@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>gear-all</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:30px;width:380px;font-family:system-ui"><select id="a"></select><br><br><select id="b"></select>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var depts=['Cardiology','Neurology','Surgery'],data=[];
+for(var i=1;i<=60;i++)data.push({id:i,name:'Staff '+i,code:'EMP-'+i,dept:depts[i%3],status:i%2?'ok':'warn',tag:i%5===0?'New':'',price:'₹'+i*10,why:i%7===0?'Needs approval':'',disabled:i%7===0,photo:''});
+bselect('#a',{options:data,multiple:true,load:'all'});
+bselect('#b',{options:data,multiple:true,load:'all',settings:false});
+</script></body></html>

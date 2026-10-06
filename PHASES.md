@@ -1,6 +1,6 @@
 # BSelect – Phases and status
 
-Location `D:\APP\dropdown` · core in `src/` → `npm run build` → `dist/` · tests: `npm test` (33 headless-browser checks, all passing).
+Location `D:\APP\dropdown` · core in `src/` → `npm run build` → `dist/` · tests: `npm test` (34 headless-browser checks, all passing).
 Decision: vanilla core first, AngularJS wrapper over it, migrate pages last. The old Angular `bselect.js` in `d:\xampp\htdocs\dev\common\dropdown` is untouched.
 
 Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
@@ -23,6 +23,7 @@ Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
 | 3j | Long lists and quality | virtual scrolling, multi-word search + highlight, screen-reader announcements, request cache, recent + favourites, minified build + version, `npm test` | PERFORMANCE.md, `qa-virtual`, `qa-search-a11y`, `qa-memory` |
 | 3k | List improvements (option driven) | result count line, Apply / Cancel commit mode, `texts`, status / badge / meta / disabled-reason rows, multi-field + accent-insensitive search | LIST_FEATURES.md, `qa-views`, `qa-rows` |
 | 3l | Fast selecting, requests, groups | Shift-click / Shift-arrows / Ctrl+A, paste a list of ids, abort stale requests + retry + keep rows on error, collapsible groups with count and select-group, A–Z rail | LIST_FEATURES.md, `qa-range`, `qa-requests`, `qa-groups` |
+| 3m | Settings gear covers every option | new List and Data tabs, Behavior additions, field-name boxes with suggestions, lazy per-option editors, nothing rendered when the gear is off | `qa-gear-all` |
 | 5 | Documentation | README + the docs in this folder | README.md |
 
 ## Open
@@ -38,7 +39,7 @@ Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
 ## How to verify
 ```
 npm run serve   →  http://localhost:8765/demo-grid.html  (and the other demo / test pages)
-npm test        →  PASS / FAIL for all 33 checks
+npm test        →  PASS / FAIL for all 34 checks
 ```
 
 ## Fix log

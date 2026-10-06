@@ -74,7 +74,7 @@ Any option can also be a `data-*` attribute. Details: [CONFIG_LAYERS.md](CONFIG_
 npm install          # terser (minified build)
 npm run build        # dist/bselect.bundle.js, .min.js, bselect.css, .min.css
 npm run serve        # demo + mock API on http://localhost:8765
-npm test             # builds, then runs all 33 headless-browser checks
+npm test             # builds, then runs all 34 headless-browser checks
 ```
 Demo pages (with the server running): `/demo-grid.html` (10 dropdowns in one line, test toggles, light/dark switch) · `/demo.html` · `/demo-angular.html` · `/demo-angular-loop.html` · `/test/virtual.html` · `/test/search-a11y.html` · `/test/memory.html`.
 

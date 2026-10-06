@@ -872,3 +872,6 @@
 .bselect-rail-letter { display: block; width: 100%; color: var(--bselect-color); cursor: pointer; font-size: 9px; font-weight: 700; line-height: 1; text-align: center; }
 .bselect-rail-letter:hover { background: var(--bselect-hover); border-radius: 4px; }
 .bselect-has-rail .bselect-list-wrap { padding-right: 16px; }
+.bselect-settings:not(.bselect-drawer) .bselect-rowc-wide .bselect-rowc-text { flex: 0 0 92px; }
+.bselect-settings:not(.bselect-drawer) .bselect-rowc-wide .bselect-text-input { flex: 1; min-width: 0; }
+.bselect-settings:not(.bselect-drawer) .bselect-pill .bselect-pill-text { white-space: nowrap; }

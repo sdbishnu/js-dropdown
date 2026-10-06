@@ -1,7 +1,7 @@
 # BSelect – every feature built so far (v1.0.0)
 
 Plain JavaScript dropdown (no framework, no jQuery needed) with an AngularJS 1.x wrapper.
-Everything below is **done and covered by `npm test`** (33 headless-browser checks).
+Everything below is **done and covered by `npm test`** (34 headless-browser checks).
 Details for each area are in the linked file; this page is the checklist.
 
 Legend: option name in `code`; **default** is stated where it matters.
@@ -62,7 +62,9 @@ Legend: option name in `code`; **default** is stated where it matters.
 
 ## 7. Settings gear (inside the dropdown, on by default)
 - Popup beside the panel, 22.1875 rem wide (355 px), animated tabs with a sliding highlight
-- Tabs: Behavior · Look · Button · Dropdown · Images · Advanced · Export
+- Tabs: Behavior · Look · Button · Dropdown · **List** · **Data** · Images · Advanced · Export
+- **Every option has a control in the gear** so it can be tested live and then copied from Export as code (global / per dropdown / JSON / data-attributes): tabs, select all, range select, paste, Apply / Cancel, count (place / align), row marks, row detail fields (status, badge, badge colour, meta, disabled reason, image, sub text), search fields / where / accents / min letters, groups, favourites / recent, requests (cancel, keep rows, preload, retries, wait, cache), long lists (virtual, A–Z)
+- **With the gear off (`settingsButton: false`) nothing of the settings is rendered** (no button, no popup, no per-option editors); with it on, the popup is built on click and the heavy per-option editors (images, sub text) only when their tab is first opened
 - Segmented choices with **Custom** value inputs, Off | On segments for yes / no options, swatches, find box, Reset
 - Behavior: Single / Multiple, Loading, Rows, Search, Sort, Clear ×, Preview, Scroll hint, Apply / Cancel, Range select, Paste list, Count
 - Button: size, shape, style, **border size** (Auto / None / 1–3 px / Custom), values display, colours

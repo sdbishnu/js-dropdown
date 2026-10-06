@@ -1513,7 +1513,7 @@ Object.assign(BSelect.prototype, {
         return this._fetch(params, signal).catch(function (error) {
             var retriable = error && error.name !== 'AbortError' && !/^HTTP 4/.test(error.message || '');
 
-            if (!retriable || attempt >= (o.retry === undefined ? 2 : Number(o.retry)) || id !== self.requestId) {
+            if (!retriable || attempt >= (o.retry === undefined || o.retry === null ? 2 : Number(o.retry)) || id !== self.requestId) {
                 throw error;
             }
 
@@ -1535,7 +1535,7 @@ Object.assign(BSelect.prototype, {
     _fetch: function (params, signal) {
         var o = this.opts;
 
-        var ttl = o.cache === true ? 30000 : Number(o.cache) || 0;
+        var ttl = o.cache === true || o.cache === null || o.cache === undefined ? 30000 : Number(o.cache) || 0;
         var key;
         var hit;
         var promise;
@@ -1633,7 +1633,7 @@ Object.assign(BSelect.prototype, {
         var extra = {};
         var prev = null;
         var ctl = null;
-        var ttl = o.cache === true ? 30000 : Number(o.cache) || 0;
+        var ttl = o.cache === true || o.cache === null || o.cache === undefined ? 30000 : Number(o.cache) || 0;
 
         if (!this._isServer()) {
             return;
@@ -2224,6 +2224,8 @@ Object.assign(BSelect.prototype, {
 
 /* Panel UI (same structure and class names as the original AngularJS bselect.html) and its render pass */
 var ICONS = {
+    list: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><path d="M5 3.5h9M5 8h9M5 12.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="2" cy="3.5" r="1" fill="currentColor"/><circle cx="2" cy="8" r="1" fill="currentColor"/><circle cx="2" cy="12.5" r="1" fill="currentColor"/></svg>',
+    data: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><ellipse cx="8" cy="3.5" rx="5.5" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 3.5v9c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-9M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     search: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10 10l4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
     cog: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
     inbox: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><path d="M2 9l2-6h8l2 6v4H2zM2 9h4l1 2h2l1-2h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
@@ -4134,7 +4136,7 @@ Object.assign(BSelect.prototype, {
 });
 
 /* Sort button, settings gear + popup, optional saved preferences (localStorage) */
-var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'rangeSelect', 'pasteIds', 'alphaRail'];
+var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'rangeSelect', 'pasteIds', 'alphaRail', 'viewTabs', 'selectAll', 'pasteMatch', 'commitClose', 'infoPlace', 'infoAlign', 'checkStyle', 'imageField', 'statusField', 'badgeField', 'badgeColorField', 'metaField', 'disabledReasonField', 'searchFields', 'accentInsensitive', 'serverSearch', 'searchMinChars', 'groupField', 'groupCollapse', 'groupSelect', 'groupCount', 'groupsOpen', 'recent', 'favorites', 'highlight', 'abortStale', 'retry', 'retryDelay', 'keepOnError', 'preload', 'cache', 'virtual', 'virtualFrom', 'alphaRailFrom'];
 
 Object.assign(BSelect.prototype, {
     _prefKey: function () {
@@ -4289,6 +4291,7 @@ Object.assign(BSelect.prototype, {
         var reload = false;
 
         o[key] = value;
+        this._memo = null; // the visible list depends on many settings (search fields, groups, sort ...)
 
         if (key.indexOf('subText') === 0) {
             this._subVer = (this._subVer || 0) + 1; // search text of the rows changed
@@ -4340,16 +4343,18 @@ Object.assign(BSelect.prototype, {
             }
 
             rebuild = true;
-        } else if (key === 'search' || key === 'sort' || key === 'settings' || key === 'arrow' || key === 'info' || key === 'commit') {
+        } else if (['search', 'sort', 'settings', 'arrow', 'info', 'commit', 'viewTabs', 'infoPlace', 'infoAlign', 'recent', 'favorites'].indexOf(key) >= 0) {
             if (!value && key === 'search') {
                 this.query = '';
             }
 
             rebuild = true;
+        } else if (key === 'serverSearch' && this._isServer()) {
+            reload = true;
         } else if (key === 'load' || key === 'pageSize') {
             this._limit = this._firstLimit();
             reload = this._serverPaged() || (this._isServer() && key === 'load');
-        } else if (['color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'panelBackground'].indexOf(key) >= 0) {
+        } else if (['color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'panelBackground', 'checkStyle'].indexOf(key) >= 0) {
             this._applyAppearance();
         }
 
@@ -4427,7 +4432,7 @@ Object.assign(BSelect.prototype, {
         var need;
         var panes = {};
         var tabButtons = {};
-        var available = (o.settingsTabs || ['behavior', 'look', 'button', 'dropdown', 'images', 'custom', 'export']).filter(Boolean);
+        var available = (o.settingsTabs || ['behavior', 'look', 'button', 'dropdown', 'list', 'data', 'images', 'custom', 'export']).filter(Boolean);
 
         if (this.settingsEl) {
             this._settingsClose();
@@ -4541,7 +4546,12 @@ Object.assign(BSelect.prototype, {
         tabs.addEventListener('transitionend', placeIndicator);
         body = el('div', 'bselect-settings-body');
 
-        var TAB_ICONS = { behavior: 'sliders', look: 'brush', button: 'button', dropdown: 'panel', images: 'image', custom: 'wand', export: 'code' };
+        var TAB_ICONS = { behavior: 'sliders', look: 'brush', button: 'button', dropdown: 'panel', list: 'list', data: 'data', images: 'image', custom: 'wand', export: 'code' };
+
+        /** the pane is filled the first time its tab is shown (keeps the popup light to open) */
+        function lazyFill(pane, fn) {
+            pane._fill = fn;
+        }
 
         function addTab(id, label) {
             var button = el('button', 'bselect-tab');
@@ -4558,6 +4568,12 @@ Object.assign(BSelect.prototype, {
                 var dir = order.indexOf(id) >= order.indexOf(self._settingsTab) ? 1 : -1;
 
                 self._settingsTab = id;
+
+                if (panes[id]._fill) {
+                    panes[id]._fill();
+                    panes[id]._fill = null;
+                }
+
                 panes[id].style.setProperty('--dir', dir);
                 Object.keys(panes).forEach(function (key) {
                     panes[key].classList.toggle('bselect-pane-active', key === id);
@@ -4845,6 +4861,36 @@ Object.assign(BSelect.prototype, {
             return line(into, label, hint, list, drawer);
         }
 
+        var fieldsList = el('datalist');
+        var sampleItem = (self.items && self.items.length ? self.items : self.known)[0] || {};
+
+        fieldsList.id = self.id + '-fields';
+        Object.keys(sampleItem).forEach(function (key) {
+            if (typeof sampleItem[key] !== 'object') {
+                fieldsList.appendChild(el('option', '', key)).value = key;
+            }
+        });
+
+        /** a text setting (item field names, comma lists ...) with suggestions from the loaded data */
+        function fieldText(into, key, label, hint, placeholder) {
+            var input = el('input', 'bselect-text-input');
+            var current = o[key];
+
+            input.type = 'text';
+            input.placeholder = placeholder || 'item field';
+            input.value = Array.isArray(current) ? current.join(', ') : current || '';
+            input.setAttribute('list', fieldsList.id);
+            input.setAttribute('aria-label', label);
+            input.addEventListener('change', function () {
+                self._setting(key, input.value.trim());
+            });
+
+            var row = line(into, label, hint, input);
+
+            row.classList.add('bselect-rowc-wide');
+            return row;
+        }
+
         function field(into, label, control) {
             var f = el('label', 'bselect-field');
 
@@ -4933,11 +4979,22 @@ Object.assign(BSelect.prototype, {
         }
 
         if (o.multiple) {
+            pillItems.push(['All / Selected', 'viewTabs', 'All and Selected tabs'], ['Select all', 'selectAll', 'Select all / Clear all button']);
+        }
+
+        if (o.multiple) {
             pillItems.push(['Range select', 'rangeSelect', 'Shift+click, Shift+arrows, Ctrl+A'], ['Paste list', 'pasteIds', 'Paste ids or names into the search']);
         }
 
         pillItems.push(['Count', 'info', 'Result count line']);
         pills(group(behavior, 'Show'), pillItems);
+
+        if (o.multiple) {
+            var bm = group(behavior, 'Multiple');
+
+            segmented(bm, 'Closing', 'Closing with pending Apply / Cancel edits', 'commitClose', [['cancel', 'Discard'], ['apply', 'Apply']], o.commitClose === 'apply' ? 'apply' : 'cancel');
+            segmented(bm, 'Paste', 'What a pasted entry is matched with', 'pasteMatch', [['both', 'Both'], ['value', 'Value'], ['label', 'Label']], o.pasteMatch || 'both');
+        }
 
         // ================= Look
         var look = addTab('look', 'Look');
@@ -5104,8 +5161,9 @@ Object.assign(BSelect.prototype, {
         });
         line(sub1, 'Field', 'Item field with the sub text', subFieldInput);
         sub1.appendChild(subList);
-        sub1.appendChild(el('div', 'bselect-card-title', 'Per option (wins over the field)'));
+        sub1.appendChild(el('div', 'bselect-card-title', 'Per option (for testing - normally the text comes from your data field)'));
 
+        lazyFill(dropdown, function () {
         (self.items && self.items.length ? self.items : self.known).slice(0, 40).forEach(function (item) {
             var row = el('div', 'bselect-subrow');
             var input = el('input', 'bselect-text-input');
@@ -5131,19 +5189,82 @@ Object.assign(BSelect.prototype, {
             row.appendChild(input);
             subRows.appendChild(row);
         });
+        });
         sub1.appendChild(subRows);
+
+        // ================= List: tabs, count, rows, search, groups, memory
+        var listTab = addTab('list', 'List');
+        var ls1 = group(listTab, 'Count and row marks');
+
+        segmented(ls1, 'Count', 'Where the "1-20 of 100" line sits', 'infoPlace', [['top', 'Top'], ['bottom', 'Bottom']], o.infoPlace === 'bottom' ? 'bottom' : 'top');
+        segmented(ls1, 'Align', 'Side of the count line', 'infoAlign', [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']], o.infoAlign || 'right');
+        segmented(ls1, 'Mark', 'Checkbox / radio style of the rows', 'checkStyle', [['box', 'Box'], ['switch', 'Switch'], ['tick', 'Tick'], ['none', 'None']], o.checkStyle || 'box');
+
+        var ls2 = group(listTab, 'Row details (item fields)');
+
+        fieldText(ls2, 'statusField', 'Status', 'Field with a status colour (ok / warn / error ...)', 'e.g. status');
+        fieldText(ls2, 'badgeField', 'Badge', 'Field shown as a small pill', 'e.g. tag');
+        fieldText(ls2, 'badgeColorField', 'Badge colour', 'Field with the pill colour', 'e.g. tagColor');
+        fieldText(ls2, 'metaField', 'Meta', 'Field shown on the right of the row', 'e.g. price');
+        fieldText(ls2, 'disabledReasonField', 'Disabled why', 'Field with the reason a row is disabled', 'e.g. why');
+        pills(ls2, [['Highlight', 'highlight', 'Mark the searched words in the rows']]);
+
+        var ls3 = group(listTab, 'Search');
+
+        fieldText(ls3, 'searchFields', 'Fields', 'Item fields searched, comma separated (empty = label + sub text)', 'name, code');
+        segmented(ls3, 'Where', 'Search in the browser or ask the server', 'serverSearch', [['', 'Auto', null], ['0', 'Browser', false], ['1', 'Server', true]], o.serverSearch === true ? '1' : o.serverSearch === false ? '0' : '');
+        pills(ls3, [['Ignore accents', 'accentInsensitive', 'jose finds Jos\u00e9']]);
+
+        var lg = el('div', 'bselect-fgrid');
+
+        numberField(lg, 'searchMinChars', 'Min letters', '', 0, 10, 1);
+        ls3.appendChild(lg);
+
+        var ls4 = group(listTab, 'Groups');
+
+        fieldText(ls4, 'groupField', 'Group by', 'Item field to group the rows under headers', 'e.g. dept');
+        pills(ls4, [['Fold', 'groupCollapse', 'Click a header to fold the group'], ['Count', 'groupCount', 'Rows in the group'], ['Select group', 'groupSelect', 'Button to select the whole group'], ['Start open', 'groupsOpen', 'Groups start unfolded']]);
+
+        var ls5 = group(listTab, 'Memory');
+        var lm = el('div', 'bselect-fgrid');
+
+        pills(ls5, [['Favourites', 'favorites', 'A star on each row']]);
+        numberField(lm, 'recent', 'Recent', 'items', 0, 20, 1);
+        ls5.appendChild(lm);
+
+        // ================= Data: requests and long lists
+        var dataTab = addTab('data', 'Data');
+        var dq = group(dataTab, 'Requests');
+        var dqg = el('div', 'bselect-fgrid');
+
+        pills(dq, [['Cancel old', 'abortStale', 'A new request cancels the one still running'], ['Keep rows', 'keepOnError', 'A failed refresh keeps the loaded rows + Retry'], ['Preload', 'preload', 'Start loading when the pointer reaches the button']]);
+        numberField(dqg, 'retry', 'Retries', '', 0, 5, 1);
+        numberField(dqg, 'retryDelay', 'Retry wait', 'ms', 100, 5000, 100);
+        numberField(dqg, 'cache', 'Cache', 'ms', 0, 600000, 1000);
+        dq.appendChild(dqg);
+
+        var dl = group(dataTab, 'Long lists');
+        var dlg = el('div', 'bselect-fgrid');
+
+        segmented(dl, 'Virtual', 'Draw only the rows in view', 'virtual', [['auto', 'Auto'], ['1', 'On', true], ['0', 'Off', false]], o.virtual === true ? '1' : o.virtual === false ? '0' : 'auto');
+        numberField(dlg, 'virtualFrom', 'Virtual from', 'rows', 20, 2000, 10);
+        numberField(dlg, 'alphaRailFrom', 'A-Z from', 'rows', 5, 500, 5);
+        dl.appendChild(dlg);
+
+        body.appendChild(fieldsList);
 
         // ================= Images
         var images = addTab('images', 'Images');
         var i1 = group(images);
 
         pills(i1, [['Show images', 'images', 'Picture, emoji or initials per option']]);
+        fieldText(i1, 'imageField', 'Field', 'Item field with the image URL, emoji or icon class', 'e.g. photo');
         segmented(i1, 'Default', 'Picture for options that have none', 'avatar', [['initials', 'Initials'], ['icon', 'Person'], ['none', 'None']], o.avatar === 'none' && o.images === true ? 'initials' : o.avatar);
         segmented(i1, 'Colour', 'Initials / person background', 'avatarColor', [['random', 'Random'], ['accent', 'Accent']], o.avatarColor === 'accent' ? 'accent' : 'random');
         segmented(i1, 'Shape', 'Picture shape', 'imageShape', [['circle', 'Circle'], ['rounded', 'Round'], ['square', 'Square']], o.imageShape);
         segmented(i1, 'Size', 'Picture size', 'imageSize', [[20, 'S', 20], [24, 'M', 24], [32, 'L', 32], [40, 'XL', 40]], o.imageSize);
 
-        var i3 = group(images, 'Per option (image URL, emoji, icon class, or upload)');
+        var i3 = group(images, 'Per option (for testing - normally the picture comes from your data field)');
         var editor = el('div', 'bselect-imgrows');
         var emojiBar = el('div', 'bselect-emoji-bar');
         var EMOJIS = ['\ud83d\ude00', '\ud83d\ude0e', '\ud83d\udc68\u200d\u2695\ufe0f', '\ud83d\udc69\u200d\u2695\ufe0f', '\ud83c\udfe5', '\ud83d\udc8a', '\ud83d\udc89', '\ud83e\ude7a', '\ud83d\ude91', '\ud83d\udd2c', '\u2764\ufe0f', '\u2b50', '\ud83d\udd25', '\u2705', '\u26a0\ufe0f', '\ud83d\ude80', '\ud83c\udf3f', '\ud83d\udc36', '\ud83d\udc31', '\ud83c\udf4e', '\ud83d\udcc5', '\ud83d\udcbc', '\ud83d\udd12', '\ud83d\udee0\ufe0f'];
@@ -5206,6 +5327,7 @@ Object.assign(BSelect.prototype, {
         });
         emojiBar.style.display = 'none';
 
+        lazyFill(images, function () {
         if (!rowsSource.length) {
             editor.appendChild(el('div', 'bselect-export-note', 'Open the list first so the options are loaded.'));
         }
@@ -5273,6 +5395,7 @@ Object.assign(BSelect.prototype, {
             row.appendChild(upload);
             row.appendChild(clear);
             editor.appendChild(row);
+        });
         });
         i3.appendChild(editor);
 
@@ -5428,7 +5551,7 @@ Object.assign(BSelect.prototype, {
         }
 
         available.forEach(function (id) {
-            var labels = { behavior: 'Behavior', look: 'Look', button: 'Button', dropdown: 'Dropdown', images: 'Images', custom: 'Advanced', export: 'Export' };
+            var labels = { behavior: 'Behavior', look: 'Look', button: 'Button', dropdown: 'Dropdown', list: 'List', data: 'Data', images: 'Images', custom: 'Advanced', export: 'Export' };
 
             if (!panes[id]) {
                 return;
@@ -5455,6 +5578,13 @@ Object.assign(BSelect.prototype, {
         find.addEventListener('input', function () {
             var q = find.value.trim().toLowerCase();
             var any = false;
+
+            Object.keys(panes).forEach(function (id) {
+                if (panes[id]._fill) {
+                    panes[id]._fill();
+                    panes[id]._fill = null;
+                }
+            });
 
             body.classList.toggle('bselect-searching', !!q);
             tabs.style.display = q ? 'none' : '';

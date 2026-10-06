@@ -80,3 +80,11 @@ All of these respect `max`, skip disabled rows and fire one `change`. Event `pas
 | `alphaRail` (false), `alphaRailFrom` (30) | A–Z strip on the right of long lists: click or drag a letter to jump (also a switch in the Dropdown tab) |
 
 New texts: `pasted`, `pastedMissing`, `limitHit`, `retry`, `loadFailed`, `loadMoreFailed`, `groupSelect`, `groupUnselect`.
+
+## Pictures and sub text come from your data
+Images and sub text are normally **assigned in the data** (array or API rows): `imageField: 'photo'` (URL, emoji or icon class), `subTextField: 'code'`, plus the other row fields above. The per-option editors in the settings gear (Images tab, Dropdown tab → Sub text) are **only for trying things out**; what you set there can be copied from the Export tab (`imageMap`, `subTextMap`) but real projects should put the values in the data.
+
+## Settings gear = test bench + code generator
+Every option on this page has a control in the gear (tabs **Behavior · Look · Button · Dropdown · List · Data · Images**). Change it, watch the dropdown react, then open **Export** (Changes / All, global / per dropdown / JSON / data-attributes) and paste the result into your code as the default.
+- Field-name boxes suggest the fields of the loaded data.
+- With the gear off (`settingsButton: false` or `settings: false`) **no settings DOM is created at all**; with it on, the popup is built when the gear is clicked and the per-option editors only when their tab is opened.

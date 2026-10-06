@@ -1,5 +1,5 @@
 /* Sort button, settings gear + popup, optional saved preferences (localStorage) */
-var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'rangeSelect', 'pasteIds', 'alphaRail'];
+var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'rangeSelect', 'pasteIds', 'alphaRail', 'viewTabs', 'selectAll', 'pasteMatch', 'commitClose', 'infoPlace', 'infoAlign', 'checkStyle', 'imageField', 'statusField', 'badgeField', 'badgeColorField', 'metaField', 'disabledReasonField', 'searchFields', 'accentInsensitive', 'serverSearch', 'searchMinChars', 'groupField', 'groupCollapse', 'groupSelect', 'groupCount', 'groupsOpen', 'recent', 'favorites', 'highlight', 'abortStale', 'retry', 'retryDelay', 'keepOnError', 'preload', 'cache', 'virtual', 'virtualFrom', 'alphaRailFrom'];
 
 Object.assign(BSelect.prototype, {
     _prefKey: function () {
@@ -154,6 +154,7 @@ Object.assign(BSelect.prototype, {
         var reload = false;
 
         o[key] = value;
+        this._memo = null; // the visible list depends on many settings (search fields, groups, sort ...)
 
         if (key.indexOf('subText') === 0) {
             this._subVer = (this._subVer || 0) + 1; // search text of the rows changed
@@ -205,16 +206,18 @@ Object.assign(BSelect.prototype, {
             }
 
             rebuild = true;
-        } else if (key === 'search' || key === 'sort' || key === 'settings' || key === 'arrow' || key === 'info' || key === 'commit') {
+        } else if (['search', 'sort', 'settings', 'arrow', 'info', 'commit', 'viewTabs', 'infoPlace', 'infoAlign', 'recent', 'favorites'].indexOf(key) >= 0) {
             if (!value && key === 'search') {
                 this.query = '';
             }
 
             rebuild = true;
+        } else if (key === 'serverSearch' && this._isServer()) {
+            reload = true;
         } else if (key === 'load' || key === 'pageSize') {
             this._limit = this._firstLimit();
             reload = this._serverPaged() || (this._isServer() && key === 'load');
-        } else if (['color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'panelBackground'].indexOf(key) >= 0) {
+        } else if (['color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'panelBackground', 'checkStyle'].indexOf(key) >= 0) {
             this._applyAppearance();
         }
 

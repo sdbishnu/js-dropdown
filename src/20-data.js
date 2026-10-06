@@ -277,7 +277,7 @@ Object.assign(BSelect.prototype, {
         return this._fetch(params, signal).catch(function (error) {
             var retriable = error && error.name !== 'AbortError' && !/^HTTP 4/.test(error.message || '');
 
-            if (!retriable || attempt >= (o.retry === undefined ? 2 : Number(o.retry)) || id !== self.requestId) {
+            if (!retriable || attempt >= (o.retry === undefined || o.retry === null ? 2 : Number(o.retry)) || id !== self.requestId) {
                 throw error;
             }
 
@@ -299,7 +299,7 @@ Object.assign(BSelect.prototype, {
     _fetch: function (params, signal) {
         var o = this.opts;
 
-        var ttl = o.cache === true ? 30000 : Number(o.cache) || 0;
+        var ttl = o.cache === true || o.cache === null || o.cache === undefined ? 30000 : Number(o.cache) || 0;
         var key;
         var hit;
         var promise;
@@ -397,7 +397,7 @@ Object.assign(BSelect.prototype, {
         var extra = {};
         var prev = null;
         var ctl = null;
-        var ttl = o.cache === true ? 30000 : Number(o.cache) || 0;
+        var ttl = o.cache === true || o.cache === null || o.cache === undefined ? 30000 : Number(o.cache) || 0;
 
         if (!this._isServer()) {
             return;

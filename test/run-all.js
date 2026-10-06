@@ -29,6 +29,7 @@ const checks = [
     ['/test/subtext.html', 'test/qa-subtext.mjs'],
     ['/test/tabs.html', 'test/qa-tabs.mjs'],
     ['/test/tabs.html', 'test/qa-range.mjs'],
+    ['/test/gear-all.html', 'test/qa-gear-all.mjs'],
     ['/test/groups.html', 'test/qa-groups.mjs'],
     ['/test/requests.html', 'test/qa-requests.mjs'],
     ['/test/views.html', 'test/qa-border.mjs'],

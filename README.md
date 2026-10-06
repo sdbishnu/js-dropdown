@@ -86,6 +86,8 @@ Needs a current browser (uses CSS `color-mix()`, `:has()`, `Map` / `Set` / `Weak
 
 | File | Contents |
 |---|---|
+| [FEATURES.md](FEATURES.md) | complete checklist of every feature built |
+| [SETUP_AND_GITHUB.md](SETUP_AND_GITHUB.md) | clone, build, test runner setup, repository notes |
 | [CONFIG_LAYERS.md](CONFIG_LAYERS.md) | the config layers, per-dropdown defaults, separate button / dropdown design, settings tabs, export |
 | [APPEARANCE_AND_LOADING.md](APPEARANCE_AND_LOADING.md) | themes, backgrounds, images, option names, loading modes |
 | [LIST_FEATURES.md](LIST_FEATURES.md) | list design: count, Apply / Cancel, texts, richer rows, multi-field accent-insensitive search |

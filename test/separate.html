@@ -1,0 +1,17 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect: separate button / dropdown design</title>
+<style>body{font-family:Arial;padding:24px;max-width:760px;display:grid;grid-template-columns:1fr 1fr;gap:16px 28px}.c h5{margin:0 0 4px;font-size:11px;color:#667}</style></head>
+<body>
+<div class="c"><h5>A: field (amber pill) + panel (dark, square, flat)</h5><div id="a"></div></div>
+<div class="c"><h5>B: flat keys panelMode:dark</h5><div id="b"></div></div>
+<div class="c"><h5>C: dark button + light panel</h5><div id="c"></div></div>
+<div class="c"><h5>D: global field.size sm + own field.shape pill</h5><div id="d"></div></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+bselect.defaults({ field: { size: 'sm' } });                       // global, nested
+var opts = ['One', 'Two', 'Three'];
+bselect('#a', { options: opts, field: { size: 'lg', shape: 'pill', background: '#fff7e6', borderColor: '#f59e0b', textColor: '#7c2d12', color: '#f59e0b' }, panel: { mode: 'dark', shape: 'square', rowStyle: 'flat', shadow: 'strong', color: '#f59e0b' } });
+bselect('#b', { options: opts, size: 'md', panelMode: 'dark', panelRadius: 4 });
+bselect('#c', { options: opts, mode: 'dark', size: 'md', panel: { mode: 'light' } });
+bselect('#d', { options: opts, field: { shape: 'pill' } });
+</script></body></html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect appearance tests</title>
+<style>body{font-family:Arial;padding:24px;max-width:460px}.row{margin:14px 0}</style></head>
+<body>
+<div class="row"><div id="sm"></div></div>
+<div class="row"><div id="lg"></div></div>
+<div class="row"><div id="sq"></div></div>
+<div class="row"><div id="pill"></div></div>
+<div class="row"><div id="filled"></div></div>
+<div class="row"><div id="under"></div></div>
+<div class="row"><div id="icon"></div></div>
+<div class="row"><div id="chips"></div></div>
+<div class="row"><div id="img"></div></div>
+<div class="row"><div id="tick"></div></div>
+<div class="row"><div id="theme"></div></div>
+<div class="row"><div id="darkone"></div></div>
+<div class="row"><div id="ls"></div></div>
+<div class="row"><div id="lb"></div></div>
+<div class="row"><div id="la"></div></div>
+<div class="row"><select id="nat"></select></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var svg = function (c) { return 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="' + c + '"/></svg>'); };
+var people = [{id:1,name:'Asha',img:svg('#e11d48'),role:'Nurse'},{id:2,name:'Ben',img:svg('#2563eb'),role:'Doctor'},{id:3,name:'Chitra',img:svg('#16a34a'),role:'Admin'}];
+var base = ['One','Two','Three','Four'];
+bselect('#sm', { options: base, size: 'sm', placeholder: 'small' });
+bselect('#lg', { options: base, size: 'lg', placeholder: 'large' });
+bselect('#sq', { options: base, shape: 'square', placeholder: 'square' });
+bselect('#pill', { options: base, shape: 'pill', placeholder: 'pill' });
+bselect('#filled', { options: base, variant: 'filled', placeholder: 'filled' });
+bselect('#under', { options: base, variant: 'underline', placeholder: 'underline' });
+bselect('#icon', { options: base, icon: 'fa fa-user', prefix: 'Ward:', suffix: 'beds', label: 'Labelled field', required: true, placeholder: 'pick', value: 'Two', color: '#0f766e' });
+bselect('#chips', { options: ['A','B','C','D','E'], multiple: true, display: 'chips', maxChips: 2, value: ['A','B','C'] });
+bselect('#img', { options: people, imageField: 'img', subTextField: 'role', imageShape: 'rounded', value: 2 });
+bselect('#tick', { options: base, checkStyle: 'tick', value: 'Three' });
+bselect.theme('hospital', { color: '#0f766e', shape: 'pill', size: 'lg', variant: 'filled' });
+bselect('#theme', { options: base, theme: 'hospital', value: 'One' });
+bselect('#darkone', { options: base, theme: 'dark', value: 'One', multiple: true, settingsButton: true });
+var many = []; for (var i = 1; i <= 60; i++) many.push('Row ' + i);
+bselect('#ls', { options: many, load: 'scroll', pageSize: 10, placeholder: 'local scroll' });
+bselect('#lb', { options: many, load: 'button', pageSize: 10, placeholder: 'local button' });
+bselect('#la', { options: many, load: 'all', placeholder: 'local all', renderChunk: 100 });
+bselect('#nat', { options: base, settingsButton: true, selectedDrawer: false, searchBox: false, clearButton: false, placeholder: 'clean names' });
+</script></body></html>

@@ -1,0 +1,14 @@
+{
+  "name": "bselect",
+  "version": "1.0.0",
+  "description": "BSelect - plain JavaScript dropdown with an AngularJS 1.x wrapper",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "serve": "node test/server.js",
+    "test": "node test/run-all.js"
+  },
+  "devDependencies": {
+    "terser": "^5.51.2"
+  }
+}

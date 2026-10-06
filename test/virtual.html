@@ -1,0 +1,17 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect virtual scrolling</title>
+<style>body{font-family:Arial;padding:24px;max-width:420px}.row{margin:14px 0}h5{margin:0 0 4px;font-size:11px;color:#667}</style></head>
+<body>
+<div class="row"><h5>5000 local options (virtual, single)</h5><div id="v1"></div></div>
+<div class="row"><h5>5000 local options (virtual, multiple)</h5><div id="v2"></div></div>
+<div class="row"><h5>300 options, virtual:false</h5><div id="v3"></div></div>
+<div class="row"><h5>server list (paged), grows past 150 rows</h5><div id="v4"></div></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var big = []; for (var i = 1; i <= 5000; i++) big.push({ id: i, name: 'Employee ' + i });
+bselect.data('big', big);
+bselect('#v1', { options: 'big' });
+bselect('#v2', { options: 'big', multiple: true });
+bselect('#v3', { options: big.slice(0, 300), virtual: false });
+bselect('#v4', { url: '/api/items', params: { total: 600 }, load: 'scroll', pageSize: 50 });
+</script></body></html>

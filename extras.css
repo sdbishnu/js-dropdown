@@ -1,0 +1,15 @@
+/* BSelect extras: groups, icons, sub-text, create row, validation, load-more button, dark theme. Appended to bselect.css by build.js */
+.bselect-group { padding: 7px 10px 3px; color: var(--bselect-muted); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; background: #f8fafc; border-top: 1px solid #edf0f4; position: sticky; top: 0; z-index: 1; }
+.bselect-group:first-child { border-top: 0; }
+.bselect-item-icon { flex: 0 0 18px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; object-fit: cover; border-radius: 3px; font-size: 14px; color: var(--bselect-muted); }
+.bselect-item-text { display: flex; flex-direction: column; justify-content: center; }
+.bselect-item-sub { display: block; overflow: hidden; color: var(--bselect-muted); font-size: 10px; line-height: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.bselect-create { color: var(--bselect-color); font-weight: 500; }
+.bselect-create .bselect-control { font-size: 16px; font-weight: 600; }
+.bselect-invalid .bselect-trigger { border-color: #d92d20; }
+.bselect-error-text { margin-top: 3px; color: #d92d20; font-size: 11px; line-height: 14px; }
+.bselect-error-text:empty { display: none; }
+.bselect-load-more-btn { display: block; width: calc(100% - 14px); margin: 6px 7px 8px; padding: 7px 10px; border: 1px solid var(--bselect-border); border-radius: 6px; background: #fff; color: var(--bselect-color); font-size: 12px; cursor: pointer; }
+.bselect-load-more-btn:hover { border-color: var(--bselect-color); background: var(--bselect-hover); }
+.bselect-empty.bselect-error { color: #b42318; cursor: pointer; }
+

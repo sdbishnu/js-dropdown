@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect layers + settings tests</title>
+<style>body{font-family:Arial;padding:20px;max-width:380px}.row{margin:12px 0}</style></head>
+<body>
+<div class="row"><select id="a"></select></div>
+<div class="row"><div id="b"></div></div>
+<div class="row"><div id="c"></div></div>
+<div class="row"><div id="d" data-bselect data-options='["x","y"]' data-size="lg" data-search-box="false"></div></div>
+<div class="row"><div id="g"></div></div>
+<script src="../dist/bselect.bundle.js"></script>
+<!-- in a real project the next block lives in its own js file, loaded before the dropdowns are built -->
+<script>
+bselect.defaults({ size: 'sm', color: '#0f766e', mode: 'light' });          // GLOBAL
+bselect.defaults('#a', { size: 'lg', shape: 'pill', color: '#8b5cf6' });      // PER DROPDOWN (from another js)
+bselect.defaults('d', { shape: 'square' });                                   // PER DROPDOWN by id/name
+</script>
+<script>
+var opts = ['One', 'Two', 'Three'];
+var a = bselect('#a', { options: opts, color: '#ef4444' });                   // OWN color beats the per-dropdown one
+var b = bselect('#b', { options: opts });                                     // global only
+var c = bselect('#c', { options: opts, size: 'md' });                         // own beats global
+var g = bselect('#g', { options: opts, settingsButton: true, multiple: true, value: ['One'] });
+var out = {};
+[['a', a], ['b', b], ['c', c]].forEach(function (p) { var e = p[1].explain(); out[p[0]] = { size: [e.size && e.size.value, e.size && e.size.from], color: [e.color && e.color.value, e.color && e.color.from], shape: [e.shape && e.shape.value, e.shape && e.shape.from] }; });
+document.documentElement.dataset.layers = JSON.stringify(out);
+</script></body></html>

@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>views</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:30px;width:360px">
+<select id="a"></select><br><br><select id="b"></select>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var opts=[];for(var i=1;i<=100;i++)opts.push({id:i,name:'Item '+i});
+window.events=[];function ev(x){events.push(x);document.documentElement.dataset.ev=events.join(',')}
+var a=bselect('#a',{options:opts,multiple:true,info:true,commit:true,recent:5,favorites:true,
+ texts:{apply:'Übernehmen'},onChange:function(v){ev('change:'+v)},onApply:function(){ev('apply')},onCancel:function(){ev('cancel')}});
+</script></body></html>

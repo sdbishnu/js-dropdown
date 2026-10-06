@@ -1,0 +1,25 @@
+<!doctype html>
+<html ng-app="cmp"><head><meta charset="utf-8"><title>Old (Angular) vs New (vanilla)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+<style>
+  body{font-family:Arial,sans-serif;margin:0;padding:16px;font-size:14px}
+  .cols{display:flex;gap:40px}.col{width:340px}.col h4{margin:0 0 10px}
+  .row{margin:12px 0;min-height:36px}
+</style></head>
+<body ng-controller="C">
+<div class="cols">
+  <div class="col" id="oldcol"><h4>OLD (common/dropdown)</h4>
+    <div class="row" id="o1"><bselect ng-model="m.a" bselect-options="list" bselect-label="ward" bselect-placeholder="x"></bselect></div>
+    <div class="row" id="o2"><bselect ng-model="m.b" bselect-options="list" bselect-label="ward" bselect-multiple></bselect></div>
+    <div class="row" id="o3"><bselect ng-model="m.c" bselect-options="big" bselect-label="big" bselect-multiple bselect-preset="bigp"></bselect></div>
+  </div>
+</div>
+<script src="/old/bselect.js"></script>
+<script>
+var data = [];
+for (var i = 1; i <= 40; i++) data.push({ id: i, name: 'Ward number ' + i + (i % 7 === 0 ? ' with a very long descriptive name that overflows' : '') });
+angular.module('cmp', ['bselect']).controller('C', function ($scope) {
+  $scope.m = {}; $scope.list = data; $scope.big = data;
+});
+</script></body></html>

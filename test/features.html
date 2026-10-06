@@ -1,0 +1,27 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect feature tests</title>
+<style>body{font-family:Arial;padding:30px;max-width:420px}label{display:block;margin:16px 0 4px;font-size:13px}</style></head>
+<body>
+<form id="f" onsubmit="document.documentElement.dataset.submitted='1';return false">
+<label>server lazy + groups + subtext + search + sort</label><div id="srv"></div>
+<label>resolve saved ids (3,7)</label><div id="res"></div>
+<label>department</label><select id="dept"></select>
+<label>ward (cascade)</label><select id="ward"></select>
+<label>required + min 2 + max 3</label><div id="req"></div>
+<label>creatable tags</label><div id="tags"></div>
+<label>load more button</label><div id="more"></div>
+<label>dark</label><div id="dark"></div>
+<button id="submit" type="submit">Submit</button>
+</form>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+document.documentElement.dataset.events = '';
+var srv = bselect('#srv', { url: '/api/items', lazy: true, pageSize: 20, multiple: true, groupField: 'group', subTextField: 'sub', sort: true, serverSort: true, onLoad: function (i) { document.documentElement.dataset.events += 'load:' + i.length + ';'; }, onOpen: function(){ document.documentElement.dataset.events += 'open;'; } });
+var res = bselect('#res', { url: '/api/items', lazy: true, multiple: true, value: [3, 7], resolveUrl: '/api/resolve' });
+var dept = bselect('#dept', { url: '/api/depts', placeholder: 'Department' });
+var ward = bselect('#ward', { url: '/api/wards', dependsOn: '#dept', dependsParam: 'parent', placeholder: 'Ward', dependsPlaceholder: 'Pick department first' });
+var req = bselect('#req', { options: [1,2,3,4,5].map(function(n){return {id:n,name:'Opt '+n}}), multiple: true, required: true, min: 2, max: 3 });
+var tags = bselect('#tags', { options: ['red','green'], multiple: true, creatable: true });
+var more = bselect('#more', { url: '/api/items', lazy: true, pageSize: 10, loadMore: true });
+var dark = bselect('#dark', { options: ['a','b'], theme: 'dark', value: 'a' });
+</script></body></html>

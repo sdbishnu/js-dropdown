@@ -1,0 +1,69 @@
+<!doctype html>
+<html ng-app="demo"><head><meta charset="utf-8"><title>BSelect AngularJS demo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+<link rel="stylesheet" href="demo-theme.css">
+<style>body{padding:24px;max-width:460px}.row{margin:14px 0}h5{margin:0 0 4px;font-size:12px;color:#667}pre{font-size:11px;background:#f4f6f8;padding:8px;border-radius:6px}</style></head>
+<body ng-controller="Ctl">
+
+<div class="row"><h5>1. new API: options + on-change</h5>
+  <bselect id="ward" ng-model="f.ward" options="wards" placeholder="Select ward" on-change="log($value)"></bselect></div>
+
+<div class="row"><h5>2. multiple + preset (per-dropdown default: size lg for f.users)</h5>
+  <bselect ng-model="f.users" preset="wards" multiple display="chips"></bselect></div>
+
+<div class="row"><h5>3. cascade: dept -> ward (server)</h5>
+  <bselect id="dept" ng-model="f.dept" url="/api/depts" params="{n:100}" placeholder="Department"></bselect>
+  <div style="height:8px"></div>
+  <bselect id="ward2" ng-model="f.ward2" url="/api/wards" params="{n:100}" depends-on="f.dept" depends-param="parent" placeholder="Ward"></bselect></div>
+
+<div class="row"><h5>4. OLD API: bselect.bind + config + object model + handler</h5>
+  <bselect id="old1" ng-model="old.single"></bselect>
+  <div style="height:8px"></div>
+  <bselect id="old2" ng-model="old.obj" config="objConfig"></bselect></div>
+
+<div class="row"><h5>5. required in a form</h5>
+  <form name="frm"><bselect id="req" ng-model="f.req" options="wards" ng-required="true" placeholder="Required"></bselect></form></div>
+
+<pre id="out">{{ {ward:f.ward, users:f.users, dept:f.dept, ward2:f.ward2, old:old.single, obj:old.obj, req:f.req, invalid:frm.$invalid} | json }}</pre>
+<button id="set" ng-click="set()">set from controller</button>
+
+<script src="dist/bselect.bundle.js"></script>
+<script src="demo-theme.js"></script>
+<script src="ng/bselect.ng.js"></script>
+<script>
+// global + per-dropdown defaults, exactly as in plain js (match by ng-model expression, id or name)
+bselect.defaults({ color: '#0f766e' });
+bselect.defaults('f.users', { size: 'lg' });
+var HUNDRED = []; for (var h = 1; h <= 100; h++) HUNDRED.push({ id: h, name: h <= 3 ? 'Ward ' + String.fromCharCode(64 + h) : 'Ward ' + h });
+bselect.preset('wards', { options: HUNDRED });
+
+angular.module('demo', ['bselect']).controller('Ctl', function ($scope, $http, bselect) {
+  $scope.f = {};
+  $scope.old = {};
+  $scope.wards = HUNDRED;
+  $scope.log = function (v) { document.documentElement.dataset.last = String(v); };
+
+  // OLD style, unchanged from the existing pages
+  function loadPage(params) {
+    params = angular.extend({ total: 100 }, params);   // ask the mock api for 100 rows
+    return $http({ method: 'POST', url: '/api/items', data: Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&'), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+      .then(function (r) { return r.data || {}; });
+  }
+  $scope.dropdowns = bselect.bind($scope, {
+    'old.single': {}
+  }, {
+    data: { source: { type: 'server', params: { includeInactive: 1 }, handlers: { loadPage: loadPage } }, load: { trigger: 'onOpen', pageSize: 10, nextPage: 'onScroll' } },
+    selection: { mode: 'single' },
+    search: { placeholder: 'Search Item' },
+    display: { placeholder: 'Select Item', showSettings: true }
+  });
+  $scope.objConfig = {
+    data: { source: { type: 'local', options: function () { return $scope.wards; } }, load: { trigger: 'onOpen', pageSize: 50, nextPage: 'onScroll' } },
+    selection: { mode: 'single', model: 'object' },
+    search: { enabled: true },
+    display: { placeholder: 'Select (object model)', showSettings: true }
+  };
+  $scope.old.obj = { id: '0' };
+  $scope.set = function () { $scope.f.ward = 3; $scope.f.users = [1, 3]; $scope.old.obj = { id: 2, name: 'Ward B' }; $scope.f.req = 1; bselect.refresh($scope.dropdowns); };
+});
+</script></body></html>

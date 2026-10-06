@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect event / listener audit</title>
+<style>body{font-family:Arial;padding:24px;max-width:420px}.row{margin:12px 0}</style></head>
+<body>
+<div class="row"><div id="d1"></div></div>
+<form id="frm" onsubmit="document.documentElement.dataset.submitted='1';return false"><div class="row"><div id="d2"></div></div></form>
+<div class="row"><div id="d3"></div></div>
+<div class="row"><select id="d4"></select></div>
+<button id="destroyAll" onclick="['d1','d2','d3','d4'].forEach(function(i){window[i].destroy()})">destroy</button>
+<button id="recreate" onclick="window.d1=bselect('#d1',{options:[{id:1,name:'A'}]});window.d1b=bselect('#d1',{options:[{id:1,name:'A'}]})">recreate</button>
+<script>
+// count live document/window listeners (add minus remove) so leaks show up; result goes to <html data-ls>
+(function () {
+  var live = [];
+  var add = EventTarget.prototype.addEventListener, rem = EventTarget.prototype.removeEventListener;
+  function name(t) { return t === document ? 'document' : t === window ? 'window' : null; }
+  function publish() {
+    var sum = {}; live.forEach(function (l) { var k = l.t + ':' + l.type; sum[k] = (sum[k] || 0) + 1; });
+    document.documentElement.dataset.ls = JSON.stringify(sum);
+  }
+  EventTarget.prototype.addEventListener = function (type, fn, opt) {
+    var t = name(this);
+    if (t && !live.some(function (l) { return l.target === this && l.type === type && l.fn === fn; }, this)) { live.push({ target: this, t: t, type: type, fn: fn }); publish(); }
+    return add.call(this, type, fn, opt);
+  };
+  EventTarget.prototype.removeEventListener = function (type, fn, opt) {
+    var t = name(this);
+    if (t) { live = live.filter(function (l) { return !(l.target === this && l.type === type && l.fn === fn); }, this); publish(); }
+    return rem.call(this, type, fn, opt);
+  };
+  window.__bsEvents = { changes: 0, opens: 0, closes: 0 };
+  ['bselect:change', 'bselect:open', 'bselect:close'].forEach(function (n) {
+    document.addEventListener(n, function () { var s = window.__bsEvents; if (n === 'bselect:change') s.changes++; if (n === 'bselect:open') s.opens++; if (n === 'bselect:close') s.closes++; document.documentElement.dataset.ev = JSON.stringify(s); });
+  });
+})();
+</script>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var data = ['One','Two','Three','Four','Five'].map(function (n, i) { return { id: i + 1, name: n }; });
+window.d1 = bselect('#d1', { options: data });
+window.d2 = bselect('#d2', { options: data, multiple: true, display: 'chips' });
+window.d3 = bselect('#d3', { url: '/api/items', load: 'scroll', pageSize: 10 });
+window.d4 = bselect('#d4', { options: data });
+document.documentElement.dataset.ready = '1';
+</script></body></html>

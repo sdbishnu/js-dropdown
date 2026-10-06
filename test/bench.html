@@ -1,0 +1,51 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect loop benchmark</title>
+<style>body{font-family:Arial;padding:20px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.cell{min-width:0}</style></head>
+<body>
+<div id="out"></div>
+<form id="frm" class="grid"></form>
+<script>
+// listener counter (document/window), like test/events.html
+(function () {
+  var live = [], add = EventTarget.prototype.addEventListener, rem = EventTarget.prototype.removeEventListener;
+  function nm(t) { return t === document ? 'document' : t === window ? 'window' : null; }
+  EventTarget.prototype.addEventListener = function (type, fn, o) { var t = nm(this); if (t) live.push({ t: this, type: type, fn: fn }); return add.call(this, type, fn, o); };
+  EventTarget.prototype.removeEventListener = function (type, fn, o) { var t = nm(this); if (t) live = live.filter(function (l) { return !(l.t === this && l.type === type && l.fn === fn); }, this); return rem.call(this, type, fn, o); };
+  window.__liveListeners = function () { return live.length; };
+})();
+</script>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var params = new URLSearchParams(location.search);
+var N = parseInt(params.get('n') || '120', 10);        // dropdowns in the loop
+var SIZE = parseInt(params.get('size') || '2000', 10); // options in the shared array
+var staff = []; for (var i = 1; i <= SIZE; i++) staff.push({ id: i, name: 'Employee number ' + i + ' (dept ' + (i % 17) + ')' });
+bselect.data && bselect.data('staff', staff);
+
+var form = document.getElementById('frm');
+var domBefore = document.getElementsByTagName('*').length;
+var listenersBefore = window.__liveListeners();
+var t0 = performance.now();
+var instances = [];
+for (var k = 0; k < N; k++) {
+  var cell = document.createElement('div');
+  cell.className = 'cell';
+  var target = document.createElement('div');
+  target.id = 'empid' + k;
+  cell.appendChild(target);
+  form.appendChild(cell);
+  instances.push(bselect('#empid' + k, { options: staff, placeholder: 'Employee ' + (k + 1), value: (k % 5) + 1 }));
+}
+var tBuild = performance.now() - t0;
+
+document.documentElement.dataset.metrics = JSON.stringify({
+  n: N, options: SIZE,
+  buildMs: Math.round(tBuild),
+  perInstanceMs: +(tBuild / N).toFixed(2),
+  domNodes: document.getElementsByTagName('*').length - domBefore,
+  domPerInstance: +((document.getElementsByTagName('*').length - domBefore) / N).toFixed(1),
+  listeners: window.__liveListeners() - listenersBefore,
+  heapMB: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null
+});
+document.getElementById('out').textContent = document.documentElement.dataset.metrics;
+</script></body></html>

@@ -1,0 +1,86 @@
+/* ===================== Appearance system =====================
+ * Everything below is driven by css variables that bselect sets from the appearance options
+ * (theme, mode, size, shape, variant, color, ...). Override any of them in your own css too:
+ *   .my-form .bselect { --bselect-color: #0f766e; --bselect-radius: 12px; }
+ */
+.bselect {
+    --bselect-surface: #fff; --bselect-surface-2: #f8fafc; --bselect-line: #edf0f4;
+    --bselect-height: 35px; --bselect-font: 13px; --bselect-item-height: 31px; --bselect-item-font: 12px;
+    --bselect-radius: 7px; --bselect-panel-radius: 8px; --bselect-item-radius: 0px; --bselect-box-radius: 4px; --bselect-img-radius: 50%;
+    --bselect-trigger-bg: linear-gradient(180deg, #fff 0%, #eef2f6 100%);
+    --bselect-trigger-bg-value: linear-gradient(180deg, #fff 30%, color-mix(in srgb, var(--bselect-color) 8%, white) 100%);
+}
+.bselect .bselect-trigger { min-height: var(--bselect-height); border-radius: var(--bselect-radius); background: var(--bselect-trigger-bg) !important; color: var(--bselect-text); }
+.bselect.bselect-has-value:not(.bselect-disabled) .bselect-trigger,
+.bselect.bselect-has-value:not(.bselect-disabled):not(.bselect-open) .bselect-trigger:hover,
+.bselect.bselect-has-value.bselect-open:not(.bselect-disabled) .bselect-trigger { background: var(--bselect-trigger-bg-value) !important; }
+.bselect .bselect-trigger-text { display: flex; align-items: center; gap: 6px; font-size: var(--bselect-font); }
+.bselect .bselect-panel { border-radius: var(--bselect-panel-radius); }
+.bselect .bselect-item { min-height: var(--bselect-item-height); }
+.bselect .bselect-item-text { font-size: var(--bselect-item-font); }
+.bselect .bselect-list .bselect-item:hover { border-radius: var(--bselect-item-radius); }
+.bselect .bselect-checkbox { border-radius: var(--bselect-box-radius); }
+.bselect .bselect-search input, .bselect .bselect-action, .bselect .bselect-radio, .bselect .bselect-checkbox, .bselect .bselect-load-more-btn { background: var(--bselect-surface); color: var(--bselect-text); }
+.bselect .bselect-header, .bselect .bselect-toolbar, .bselect .bselect-selected, .bselect .bselect-selected-drawer, .bselect .bselect-selected-list, .bselect .bselect-group { background: var(--bselect-surface-2); border-color: var(--bselect-line); }
+.bselect .bselect-checkbox.bselect-checked { background: var(--bselect-color); color: #fff; }
+.bselect .bselect-settings, .bselect .bselect-settings-header { background: var(--bselect-bg); }
+.bselect .bselect-settings-body { background: var(--bselect-surface-2); }
+.bselect .bselect-settings-section { background: var(--bselect-surface); }
+
+.bselect.bselect-settings-open .bselect-panel { background: var(--bselect-bg); border-color: var(--bselect-border); }
+.bselect .bselect-setting-field input, .bselect .bselect-setting-field select, .bselect .bselect-setting-select select, .bselect .bselect-setting-select:hover select { background: var(--bselect-surface) !important; color: var(--bselect-text); border-color: var(--bselect-border); }
+.bselect .bselect-settings-section-title { background: var(--bselect-surface); color: var(--bselect-text); }
+
+/* sizes */
+.bselect-size-sm .bselect-trigger { padding: 3px 7px; }
+.bselect-size-lg .bselect-trigger { padding: 7px 12px; }
+.bselect-size-lg .bselect-search input { height: 36px; font-size: 14px; }
+.bselect-size-sm .bselect-search input { height: 26px; font-size: 11px; }
+
+/* variants */
+.bselect.bselect-variant-filled { --bselect-trigger-bg: #eef1f6; --bselect-trigger-bg-value: #e6ebf3; --bselect-trigger-border: transparent; }
+.bselect.bselect-variant-filled.bselect-dark { --bselect-trigger-bg: #2f3748; --bselect-trigger-bg-value: #343d50; }
+.bselect-variant-filled .bselect-trigger:hover { filter: brightness(.98); }
+.bselect-variant-underline .bselect-trigger { border-width: 0 0 var(--bselect-trigger-border-width, 2px) 0 !important; border-radius: 0 !important; background: transparent !important; padding-left: 2px; padding-right: 2px; }
+.bselect-variant-ghost .bselect-trigger { border-color: transparent !important; background: transparent !important; }
+.bselect-variant-ghost .bselect-trigger:hover { background: var(--bselect-hover) !important; }
+
+/* field content: leading icon/image, prefix/suffix text, chips */
+.bselect-lead { flex: 0 0 auto; display: inline-flex; align-items: center; color: var(--bselect-color); font-size: 1.1em; }
+.bselect-lead-img { width: 20px; height: 20px; object-fit: cover; border-radius: var(--bselect-img-radius); }
+.bselect-affix { flex: 0 0 auto; color: var(--bselect-muted); font-size: .92em; }
+.bselect-trigger-text .bselect-item-label { flex: 1 1 auto; width: auto; min-width: 0; }
+.bselect-chips { flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.bselect-chip { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 0 3px 0 8px; border-radius: min(var(--bselect-radius), 12px); background: var(--bselect-selected); color: var(--bselect-color); font-size: .9em; line-height: 22px; }
+.bselect-chip-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bselect-chip-pic { display: inline-flex; align-items: center; }
+.bselect-chip-pic .bselect-lead-img { width: 16px; height: 16px; }
+.bselect-chip-x { width: 16px; height: 16px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; font-size: 14px; line-height: 14px; }
+.bselect-chip-x:hover { background: rgba(0, 0, 0, .12); }
+.bselect-chip-more { padding-right: 8px; }
+.bselect-has-chips .bselect-trigger-text { white-space: normal; overflow: visible; }
+.bselect-has-chips .bselect-trigger { padding-top: 3px; padding-bottom: 3px; }
+.bselect-label { display: block; margin: 0 0 4px; color: var(--bselect-text); font-size: 12px; font-weight: 600; }
+.bselect-label-required::after { content: ' *'; color: #d92d20; }
+
+/* item pictures */
+.bselect-item-pic { flex: 0 0 auto; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; border-radius: var(--bselect-img-radius); color: var(--bselect-muted); }
+.bselect-item-pic .bselect-lead-img { width: 100%; height: 100%; }
+.bselect-image-circle { --bselect-img-radius: 50%; }
+.bselect-image-rounded { --bselect-img-radius: 6px; }
+.bselect-image-square { --bselect-img-radius: 0; }
+
+/* selection indicator: box (default) | tick | none */
+.bselect-check-tick .bselect-list > .bselect-item > .bselect-control,
+.bselect-check-none .bselect-list > .bselect-item > .bselect-control { display: none; }
+.bselect-selected-mark { margin-left: auto; color: var(--bselect-color); font-weight: 700; }
+
+/* misc switches */
+.bselect-no-chevron .bselect-chevron { display: none; }
+.bselect-no-anim .bselect-panel, .bselect-no-anim .bselect-panel * { animation: none !important; transition: none !important; }
+
+/* dark mode (mode:'dark' | 'auto') */
+.bselect.bselect-dark { --bselect-bg: #1f2530; --bselect-surface: #2a3140; --bselect-surface-2: #232a37; --bselect-line: #3a4252; --bselect-text: #e6e9ef; --bselect-muted: #98a2b3; --bselect-border: #3a4252; --bselect-trigger-bg: #2a3140; --bselect-trigger-bg-value: #2f3748; --bselect-hover: color-mix(in srgb, var(--bselect-color) 18%, #1f2530); --bselect-selected: color-mix(in srgb, var(--bselect-color) 28%, #1f2530); color-scheme: dark; }
+.bselect-dark .bselect-radio, .bselect-dark .bselect-checkbox { border-color: #4a5468; }
+.bselect-dark .bselect-panel-anchor { background: var(--bselect-bg); }
+.bselect-dark .bselect-search input::placeholder { color: var(--bselect-muted); }

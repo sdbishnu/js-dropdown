@@ -1,0 +1,29 @@
+<!doctype html>
+<html ng-app="loop"><head><meta charset="utf-8"><title>BSelect AngularJS - ng-repeat form</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+<link rel="stylesheet" href="demo-theme.css">
+<style>body{padding:20px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px}label{display:block;font-size:11px;color:var(--demo-muted);margin-bottom:3px}pre{font-size:11px}</style></head>
+<body ng-controller="Ctl">
+<h4>AngularJS: ng-repeat over {{rows.length}} rows, one shared array ({{staff.length}} options)</h4>
+<form name="frm" class="grid">
+  <div ng-repeat="r in rows track by $index">
+    <label>Row {{$index + 1}}</label>
+    <bselect id="empid{{$index}}" ng-model="r.emp" options="staff" placeholder="Employee" ng-required="$index < 2"></bselect>
+  </div>
+</form>
+<pre id="out">{{ {values: picked(), invalid: frm.$invalid} | json }}</pre>
+<button id="fill" ng-click="fill()">fill from controller</button>
+
+<script src="dist/bselect.bundle.js"></script>
+<script src="demo-theme.js"></script>
+<script src="ng/bselect.ng.js"></script>
+<script>
+angular.module('loop', ['bselect']).controller('Ctl', function ($scope) {
+  $scope.staff = []; for (var i = 1; i <= 2000; i++) $scope.staff.push({ id: i, name: 'Employee ' + i });
+  $scope.rows = []; for (var k = 0; k < 90; k++) $scope.rows.push({ emp: null });
+  $scope.picked = function () { var o = {}; $scope.rows.forEach(function (r, i) { if (r.emp) o['r' + i] = r.emp; }); return o; };
+  $scope.fill = function () { $scope.rows.forEach(function (r, i) { r.emp = (i % 9) + 1; }); };
+  var t0 = performance.now();
+  setTimeout(function () { document.documentElement.dataset.metrics = JSON.stringify({ rows: $scope.rows.length, settleMs: Math.round(performance.now() - t0), dom: document.getElementsByTagName('*').length }); }, 0);
+});
+</script></body></html>

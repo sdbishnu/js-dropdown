@@ -1,0 +1,12 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect recent + favourites</title>
+<style>body{font-family:Arial;padding:24px;max-width:420px}.row{margin:14px 0}h5{margin:0 0 4px;font-size:11px;color:#667}</style></head>
+<body>
+<div class="row"><h5>recent 3 + favourites</h5><div id="m1"></div></div>
+<div class="row"><h5>multiple, recent only</h5><div id="m2"></div></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var items = []; for (var i = 1; i <= 30; i++) items.push({ id: i, name: 'Item ' + i });
+bselect('#m1', { options: items, recent: 3, favorites: true, memoryKey: 'mem-test-1' });
+bselect('#m2', { options: items, multiple: true, recent: 2, memoryKey: 'mem-test-2' });
+</script></body></html>

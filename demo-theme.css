@@ -1,0 +1,14 @@
+/* Demo page theme: light + dark (driven by demo-theme.js through data-demo-theme on <html>) */
+:root { --demo-bg: #f4f6fa; --demo-card: #ffffff; --demo-text: #1f2733; --demo-muted: #667085; --demo-line: #e3e8ef; --demo-accent: #47a0ec; }
+:root[data-demo-theme="dark"] { --demo-bg: #11151c; --demo-card: #1a2029; --demo-text: #e8ecf3; --demo-muted: #98a2b3; --demo-line: #2c3646; color-scheme: dark; }
+html { background: var(--demo-bg); }
+body { background: var(--demo-bg); color: var(--demo-text); font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; transition: background .2s ease, color .2s ease; }
+body label, body h5, body h4 { color: var(--demo-muted); }
+body pre { background: var(--demo-card) !important; color: var(--demo-text); border: 1px solid var(--demo-line); }
+body button:not(.bselect *):not(.demo-theme-switch button) { padding: 6px 12px; border: 1px solid var(--demo-line); border-radius: 8px; background: var(--demo-card); color: var(--demo-text); cursor: pointer; font: inherit; font-size: 12px; }
+
+.demo-theme-switch { position: fixed; top: 12px; right: 14px; z-index: 5000; display: flex; gap: 2px; padding: 3px; border: 1px solid var(--demo-line); border-radius: 999px; background: var(--demo-card); box-shadow: 0 4px 14px rgba(0, 0, 0, .12); }
+.demo-theme-switch button { padding: 5px 12px; border: 0; border-radius: 999px; background: transparent; color: var(--demo-muted); cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; }
+.demo-theme-switch button:hover { color: var(--demo-text); }
+.demo-theme-switch button.on { background: var(--demo-accent); color: #fff; }
+@media (max-width: 520px) { .demo-theme-switch { top: 8px; right: 8px; } .demo-theme-switch button { padding: 5px 9px; } }

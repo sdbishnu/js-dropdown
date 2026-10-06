@@ -1,0 +1,31 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect in a form loop</title>
+<style>body{font-family:Arial;padding:20px}form{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px}label{display:block;font-size:11px;color:#667;margin-bottom:3px}pre{font-size:11px}</style></head>
+<body>
+<h4>Plain JS: 90 dropdowns, one shared array, each on its own id inside a form</h4>
+<form id="frm" onsubmit="return false"></form>
+<button id="send" type="button">Collect form values</button>
+<pre id="out"></pre>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+// ONE array, registered by name - the markup below only carries the name, not 2000 options per row
+var staff = []; for (var i = 1; i <= 2000; i++) staff.push({ id: i, name: 'Employee ' + i });
+bselect.data('staff', staff);
+
+var frm = document.getElementById('frm'), html = '';
+for (var k = 0; k < 90; k++) {
+  html += '<div><label>Row ' + (k + 1) + '</label><select id="empid' + k + '" name="emp[' + k + ']" data-bselect data-options="staff" data-placeholder="Employee" data-value="' + ((k % 7) + 1) + '"></select></div>';
+}
+var t0 = performance.now();
+frm.innerHTML = html;          // data-bselect elements are picked up by bselect.scan()
+bselect.scan(frm);
+var ms = Math.round(performance.now() - t0);
+document.documentElement.dataset.metrics = JSON.stringify({ rows: 90, ms: ms, htmlKB: Math.round(html.length / 1024 * 10) / 10, dom: document.getElementsByTagName('*').length });
+
+document.getElementById('send').addEventListener('click', function () {
+  var fd = new FormData(frm), o = {};
+  fd.forEach(function (v, key) { o[key] = v; });
+  document.getElementById('out').textContent = JSON.stringify(o);
+  document.documentElement.dataset.form = JSON.stringify(o);
+});
+</script></body></html>

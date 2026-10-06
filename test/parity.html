@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect parity tests</title>
+<style>body{font-family:Arial;padding:24px;max-width:420px}.row{margin:12px 0}</style></head>
+<body>
+<div class="row"><div id="srv"></div></div>
+<div class="row"><div id="min"></div></div>
+<div class="row"><div id="bad"></div></div>
+<div class="row"><div id="btn"></div></div>
+<div class="row"><div id="set"></div></div>
+<div class="row"><div id="dis"></div></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+bselect('#srv', { url: '/api/items', load: 'scroll', pageSize: 20, noun: 'item' });
+bselect('#min', { url: '/api/items', load: 'scroll', pageSize: 20, searchMinChars: 2 });
+bselect('#bad', { url: '/api/fail' });
+bselect('#btn', { url: '/api/items', load: 'button', pageSize: 10 });
+bselect('#set', { options: ['A', 'B'], settingsButton: true });
+bselect('#dis', { options: [{id:1,name:'Open'},{id:2,name:'Locked'},{id:3,name:'Open too'}], isOptionDisabled: function (i) { return i.id === 2; }, noun: 'status' });
+</script></body></html>

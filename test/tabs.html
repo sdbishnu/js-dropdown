@@ -1,0 +1,8 @@
+<!doctype html><html><head><meta charset="utf-8"><title>tabs</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:30px;width:360px;font-family:system-ui"><select id="m"></select><br><br><select id="s"></select>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var opts=[];for(var i=1;i<=100;i++)opts.push({id:i,name:'Item '+i});
+bselect('#m',{options:opts,multiple:true});
+bselect('#s',{options:opts});
+</script></body></html>

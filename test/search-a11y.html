@@ -1,0 +1,20 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect search highlight, screen reader, cache</title>
+<style>body{font-family:Arial;padding:24px;max-width:460px}.row{margin:14px 0}h5{margin:0 0 4px;font-size:11px;color:#667}</style></head>
+<body>
+<div class="row"><h5>staff with sub text</h5><div id="s1"></div></div>
+<div class="row"><h5>server A (cached)</h5><div id="c1"></div></div>
+<div class="row"><h5>server B (same url+params -> shared answer)</h5><div id="c2"></div></div>
+<div class="row"><h5>server C (cache:0)</h5><div id="c3"></div></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var staff = [
+  { id: 1, name: 'John Carter', role: 'Cardiology' }, { id: 2, name: 'Johanna Lee', role: 'Neurology' },
+  { id: 3, name: 'Maria Cardoso', role: 'Cardiology' }, { id: 4, name: 'Dr. A. (Smith) [ICU]', role: 'Critical care' },
+  { id: 5, name: 'Peter Pan', role: 'Surgery' }
+];
+bselect('#s1', { options: staff, subTextField: 'role', placeholder: 'Staff' });
+bselect('#c1', { url: '/api/items', params: { total: 30 }, load: 'all' });
+bselect('#c2', { url: '/api/items', params: { total: 30 }, load: 'all' });
+bselect('#c3', { url: '/api/items', params: { total: 30 }, load: 'all', cache: 0 });
+</script></body></html>

@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect default look check</title>
+<style>body{font-family:Arial;padding:24px;max-width:380px}.row{margin:12px 0}</style></head>
+<body>
+<div class="row"><div id="def"></div></div>
+<div class="row"><div id="auto"></div></div>
+<div class="row"><div id="dark"></div></div>
+<div class="row"><div id="pdark"></div></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var o = ['One', 'Two', 'Three'];
+bselect('#def', { options: o });                          // nothing set: must be the light look
+bselect('#auto', { options: o, mode: 'auto' });           // follows the operating system
+bselect('#dark', { options: o, mode: 'dark' });
+bselect('#pdark', { options: o, panel: { mode: 'dark' } }); // light button, dark dropdown
+</script></body></html>

@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BSelect default lazy load</title>
+<style>body{font-family:Arial;padding:24px;max-width:420px}.row{margin:14px 0}h5{margin:0 0 4px;font-size:11px;color:#667}</style></head>
+<body>
+<div class="row"><h5>local, 100 options, no load option</h5><div id="loc"></div></div>
+<div class="row"><h5>server that ignores paging (returns all 100 every time)</h5><div id="nopage"></div></div>
+<div class="row"><h5>server that pages (total=100)</h5><div id="page"></div></div>
+<div class="row"><h5>load:'all' still available</h5><div id="all"></div></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var hundred = []; for (var i = 1; i <= 100; i++) hundred.push({ id: i, name: 'Option ' + i });
+bselect('#loc', { options: hundred });
+bselect('#nopage', { url: '/api/depts', params: { n: 100 } });
+bselect('#page', { url: '/api/items', params: { total: 100 } });
+bselect('#all', { options: hundred, load: 'all' });
+</script></body></html>

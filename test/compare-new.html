@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>New (vanilla)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+  body{font-family:Arial,sans-serif;margin:0;padding:16px;font-size:14px}
+  .cols{display:flex;gap:40px}.col{width:340px}.col h4{margin:0 0 10px}
+  .row{margin:12px 0;min-height:36px}
+</style></head>
+<body>
+<div class="cols">
+  <div class="col" id="newcol"><h4>NEW (D:\APP\dropdown)</h4>
+    <div class="row"><div id="n1"></div></div>
+    <div class="row"><div id="n2"></div></div>
+    <div class="row"><div id="n3"></div></div>
+  </div>
+</div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var data = [];
+for (var i = 1; i <= 40; i++) data.push({ id: i, name: 'Ward number ' + i + (i % 7 === 0 ? ' with a very long descriptive name that overflows' : '') });
+var n1 = bselect('#n1', { options: data, placeholder: 'Select', pageSize: 20 });
+var n2 = bselect('#n2', { options: data, multiple: true, placeholder: 'Select' });
+var n3 = bselect('#n3', { options: data, multiple: true, load: 'scroll', pageSize: 10, placeholder: 'Select' });
+</script></body></html>

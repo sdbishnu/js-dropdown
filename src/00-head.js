@@ -30,6 +30,14 @@
         selectAll: 'Select all',
         unselectAll: 'Unselect all',
         clearAll: 'Clear all',
+        pasted: '{n} selected from the pasted list',
+        pastedMissing: '{m} not found: {list}',
+        limitHit: 'You can select up to {max}',
+        retry: 'Retry',
+        loadFailed: 'Could not refresh the list. Showing the last result.',
+        loadMoreFailed: 'Could not load more.',
+        groupSelect: 'Select group',
+        groupUnselect: 'Unselect group',
         nSelected: '{n} selected',
         info: '{from}\u2013{to} of {total}',
         infoMore: '{from}\u2013{to} of {total}+',
@@ -103,6 +111,13 @@
         multiple: false,
         search: true, // search box
         noun: '', // 'ward' -> placeholder 'Select ward', search 'Search ward'
+        abortStale: true, // a new request cancels the one still running (typing fast, switching pages)
+        retry: 2, // automatic retries of a failed load (network errors and HTTP 5xx), with growing waits
+        retryDelay: 500, // ms before the first retry, doubled each time
+        keepOnError: true, // a failed refresh / next page keeps the rows already loaded and shows a Retry note
+        rangeSelect: true, // multiple: Shift+click / Shift+arrows select a range, Ctrl+A selects everything listed
+        pasteIds: true, // multiple: paste a list (comma / semicolon / new line / tab) into the search to select those items
+        pasteMatch: 'both', // what a pasted entry is compared with: 'both' | 'value' | 'label'
         searchFields: null, // item fields the search looks at, e.g. ['name', 'code'] (default: label + the sub text)
         accentInsensitive: true, // "jose" finds "José"
         badgeField: null, // item field shown as a small pill at the end of the row: { badge: 'New' }
@@ -156,6 +171,12 @@
         beforeChange: null, // function(item, selecting) -> false cancels
 
         // ---- item content
+        groupCollapse: true, // with groupField: click a header to fold / unfold its rows (the count stays visible)
+        groupSelect: true, // with groupField + multiple: a button on the header selects / unselects the whole group
+        groupCount: true, // with groupField: show how many rows the group has
+        groupsOpen: true, // false = groups start folded
+        alphaRail: false, // A-Z strip on the right: jump to the first row of a letter (sorted lists)
+        alphaRailFrom: 30, // show the rail only from this many rows
         groupField: '', // field name to group items under headers
         subText: true, // show the small second line (switch it off without losing the field / texts)
         subTextField: '', // item field with the small second line

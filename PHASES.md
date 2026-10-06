@@ -1,6 +1,6 @@
 # BSelect – Phases and status
 
-Location `D:\APP\dropdown` · core in `src/` → `npm run build` → `dist/` · tests: `npm test` (26 headless-browser checks, all passing).
+Location `D:\APP\dropdown` · core in `src/` → `npm run build` → `dist/` · tests: `npm test` (33 headless-browser checks, all passing).
 Decision: vanilla core first, AngularJS wrapper over it, migrate pages last. The old Angular `bselect.js` in `d:\xampp\htdocs\dev\common\dropdown` is untouched.
 
 Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
@@ -22,6 +22,7 @@ Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
 | 3i | Defaults and polish | lazy load by default (duplicate-safe), arrow, gear on by default, no open "jump", arrow stays visible while switching | `qa-lazy-default`, `qa-jump`, `qa-arrow` |
 | 3j | Long lists and quality | virtual scrolling, multi-word search + highlight, screen-reader announcements, request cache, recent + favourites, minified build + version, `npm test` | PERFORMANCE.md, `qa-virtual`, `qa-search-a11y`, `qa-memory` |
 | 3k | List improvements (option driven) | result count line, Apply / Cancel commit mode, `texts`, status / badge / meta / disabled-reason rows, multi-field + accent-insensitive search | LIST_FEATURES.md, `qa-views`, `qa-rows` |
+| 3l | Fast selecting, requests, groups | Shift-click / Shift-arrows / Ctrl+A, paste a list of ids, abort stale requests + retry + keep rows on error, collapsible groups with count and select-group, A–Z rail | LIST_FEATURES.md, `qa-range`, `qa-requests`, `qa-groups` |
 | 5 | Documentation | README + the docs in this folder | README.md |
 
 ## Open
@@ -31,13 +32,13 @@ Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
 | ⏳ Migrate TrainingMaster | change the includes in `TrainingMaster/index.html` (see ANGULAR.md); the folder has uncommitted changes, so confirm first. Pages keep working unchanged (`bselect.bind`, `config=`, object model). The old 30 s response cache is replaced by the new `cache` option |
 | 🟡 Real endpoints | run against two or three real module APIs (response shapes, session / auth, GET vs POST, error bodies). Endpoints that ignore `page` / `search` are handled, long lists on them should use `searchMode: 'client'` |
 | ⏳ Retire the old Angular file | after migration; `common/dropdown` is untracked in git, so back it up first |
-| ⏳ List improvements still to do | table columns with sticky header, tree lists, collapsible groups / A–Z rail, RTL, phone bottom sheet, Shift-click range select, abort stale requests + retry |
+| ⏳ List improvements still to do | table columns with sticky header, tree lists, RTL + language packs, phone bottom sheet, fuzzy search, drag reorder, inline create form, undo after Clear all |
 | ⏳ Nice to have | undo after Clear all, paste a list of ids / names, fuzzy search, bottom-sheet polish on phones, offline notice keeping the last good list |
 
 ## How to verify
 ```
 npm run serve   →  http://localhost:8765/demo-grid.html  (and the other demo / test pages)
-npm test        →  PASS / FAIL for all 26 checks
+npm test        →  PASS / FAIL for all 33 checks
 ```
 
 ## Fix log

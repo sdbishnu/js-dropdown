@@ -530,7 +530,7 @@ Object.assign(BSelect.prototype, {
         var i = from + dir;
 
         while (i >= 0 && i <= max) {
-            if (i >= visible.length || !this._isDisabled(visible[i])) {
+            if (i >= visible.length || (!this._isDisabled(visible[i]) && !(this.opts.groupField && visible[i][this.opts.groupField] && this._groupFolded(String(visible[i][this.opts.groupField]))))) {
                 return i;
             }
 
@@ -597,6 +597,9 @@ Object.assign(BSelect.prototype, {
             }
         } else if (key === 'Tab') {
             this.close();
+        } else if ((key === 'a' || key === 'A') && (event.ctrlKey || event.metaKey) && this.isOpen && this.opts.multiple && this.opts.rangeSelect !== false && (event.target !== this.input || !this.input.value)) {
+            event.preventDefault();
+            this._selectAllListed();
         } else if (key === 'ArrowDown' || key === 'ArrowUp') {
             event.preventDefault();
 
@@ -604,7 +607,21 @@ Object.assign(BSelect.prototype, {
                 return this.open();
             }
 
-            this._setActive(this._step(this.active, key === 'ArrowDown' ? 1 : -1, visible));
+            next = this._step(this.active, key === 'ArrowDown' ? 1 : -1, visible);
+
+            // Shift+arrow extends the selection from the anchor row
+            if (event.shiftKey && this.opts.multiple && this.opts.rangeSelect !== false && next >= 0 && next < visible.length) {
+                if (this._anchorValue === undefined && this.active >= 0 && this.active < visible.length) {
+                    this._anchorValue = this._val(visible[this.active]);
+                    this._selectItems([visible[this.active]]);
+                }
+
+                this._setActive(next);
+                this._selectRange(next);
+                return;
+            }
+
+            this._setActive(next);
         } else if (key === 'PageDown' || key === 'PageUp') {
             if (this.isOpen) {
                 event.preventDefault();

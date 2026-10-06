@@ -31,6 +31,14 @@
         selectAll: 'Select all',
         unselectAll: 'Unselect all',
         clearAll: 'Clear all',
+        pasted: '{n} selected from the pasted list',
+        pastedMissing: '{m} not found: {list}',
+        limitHit: 'You can select up to {max}',
+        retry: 'Retry',
+        loadFailed: 'Could not refresh the list. Showing the last result.',
+        loadMoreFailed: 'Could not load more.',
+        groupSelect: 'Select group',
+        groupUnselect: 'Unselect group',
         nSelected: '{n} selected',
         info: '{from}\u2013{to} of {total}',
         infoMore: '{from}\u2013{to} of {total}+',
@@ -104,6 +112,13 @@
         multiple: false,
         search: true, // search box
         noun: '', // 'ward' -> placeholder 'Select ward', search 'Search ward'
+        abortStale: true, // a new request cancels the one still running (typing fast, switching pages)
+        retry: 2, // automatic retries of a failed load (network errors and HTTP 5xx), with growing waits
+        retryDelay: 500, // ms before the first retry, doubled each time
+        keepOnError: true, // a failed refresh / next page keeps the rows already loaded and shows a Retry note
+        rangeSelect: true, // multiple: Shift+click / Shift+arrows select a range, Ctrl+A selects everything listed
+        pasteIds: true, // multiple: paste a list (comma / semicolon / new line / tab) into the search to select those items
+        pasteMatch: 'both', // what a pasted entry is compared with: 'both' | 'value' | 'label'
         searchFields: null, // item fields the search looks at, e.g. ['name', 'code'] (default: label + the sub text)
         accentInsensitive: true, // "jose" finds "José"
         badgeField: null, // item field shown as a small pill at the end of the row: { badge: 'New' }
@@ -157,6 +172,12 @@
         beforeChange: null, // function(item, selecting) -> false cancels
 
         // ---- item content
+        groupCollapse: true, // with groupField: click a header to fold / unfold its rows (the count stays visible)
+        groupSelect: true, // with groupField + multiple: a button on the header selects / unselects the whole group
+        groupCount: true, // with groupField: show how many rows the group has
+        groupsOpen: true, // false = groups start folded
+        alphaRail: false, // A-Z strip on the right: jump to the first row of a letter (sorted lists)
+        alphaRailFrom: 30, // show the rail only from this many rows
         groupField: '', // field name to group items under headers
         subText: true, // show the small second line (switch it off without losing the field / texts)
         subTextField: '', // item field with the small second line
@@ -821,6 +842,7 @@ Object.assign(BSelect.prototype, {
 
         i = this._indexIn(this.selected, this._val(item));
         selecting = i < 0;
+        this._anchorValue = this._val(item);
 
         if (this.opts.beforeChange && this.opts.beforeChange(item, selecting) === false) {
             return;
@@ -832,7 +854,7 @@ Object.assign(BSelect.prototype, {
 
                 if (this._atMax()) {
                     this._emit('limit', this.opts.max);
-                    this._flash('You can select up to ' + this.opts.max);
+                    this._flash(this._t('limitHit', { max: this.opts.max }));
                     return;
                 }
 
@@ -851,6 +873,143 @@ Object.assign(BSelect.prototype, {
         }
 
         this._changed();
+    },
+
+    /** select several items at once (range, Ctrl+A, paste): one change event, honours max, skips disabled. Returns how many were added. */
+    _selectItems: function (items) {
+        var self = this;
+        var added = 0;
+        var hitMax = false;
+
+        items.forEach(function (item) {
+            if (!item || self._isDisabled(item) || self._indexIn(self.selected, self._val(item)) >= 0) {
+                return;
+            }
+
+            if (self._atMax()) {
+                hitMax = true;
+                return;
+            }
+
+            self.selected.push(item);
+            self._memPicked(item);
+            added++;
+        });
+
+        if (hitMax) {
+            this._emit('limit', this.opts.max);
+            this._flash(this._t('limitHit', { max: this.opts.max }));
+        }
+
+        if (added) {
+            this._changed();
+        }
+
+        return added;
+    },
+
+    /** Shift+click / Shift+arrow: everything between the anchor row and this row is selected */
+    _selectRange: function (toIndex) {
+        var list = this._shown || [];
+        var from = this._anchorValue === undefined ? -1 : this._indexOfShown(this._anchorValue);
+        var a;
+        var b;
+
+        if (from < 0) {
+            from = toIndex;
+        }
+
+        a = Math.min(from, toIndex);
+        b = Math.max(from, toIndex);
+
+        return this._selectItems(list.slice(a, b + 1));
+    },
+
+    _indexOfShown: function (value) {
+        var list = this._shown || [];
+        var i;
+
+        for (i = 0; i < list.length; i++) {
+            if (String(this._val(list[i])) === String(value)) {
+                return i;
+            }
+        }
+
+        return -1;
+    },
+
+    /** Ctrl+A: every row currently listed */
+    _selectAllListed: function () {
+        return this._selectItems(this._visible());
+    },
+
+    /** a pasted list ("12, 15\nAnn") -> select the matching items, tell what was not found */
+    _pasteList: function (text) {
+        var self = this;
+        var o = this.opts;
+        var entries = String(text).split(/[\r\n\t,;]+/).map(function (x) { return x.trim(); }).filter(Boolean);
+        var pool = (this.items || []).concat(this.known || []);
+        var byValue = {};
+        var byLabel = {};
+        var found = [];
+        var missing = [];
+        var added;
+
+        if (entries.length < 2) {
+            return false;
+        }
+
+        pool.forEach(function (item) {
+            byValue[String(self._val(item)).toLowerCase()] = byValue[String(self._val(item)).toLowerCase()] || item;
+            byLabel[fold(String(self._lbl(item)).toLowerCase())] = byLabel[fold(String(self._lbl(item)).toLowerCase())] || item;
+        });
+
+        entries.forEach(function (entry) {
+            var key = entry.toLowerCase();
+            var hit = (o.pasteMatch !== 'label' && byValue[key]) || (o.pasteMatch !== 'value' && byLabel[fold(key)]) || null;
+
+            if (hit) {
+                found.push(hit);
+            } else {
+                missing.push(entry);
+            }
+        });
+
+        added = this._selectItems(found);
+        this._note(this._t('pasted', { n: found.length }) + (missing.length ? ' \u00b7 ' + this._t('pastedMissing', { m: missing.length, list: missing.slice(0, 5).join(', ') + (missing.length > 5 ? '\u2026' : '') }) : ''), missing.length ? 'warn' : 'ok');
+        this._emit('paste', { found: found.length, missing: missing, added: added });
+        return true;
+    },
+
+    /** short message inside the open panel (under the search) */
+    _note: function (text, tone, actionLabel, action) {
+        var self = this;
+
+        if (!this.noteBox) {
+            return;
+        }
+
+        this.noteBox.textContent = text;
+        this.noteBox.className = 'bselect-note bselect-note-' + (tone || 'ok');
+
+        if (action) {
+            var button = el('button', 'bselect-note-action', actionLabel);
+
+            button.type = 'button';
+            button.addEventListener('click', function () {
+                self.noteBox.style.display = 'none';
+                action();
+            });
+            this.noteBox.appendChild(button);
+        }
+
+        this.noteBox.style.display = '';
+        clearTimeout(this._noteTimer);
+        this._noteTimer = setTimeout(function () {
+            if (self.noteBox) {
+                self.noteBox.style.display = 'none';
+            }
+        }, action ? 12000 : 4000);
     },
 
     _toggleAll: function () {
@@ -1051,6 +1210,10 @@ Object.assign(BSelect.prototype, {
     },
 
     destroy: function () {
+        if (this._ctl) {
+            this._ctl.abort();
+        }
+
         this._featuresDestroy();
         this._themeDestroy();
         clearTimeout(this.timer);
@@ -1342,8 +1505,34 @@ Object.assign(BSelect.prototype, {
         return { page: this.page, pageSize: this.opts.pageSize, search: this.query, sortDirection: this.sortDir };
     },
 
+    /** _fetch + automatic retries (network errors, HTTP 5xx) with a growing wait; stops when a newer request started */
+    _fetchRetry: function (params, signal, id, attempt) {
+        var self = this;
+        var o = this.opts;
+
+        return this._fetch(params, signal).catch(function (error) {
+            var retriable = error && error.name !== 'AbortError' && !/^HTTP 4/.test(error.message || '');
+
+            if (!retriable || attempt >= (o.retry === undefined ? 2 : Number(o.retry)) || id !== self.requestId) {
+                throw error;
+            }
+
+            self._emit('retry', attempt + 1, error);
+
+            return new Promise(function (resolve) {
+                setTimeout(resolve, (Number(o.retryDelay) || 500) * Math.pow(2, attempt));
+            }).then(function () {
+                if (id !== self.requestId) {
+                    throw error;
+                }
+
+                return self._fetchRetry(params, signal, id, attempt + 1);
+            });
+        });
+    },
+
     /** One page of data: your handler(params, state) when given, otherwise an HTTP call to url. */
-    _fetch: function (params) {
+    _fetch: function (params, signal) {
         var o = this.opts;
 
         var ttl = o.cache === true ? 30000 : Number(o.cache) || 0;
@@ -1352,11 +1541,11 @@ Object.assign(BSelect.prototype, {
         var promise;
 
         if (typeof o.handler === 'function') {
-            return Promise.resolve(o.handler(params, this._state())).then(unwrapResponse);
+            return Promise.resolve(o.handler(params, Object.assign(this._state(), { signal: signal || null }))).then(unwrapResponse);
         }
 
         if (!ttl) {
-            return this._request(o.url, params);
+            return this._request(o.url, params, signal);
         }
 
         key = String(o.method).toUpperCase() + ' ' + o.url + ' ' + JSON.stringify(params, Object.keys(params).sort());
@@ -1376,10 +1565,14 @@ Object.assign(BSelect.prototype, {
     },
 
     /** One HTTP call -> parsed JSON. GET => query string, otherwise form-encoded body. */
-    _request: function (url, params) {
+    _request: function (url, params, signal) {
         var o = this.opts;
         var method = String(o.method).toUpperCase();
         var init = { method: method, credentials: 'same-origin', headers: Object.assign({}, o.headers) };
+
+        if (signal) {
+            init.signal = signal;
+        }
         var body = new URLSearchParams();
 
         Object.keys(params).forEach(function (key) {
@@ -1438,6 +1631,9 @@ Object.assign(BSelect.prototype, {
         var o = this.opts;
         var id = ++this.requestId;
         var extra = {};
+        var prev = null;
+        var ctl = null;
+        var ttl = o.cache === true ? 30000 : Number(o.cache) || 0;
 
         if (!this._isServer()) {
             return;
@@ -1451,6 +1647,7 @@ Object.assign(BSelect.prototype, {
         }
 
         if (!append) {
+            prev = this.items;
             this.page = 1;
             this.items = [];
             this._limit = this._firstLimit();
@@ -1477,7 +1674,17 @@ Object.assign(BSelect.prototype, {
         this.error = null;
         this._render();
 
-        return this._fetch(this._params(extra))
+        // cancel the request that is still running (not when answers are shared through the request cache)
+        if (this._ctl) {
+            this._ctl.abort();
+            this._ctl = null;
+        }
+
+        if (o.abortStale !== false && !ttl && window.AbortController) {
+            ctl = this._ctl = new AbortController();
+        }
+
+        return this._fetchRetry(this._params(extra), ctl && ctl.signal, id, 0)
             .then(function (json) {
                 var data;
 
@@ -1526,10 +1733,33 @@ Object.assign(BSelect.prototype, {
                     return;
                 }
 
+                if (error && error.name === 'AbortError') {
+                    return;
+                }
+
                 self.loading = false;
                 self.loadingMore = false;
-                self.error = error;
-                self._render();
+
+                // keep what is already there and offer a retry instead of an empty error page
+                if (o.keepOnError !== false && (append ? self.items.length : prev && prev.length)) {
+                    if (!append) {
+                        self.items = prev;
+                        self._memo = null;
+                    } else {
+                        self.page--; // retry asks for the same page again
+                    }
+
+                    self.loaded = true;
+                    self.error = null;
+                    self._render();
+                    self._note(self._t(append ? 'loadMoreFailed' : 'loadFailed'), 'warn', self._t('retry'), function () {
+                        self._load(append);
+                    });
+                } else {
+                    self.error = error;
+                    self._render();
+                }
+
                 self._emit('error', error);
             });
     },
@@ -1731,6 +1961,8 @@ Object.assign(BSelect.prototype, {
         var i;
         var field;
         var dir;
+        var order;
+        var groups;
 
         // same input as last time -> same list (it is asked for several times per render and key press)
         if (memo && memo.items === list && memo.len === list.length && memo.key === key) {
@@ -1768,6 +2000,25 @@ Object.assign(BSelect.prototype, {
 
                 return x < y ? -dir : x > y ? dir : 0;
             });
+        }
+
+        // grouped lists keep every group together (groups in order of first appearance, rows keep their order inside)
+        if (o.groupField) {
+            order = {};
+            groups = [];
+            list.forEach(function (item) {
+                var g = item[o.groupField] || '';
+
+                if (!order[g]) {
+                    order[g] = [];
+                    groups.push(g);
+                }
+
+                order[g].push(item);
+            });
+            list = [].concat.apply([], groups.map(function (g) {
+                return order[g];
+            }));
         }
 
         list = this._withMemory(list);
@@ -1962,6 +2213,8 @@ Object.assign(BSelect.prototype, {
             this._mqStop();
             this.panel = this.list = this.wrap = this.input = this.viewBar = this.allBtn = this.handle = this._shown = this.footer = this.footerCount = this.viewInfo = null;
             this.view = 'all';
+            this.noteBox = null;
+            this.rail = null;
             this.gearBtn = this.sortBtn = this.searchHolder = this.searchClear = null;
 
             this._validateIfTouched();
@@ -2077,6 +2330,13 @@ Object.assign(BSelect.prototype, {
             this.input.addEventListener('keydown', function (event) {
                 self._key(event);
             });
+            this.input.addEventListener('paste', function (event) {
+                var text = event.clipboardData && event.clipboardData.getData('text');
+
+                if (o.multiple && o.pasteIds !== false && text && /[\r\n\t,;]/.test(text) && self._pasteList(text)) {
+                    event.preventDefault();
+                }
+            });
             clearBtn.addEventListener('click', function (event) {
                 event.preventDefault();
                 self._clearSearch();
@@ -2088,6 +2348,11 @@ Object.assign(BSelect.prototype, {
             panel.appendChild(header);
             panel.classList.add('bselect-panel-has-header');
         }
+
+        this.noteBox = el('div', 'bselect-note');
+        this.noteBox.style.display = 'none';
+        this.noteBox.setAttribute('role', 'status');
+        panel.appendChild(this.noteBox);
 
         if (o.info) {
             this.viewInfo = el('div', 'bselect-infobar bselect-info-' + (o.infoAlign || 'right') + (o.infoPlace === 'bottom' ? ' bselect-info-bottom' : ''));
@@ -2108,7 +2373,7 @@ Object.assign(BSelect.prototype, {
         this.skeleton = this._skeletonRows(9, 'bselect-skeleton', 'bselect-skeleton-row');
         this.errorBox = el('div', 'bselect-error');
         this.errorText = el('span');
-        var retry = el('button', '', 'Retry');
+        var retry = el('button', '', this._t('retry'));
         retry.type = 'button';
         retry.addEventListener('click', function () {
             self._load(false);
@@ -2135,7 +2400,18 @@ Object.assign(BSelect.prototype, {
         // ONE click / hover handler for the whole list (rows carry data-i)
         this.list.addEventListener('click', function (event) {
             var li = event.target.closest ? event.target.closest('li[data-i]') : null;
+            var head = event.target.closest ? event.target.closest('li.bselect-group[data-g]') : null;
             var item;
+
+            if (head && self.list.contains(head)) {
+                if (event.target.closest('.bselect-group-pick')) {
+                    self._toggleGroup(head.getAttribute('data-g'));
+                } else if (o.groupCollapse !== false) {
+                    self._foldGroup(head.getAttribute('data-g'));
+                }
+
+                return;
+            }
 
             if (!li || !self.list.contains(li)) {
                 return;
@@ -2152,6 +2428,12 @@ Object.assign(BSelect.prototype, {
             if (item && event.target.closest && event.target.closest('.bselect-star')) {
                 event.stopPropagation();
                 self._toggleFav(item);
+                return;
+            }
+
+            if (item && event.shiftKey && o.multiple && o.rangeSelect !== false) {
+                event.preventDefault();
+                self._selectRange(parseInt(li.getAttribute('data-i'), 10));
                 return;
             }
 
@@ -2263,6 +2545,190 @@ Object.assign(BSelect.prototype, {
         this.panel = panel;
         this._applyPanelAppearance();
         this._resizeInit(panel);
+    },
+
+    /** { groupName: rowCount } over the whole visible list */
+    _groupCounts: function (visible) {
+        var o = this.opts;
+        var counts = {};
+
+        visible.forEach(function (item) {
+            var g = item[o.groupField];
+
+            if (g) {
+                counts[g] = (counts[g] || 0) + 1;
+            }
+        });
+
+        return counts;
+    },
+
+    _groupFolded: function (name) {
+        var folds = this._folds || (this._folds = {});
+
+        if (this.opts.groupCollapse === false || this.query) {
+            return false; // searching always shows the matches
+        }
+
+        return name in folds ? folds[name] : this.opts.groupsOpen === false;
+    },
+
+    _foldGroup: function (name) {
+        var folds = this._folds || (this._folds = {});
+
+        folds[name] = !this._groupFolded(name);
+        this._render();
+    },
+
+    _groupHeader: function (name, counts) {
+        var o = this.opts;
+        var li = el('li', 'bselect-group bselect-group-head' + (o.groupCollapse !== false ? ' bselect-group-fold' : '') + (this._groupFolded(name) ? ' bselect-group-closed' : ''));
+        var members;
+        var all;
+
+        li.setAttribute('data-g', name);
+
+        if (o.groupCollapse !== false) {
+            li.appendChild(el('span', 'bselect-group-caret', '\u25be'));
+        }
+
+        li.appendChild(el('span', 'bselect-group-name', name));
+
+        if (o.groupCount !== false && counts) {
+            li.appendChild(el('span', 'bselect-group-count', String(counts[name] || 0)));
+        }
+
+        if (o.multiple && o.groupSelect !== false) {
+            members = this._visible().filter(function (item) {
+                return item[o.groupField] === name && !this._isDisabled(item);
+            }, this);
+            all = members.length && members.every(this._isSel, this);
+            li.appendChild(el('button', 'bselect-group-pick', this._t(all ? 'groupUnselect' : 'groupSelect')));
+            li.lastChild.type = 'button';
+        }
+
+        return li;
+    },
+
+    /** select / unselect every row of a group */
+    _toggleGroup: function (name) {
+        var self = this;
+        var o = this.opts;
+        var members = this._visible().filter(function (item) {
+            return item[o.groupField] === name && !self._isDisabled(item);
+        });
+        var all = members.length && members.every(function (item) {
+            return self._isSel(item);
+        });
+
+        if (all) {
+            this.selected = this.selected.filter(function (item) {
+                return members.indexOf(item) < 0 && !members.some(function (m) {
+                    return String(self._val(m)) === String(self._val(item));
+                });
+            });
+            this._changed();
+        } else {
+            this._selectItems(members);
+        }
+
+        this._render();
+    },
+
+    /** A-Z strip: letters that have rows, click / drag to jump */
+    _updateRail: function (visible) {
+        var self = this;
+        var o = this.opts;
+        var letters = [];
+        var seen = {};
+
+        if (!o.alphaRail || !this.panel) {
+            return;
+        }
+
+        if (!this.rail) {
+            this.rail = el('div', 'bselect-rail');
+            this.rail.setAttribute('aria-hidden', 'true');
+            this.rail.addEventListener('pointerdown', function (event) {
+                var go = function (e) {
+                    var t = document.elementFromPoint(e.clientX, e.clientY);
+
+                    if (t && t.classList && t.classList.contains('bselect-rail-letter')) {
+                        self._jumpToLetter(t.getAttribute('data-l'));
+                    }
+                };
+
+                event.preventDefault();
+                go(event);
+                var move = function (e) {
+                    go(e);
+                };
+                var up = function () {
+                    document.removeEventListener('pointermove', move);
+                    document.removeEventListener('pointerup', up);
+                };
+
+                document.addEventListener('pointermove', move);
+                document.addEventListener('pointerup', up);
+            });
+            this.panel.appendChild(this.rail);
+        }
+
+        visible.forEach(function (item) {
+            var l = self._letterOf(item);
+
+            if (!seen[l]) {
+                seen[l] = true;
+                letters.push(l);
+            }
+        });
+        letters.sort();
+        this.rail.style.display = visible.length >= (o.alphaRailFrom || 30) && letters.length > 1 && !this.query && this.view === 'all' ? '' : 'none';
+        this.rail.innerHTML = '';
+        letters.forEach(function (l) {
+            var b = el('span', 'bselect-rail-letter', l);
+
+            b.setAttribute('data-l', l);
+            self.rail.appendChild(b);
+        });
+        this.rail.style.top = this.wrap.offsetTop + 'px';
+        this.rail.style.height = this.wrap.offsetHeight + 'px';
+        this.panel.classList.toggle('bselect-has-rail', this.rail.style.display !== 'none');
+    },
+
+    _letterOf: function (item) {
+        var c = fold(String(this._lbl(item)).charAt(0)).toUpperCase();
+
+        return c >= 'A' && c <= 'Z' ? c : '#';
+    },
+
+    _jumpToLetter: function (letter) {
+        var visible = this._visible();
+        var i;
+        var li;
+        var wrapRect;
+
+        for (i = 0; i < visible.length; i++) {
+            if (this._letterOf(visible[i]) === letter) {
+                break;
+            }
+        }
+
+        if (i >= visible.length) {
+            return;
+        }
+
+        if (this._shown && i >= this._shown.length && !this._serverPaged()) {
+            this._limit = Math.max(this._limit || 0, i + 1);
+            this._render();
+        }
+
+        li = this.list.querySelector('[data-i="' + i + '"]');
+
+        if (li) {
+            wrapRect = this.wrap.getBoundingClientRect();
+            this.wrap.scrollTop += li.getBoundingClientRect().top - wrapRect.top;
+        }
     },
 
     /** multiple select only: [All | Selected (n)] tabs and the action of the tab (Select all / Clear all) */
@@ -2470,14 +2936,20 @@ Object.assign(BSelect.prototype, {
             frag.appendChild(this._virtualFragment(visible));
         }
 
+        var groupCounts = o.groupField ? this._groupCounts(visible) : null;
+
         (this._virtual ? [] : shown).forEach(function (item, index) {
             current = o.groupField ? item[o.groupField] : null;
 
             if (current && current !== group) {
-                frag.appendChild(el('li', 'bselect-group', String(current)));
+                frag.appendChild(self._groupHeader(String(current), groupCounts));
             }
 
             group = current;
+
+            if (current && self._groupFolded(String(current))) {
+                return; // folded: header only (row indexes stay the same)
+            }
 
             // favourites / recent / all headers
             if (self._sections) {
@@ -2531,6 +3003,7 @@ Object.assign(BSelect.prototype, {
         }
 
         this._updateViewBar(visible, shown);
+        this._updateRail(visible);
 
         if (this.footerCount) {
             this.footerCount.textContent = this._dirty ? this._t('pending') : '';
@@ -3273,7 +3746,7 @@ Object.assign(BSelect.prototype, {
         var i = from + dir;
 
         while (i >= 0 && i <= max) {
-            if (i >= visible.length || !this._isDisabled(visible[i])) {
+            if (i >= visible.length || (!this._isDisabled(visible[i]) && !(this.opts.groupField && visible[i][this.opts.groupField] && this._groupFolded(String(visible[i][this.opts.groupField]))))) {
                 return i;
             }
 
@@ -3340,6 +3813,9 @@ Object.assign(BSelect.prototype, {
             }
         } else if (key === 'Tab') {
             this.close();
+        } else if ((key === 'a' || key === 'A') && (event.ctrlKey || event.metaKey) && this.isOpen && this.opts.multiple && this.opts.rangeSelect !== false && (event.target !== this.input || !this.input.value)) {
+            event.preventDefault();
+            this._selectAllListed();
         } else if (key === 'ArrowDown' || key === 'ArrowUp') {
             event.preventDefault();
 
@@ -3347,7 +3823,21 @@ Object.assign(BSelect.prototype, {
                 return this.open();
             }
 
-            this._setActive(this._step(this.active, key === 'ArrowDown' ? 1 : -1, visible));
+            next = this._step(this.active, key === 'ArrowDown' ? 1 : -1, visible);
+
+            // Shift+arrow extends the selection from the anchor row
+            if (event.shiftKey && this.opts.multiple && this.opts.rangeSelect !== false && next >= 0 && next < visible.length) {
+                if (this._anchorValue === undefined && this.active >= 0 && this.active < visible.length) {
+                    this._anchorValue = this._val(visible[this.active]);
+                    this._selectItems([visible[this.active]]);
+                }
+
+                this._setActive(next);
+                this._selectRange(next);
+                return;
+            }
+
+            this._setActive(next);
         } else if (key === 'PageDown' || key === 'PageUp') {
             if (this.isOpen) {
                 event.preventDefault();
@@ -3644,7 +4134,7 @@ Object.assign(BSelect.prototype, {
 });
 
 /* Sort button, settings gear + popup, optional saved preferences (localStorage) */
-var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace'];
+var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'rangeSelect', 'pasteIds', 'alphaRail'];
 
 Object.assign(BSelect.prototype, {
     _prefKey: function () {
@@ -4442,6 +4932,10 @@ Object.assign(BSelect.prototype, {
             pillItems.push(['Apply / Cancel', 'commit', 'Edits wait for the Apply button']);
         }
 
+        if (o.multiple) {
+            pillItems.push(['Range select', 'rangeSelect', 'Shift+click, Shift+arrows, Ctrl+A'], ['Paste list', 'pasteIds', 'Paste ids or names into the search']);
+        }
+
         pillItems.push(['Count', 'info', 'Result count line']);
         pills(group(behavior, 'Show'), pillItems);
 
@@ -4583,7 +5077,7 @@ Object.assign(BSelect.prototype, {
         colourField(dcolours, 'selectedColor', 'Selected');
         colourField(dcolours, 'panelColor', 'Accent');
         d3.appendChild(dcolours);
-        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)']]);
+        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['A\u2013Z rail', 'alphaRail', 'Letter strip to jump through long lists']]);
 
         // sub text: the small line under (or beside) the label
         var sub1 = group(dropdown, 'Sub text');

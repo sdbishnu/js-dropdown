@@ -1,0 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><title>requests</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:30px;width:380px;font-family:system-ui"><select id="a"></select><br><br><select id="b"></select>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+bselect('#a',{url:'/api/items',params:{total:200},pageSize:20,retryDelay:80});
+bselect('#b',{url:'/api/items',params:{total:200},pageSize:20,retry:0,retryDelay:80,cache:0});
+</script></body></html>

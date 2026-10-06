@@ -522,6 +522,10 @@ Object.assign(BSelect.prototype, {
             pillItems.push(['Apply / Cancel', 'commit', 'Edits wait for the Apply button']);
         }
 
+        if (o.multiple) {
+            pillItems.push(['Range select', 'rangeSelect', 'Shift+click, Shift+arrows, Ctrl+A'], ['Paste list', 'pasteIds', 'Paste ids or names into the search']);
+        }
+
         pillItems.push(['Count', 'info', 'Result count line']);
         pills(group(behavior, 'Show'), pillItems);
 
@@ -663,7 +667,7 @@ Object.assign(BSelect.prototype, {
         colourField(dcolours, 'selectedColor', 'Selected');
         colourField(dcolours, 'panelColor', 'Accent');
         d3.appendChild(dcolours);
-        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)']]);
+        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['A\u2013Z rail', 'alphaRail', 'Letter strip to jump through long lists']]);
 
         // sub text: the small line under (or beside) the label
         var sub1 = group(dropdown, 'Sub text');

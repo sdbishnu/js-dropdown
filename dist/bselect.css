@@ -851,3 +851,24 @@
 .bselect-subrow { display: flex; align-items: center; gap: 5px; padding: 2px 0; }
 .bselect-subrow-name { flex: 0 0 62px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--bselect-text); font-size: 10.5px; }
 .bselect-subrow .bselect-text-input { flex: 1; min-width: 0; height: 22px; font-size: 10.5px; }
+/* paste result / short notes inside the panel */
+.bselect-note { padding: 4px 10px; border-bottom: 1px solid var(--bselect-line); font-size: 11px; line-height: 1.35; }
+.bselect-note-ok { background: color-mix(in srgb, #16a34a 10%, var(--bselect-bg)); color: color-mix(in srgb, #16a34a 80%, var(--bselect-text)); }
+.bselect-note-warn { background: color-mix(in srgb, #f59e0b 14%, var(--bselect-bg)); color: color-mix(in srgb, #b45309 75%, var(--bselect-text)); }
+.bselect-note-action { margin-left: 8px; padding: 1px 8px; border: 1px solid currentColor; border-radius: 6px; background: transparent; color: inherit; cursor: pointer; font: inherit; font-size: 10.5px; font-weight: 600; }
+.bselect-note-action:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+/* groups: fold, count, select group */
+.bselect-group-head { display: flex; align-items: center; gap: 6px; }
+.bselect-group-fold { cursor: pointer; user-select: none; }
+.bselect-group-fold:hover { color: var(--bselect-text); }
+.bselect-group-caret { display: inline-block; width: 10px; font-size: 10px; transition: transform .15s ease; }
+.bselect-group-closed .bselect-group-caret { transform: rotate(-90deg); }
+.bselect-group-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bselect-group-count { padding: 0 6px; border-radius: 99px; background: var(--bselect-surface-3); color: var(--bselect-muted); font-size: 10px; font-weight: 600; line-height: 16px; }
+.bselect-group-pick { padding: 1px 6px; border: 0; border-radius: 5px; background: transparent; color: var(--bselect-color); cursor: pointer; font: inherit; font-size: 10px; font-weight: 600; text-transform: none; letter-spacing: 0; }
+.bselect-group-pick:hover { background: var(--bselect-hover); }
+/* A-Z rail */
+.bselect-rail { position: absolute; right: 3px; z-index: 6; width: 15px; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; padding: 2px 0; border-radius: 8px; background: color-mix(in srgb, var(--bselect-bg) 82%, transparent); touch-action: none; user-select: none; }
+.bselect-rail-letter { display: block; width: 100%; color: var(--bselect-color); cursor: pointer; font-size: 9px; font-weight: 700; line-height: 1; text-align: center; }
+.bselect-rail-letter:hover { background: var(--bselect-hover); border-radius: 4px; }
+.bselect-has-rail .bselect-list-wrap { padding-right: 16px; }

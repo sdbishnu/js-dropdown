@@ -106,6 +106,13 @@ Object.assign(BSelect.prototype, {
             this.input.addEventListener('keydown', function (event) {
                 self._key(event);
             });
+            this.input.addEventListener('paste', function (event) {
+                var text = event.clipboardData && event.clipboardData.getData('text');
+
+                if (o.multiple && o.pasteIds !== false && text && /[\r\n\t,;]/.test(text) && self._pasteList(text)) {
+                    event.preventDefault();
+                }
+            });
             clearBtn.addEventListener('click', function (event) {
                 event.preventDefault();
                 self._clearSearch();
@@ -117,6 +124,11 @@ Object.assign(BSelect.prototype, {
             panel.appendChild(header);
             panel.classList.add('bselect-panel-has-header');
         }
+
+        this.noteBox = el('div', 'bselect-note');
+        this.noteBox.style.display = 'none';
+        this.noteBox.setAttribute('role', 'status');
+        panel.appendChild(this.noteBox);
 
         if (o.info) {
             this.viewInfo = el('div', 'bselect-infobar bselect-info-' + (o.infoAlign || 'right') + (o.infoPlace === 'bottom' ? ' bselect-info-bottom' : ''));
@@ -137,7 +149,7 @@ Object.assign(BSelect.prototype, {
         this.skeleton = this._skeletonRows(9, 'bselect-skeleton', 'bselect-skeleton-row');
         this.errorBox = el('div', 'bselect-error');
         this.errorText = el('span');
-        var retry = el('button', '', 'Retry');
+        var retry = el('button', '', this._t('retry'));
         retry.type = 'button';
         retry.addEventListener('click', function () {
             self._load(false);
@@ -164,7 +176,18 @@ Object.assign(BSelect.prototype, {
         // ONE click / hover handler for the whole list (rows carry data-i)
         this.list.addEventListener('click', function (event) {
             var li = event.target.closest ? event.target.closest('li[data-i]') : null;
+            var head = event.target.closest ? event.target.closest('li.bselect-group[data-g]') : null;
             var item;
+
+            if (head && self.list.contains(head)) {
+                if (event.target.closest('.bselect-group-pick')) {
+                    self._toggleGroup(head.getAttribute('data-g'));
+                } else if (o.groupCollapse !== false) {
+                    self._foldGroup(head.getAttribute('data-g'));
+                }
+
+                return;
+            }
 
             if (!li || !self.list.contains(li)) {
                 return;
@@ -181,6 +204,12 @@ Object.assign(BSelect.prototype, {
             if (item && event.target.closest && event.target.closest('.bselect-star')) {
                 event.stopPropagation();
                 self._toggleFav(item);
+                return;
+            }
+
+            if (item && event.shiftKey && o.multiple && o.rangeSelect !== false) {
+                event.preventDefault();
+                self._selectRange(parseInt(li.getAttribute('data-i'), 10));
                 return;
             }
 
@@ -292,6 +321,190 @@ Object.assign(BSelect.prototype, {
         this.panel = panel;
         this._applyPanelAppearance();
         this._resizeInit(panel);
+    },
+
+    /** { groupName: rowCount } over the whole visible list */
+    _groupCounts: function (visible) {
+        var o = this.opts;
+        var counts = {};
+
+        visible.forEach(function (item) {
+            var g = item[o.groupField];
+
+            if (g) {
+                counts[g] = (counts[g] || 0) + 1;
+            }
+        });
+
+        return counts;
+    },
+
+    _groupFolded: function (name) {
+        var folds = this._folds || (this._folds = {});
+
+        if (this.opts.groupCollapse === false || this.query) {
+            return false; // searching always shows the matches
+        }
+
+        return name in folds ? folds[name] : this.opts.groupsOpen === false;
+    },
+
+    _foldGroup: function (name) {
+        var folds = this._folds || (this._folds = {});
+
+        folds[name] = !this._groupFolded(name);
+        this._render();
+    },
+
+    _groupHeader: function (name, counts) {
+        var o = this.opts;
+        var li = el('li', 'bselect-group bselect-group-head' + (o.groupCollapse !== false ? ' bselect-group-fold' : '') + (this._groupFolded(name) ? ' bselect-group-closed' : ''));
+        var members;
+        var all;
+
+        li.setAttribute('data-g', name);
+
+        if (o.groupCollapse !== false) {
+            li.appendChild(el('span', 'bselect-group-caret', '\u25be'));
+        }
+
+        li.appendChild(el('span', 'bselect-group-name', name));
+
+        if (o.groupCount !== false && counts) {
+            li.appendChild(el('span', 'bselect-group-count', String(counts[name] || 0)));
+        }
+
+        if (o.multiple && o.groupSelect !== false) {
+            members = this._visible().filter(function (item) {
+                return item[o.groupField] === name && !this._isDisabled(item);
+            }, this);
+            all = members.length && members.every(this._isSel, this);
+            li.appendChild(el('button', 'bselect-group-pick', this._t(all ? 'groupUnselect' : 'groupSelect')));
+            li.lastChild.type = 'button';
+        }
+
+        return li;
+    },
+
+    /** select / unselect every row of a group */
+    _toggleGroup: function (name) {
+        var self = this;
+        var o = this.opts;
+        var members = this._visible().filter(function (item) {
+            return item[o.groupField] === name && !self._isDisabled(item);
+        });
+        var all = members.length && members.every(function (item) {
+            return self._isSel(item);
+        });
+
+        if (all) {
+            this.selected = this.selected.filter(function (item) {
+                return members.indexOf(item) < 0 && !members.some(function (m) {
+                    return String(self._val(m)) === String(self._val(item));
+                });
+            });
+            this._changed();
+        } else {
+            this._selectItems(members);
+        }
+
+        this._render();
+    },
+
+    /** A-Z strip: letters that have rows, click / drag to jump */
+    _updateRail: function (visible) {
+        var self = this;
+        var o = this.opts;
+        var letters = [];
+        var seen = {};
+
+        if (!o.alphaRail || !this.panel) {
+            return;
+        }
+
+        if (!this.rail) {
+            this.rail = el('div', 'bselect-rail');
+            this.rail.setAttribute('aria-hidden', 'true');
+            this.rail.addEventListener('pointerdown', function (event) {
+                var go = function (e) {
+                    var t = document.elementFromPoint(e.clientX, e.clientY);
+
+                    if (t && t.classList && t.classList.contains('bselect-rail-letter')) {
+                        self._jumpToLetter(t.getAttribute('data-l'));
+                    }
+                };
+
+                event.preventDefault();
+                go(event);
+                var move = function (e) {
+                    go(e);
+                };
+                var up = function () {
+                    document.removeEventListener('pointermove', move);
+                    document.removeEventListener('pointerup', up);
+                };
+
+                document.addEventListener('pointermove', move);
+                document.addEventListener('pointerup', up);
+            });
+            this.panel.appendChild(this.rail);
+        }
+
+        visible.forEach(function (item) {
+            var l = self._letterOf(item);
+
+            if (!seen[l]) {
+                seen[l] = true;
+                letters.push(l);
+            }
+        });
+        letters.sort();
+        this.rail.style.display = visible.length >= (o.alphaRailFrom || 30) && letters.length > 1 && !this.query && this.view === 'all' ? '' : 'none';
+        this.rail.innerHTML = '';
+        letters.forEach(function (l) {
+            var b = el('span', 'bselect-rail-letter', l);
+
+            b.setAttribute('data-l', l);
+            self.rail.appendChild(b);
+        });
+        this.rail.style.top = this.wrap.offsetTop + 'px';
+        this.rail.style.height = this.wrap.offsetHeight + 'px';
+        this.panel.classList.toggle('bselect-has-rail', this.rail.style.display !== 'none');
+    },
+
+    _letterOf: function (item) {
+        var c = fold(String(this._lbl(item)).charAt(0)).toUpperCase();
+
+        return c >= 'A' && c <= 'Z' ? c : '#';
+    },
+
+    _jumpToLetter: function (letter) {
+        var visible = this._visible();
+        var i;
+        var li;
+        var wrapRect;
+
+        for (i = 0; i < visible.length; i++) {
+            if (this._letterOf(visible[i]) === letter) {
+                break;
+            }
+        }
+
+        if (i >= visible.length) {
+            return;
+        }
+
+        if (this._shown && i >= this._shown.length && !this._serverPaged()) {
+            this._limit = Math.max(this._limit || 0, i + 1);
+            this._render();
+        }
+
+        li = this.list.querySelector('[data-i="' + i + '"]');
+
+        if (li) {
+            wrapRect = this.wrap.getBoundingClientRect();
+            this.wrap.scrollTop += li.getBoundingClientRect().top - wrapRect.top;
+        }
     },
 
     /** multiple select only: [All | Selected (n)] tabs and the action of the tab (Select all / Clear all) */
@@ -499,14 +712,20 @@ Object.assign(BSelect.prototype, {
             frag.appendChild(this._virtualFragment(visible));
         }
 
+        var groupCounts = o.groupField ? this._groupCounts(visible) : null;
+
         (this._virtual ? [] : shown).forEach(function (item, index) {
             current = o.groupField ? item[o.groupField] : null;
 
             if (current && current !== group) {
-                frag.appendChild(el('li', 'bselect-group', String(current)));
+                frag.appendChild(self._groupHeader(String(current), groupCounts));
             }
 
             group = current;
+
+            if (current && self._groupFolded(String(current))) {
+                return; // folded: header only (row indexes stay the same)
+            }
 
             // favourites / recent / all headers
             if (self._sections) {
@@ -560,6 +779,7 @@ Object.assign(BSelect.prototype, {
         }
 
         this._updateViewBar(visible, shown);
+        this._updateRail(visible);
 
         if (this.footerCount) {
             this.footerCount.textContent = this._dirty ? this._t('pending') : '';

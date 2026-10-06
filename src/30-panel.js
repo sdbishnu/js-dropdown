@@ -184,6 +184,8 @@ Object.assign(BSelect.prototype, {
             this._mqStop();
             this.panel = this.list = this.wrap = this.input = this.viewBar = this.allBtn = this.handle = this._shown = this.footer = this.footerCount = this.viewInfo = null;
             this.view = 'all';
+            this.noteBox = null;
+            this.rail = null;
             this.gearBtn = this.sortBtn = this.searchHolder = this.searchClear = null;
 
             this._validateIfTouched();

@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>groups</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:30px;width:380px;font-family:system-ui"><select id="g"></select><br><br><select id="r"></select>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var depts=['Cardiology','Neurology','Surgery'];var g=[];
+for(var i=1;i<=30;i++)g.push({id:i,name:'Staff '+i,dept:depts[i%3]});
+bselect('#g',{options:g,multiple:true,groupField:'dept',load:'all'});
+var names=[];'Ann Bob Cara Dan Eve Fay Gus Hal Ian Joy Kim Lee Max Ned Ola Pam Quin Ron Sue Tim Uma Vic Wes Xan Yan Zed'.split(' ').forEach(function(n,i){names.push({id:i+1,name:n+' One'},{id:100+i,name:n+' Two'})});
+bselect('#r',{options:names,alphaRail:true,load:'all'});
+</script></body></html>

@@ -53,3 +53,30 @@ Example:
   statusField: 'state', badgeField: 'tag', metaField: 'code', searchFields: ['name', 'code'] });
 ```
 Checks: `test/qa-views.mjs` (page `test/views.html`), `test/qa-rows.mjs` (page `test/rows.html`).
+
+## Fast selecting (multiple)
+| Option | Meaning |
+|---|---|
+| `rangeSelect` (default true) | **Shift+click** selects every row between the last picked row and this one, **Shift+↑/↓** extends the selection, **Ctrl/Cmd+A** selects everything listed (search box empty) |
+| `pasteIds` (default true) | paste a list (comma, semicolon, new line or tab separated) into the search: matching items are selected, the panel says what was not found ("3 selected from the pasted list · 2 not found: nope, 999") |
+| `pasteMatch` | `'both'` (default: value or label), `'value'`, `'label'` (accent / case insensitive) |
+
+All of these respect `max`, skip disabled rows and fire one `change`. Event `paste` gives `{ found, missing, added }`. Both are switches in the settings gear (Behavior).
+
+## Requests (server lists)
+| Option | Meaning |
+|---|---|
+| `abortStale` (default true) | a new request cancels the one still running (fast typing, quick page changes); the handler gets `state.signal` (AbortSignal) |
+| `retry` (default 2), `retryDelay` (500 ms, doubled each try) | automatic retries for network errors and HTTP 5xx (not 4xx); event `retry` |
+| `keepOnError` (default true) | a failed refresh / next page keeps the rows already loaded and shows a note with a **Retry** button instead of an empty error page |
+
+## Groups and A–Z rail
+| Option | Meaning |
+|---|---|
+| `groupField` | item field to group under headers (each group is kept together) |
+| `groupCollapse` (true), `groupsOpen` (true) | click a header to fold / unfold; `groupsOpen: false` starts folded; searching always shows matches |
+| `groupCount` (true) | row count on the header |
+| `groupSelect` (true) | multiple: header button selects / unselects the whole group |
+| `alphaRail` (false), `alphaRailFrom` (30) | A–Z strip on the right of long lists: click or drag a letter to jump (also a switch in the Dropdown tab) |
+
+New texts: `pasted`, `pastedMissing`, `limitHit`, `retry`, `loadFailed`, `loadMoreFailed`, `groupSelect`, `groupUnselect`.

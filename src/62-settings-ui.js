@@ -53,6 +53,7 @@ Object.assign(BSelect.prototype, {
         var head = el('div', 'bselect-settings-header');
         var title = el('div', 'bselect-settings-title');
         var closeBtn = el('button', 'bselect-settings-close');
+        var guide = el('a', 'bselect-settings-guide');
         var find = el('input', 'bselect-settings-find');
         var findRow = el('div', 'bselect-drawer-find');
 
@@ -76,8 +77,24 @@ Object.assign(BSelect.prototype, {
             closeBtn.textContent = '\u00d7';
             find.placeholder = 'Find...';
             head.appendChild(title);
+            head.appendChild(guide);
             head.appendChild(find);
             head.appendChild(closeBtn);
+        }
+
+        // Guide: opens the full feature guide in a new tab, at the section of the open tab
+        guide.href = o.guideUrl || GUIDE_URL;
+        guide.target = '_blank';
+        guide.rel = 'noopener';
+        guide.title = 'Open the guide in a new tab';
+        guide.setAttribute('aria-label', 'Open the guide in a new tab');
+        guide.appendChild(icon('book'));
+        guide.appendChild(el('span', '', 'Guide'));
+        guide.style.display = o.guideButton === false ? 'none' : '';
+
+        if (drawer) {
+            guide.className += ' bselect-settings-guide-drawer';
+            head.insertBefore(guide, closeBtn);
         }
 
         closeBtn.type = 'button';
@@ -155,6 +172,7 @@ Object.assign(BSelect.prototype, {
                 var dir = order.indexOf(id) >= order.indexOf(self._settingsTab) ? 1 : -1;
 
                 self._settingsTab = id;
+                guide.href = (o.guideUrl || GUIDE_URL) + '#tab-' + (id === 'custom' || id === 'export' ? 'advanced' : id);
 
                 if (panes[id]._fill) {
                     panes[id]._fill();

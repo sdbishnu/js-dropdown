@@ -17,6 +17,8 @@
     'use strict';
 
     var currentScript = document.currentScript;
+    // the guide page is built next to the bundle (dist/guide.html)
+    var GUIDE_URL = currentScript && currentScript.src ? currentScript.src.replace(/bselect[\w.-]*\.js(\?.*)?$/i, 'guide.html') : 'guide.html';
     var sequence = 0;
     var REQ_CACHE = new Map(); // 'METHOD url params' -> { t, promise }  (server answers shared by every dropdown)
     // every text the list shows
@@ -152,6 +154,8 @@
 
         // ---- item content
         groupField: '', // field name to group items under headers
+        guideButton: true, // a Guide button next to Find in the settings gear (opens the guide in a new tab)
+        guideUrl: null, // where the guide is (default: guide.html next to the bundle)
         scrollFade: true, // rows fade out at the top / bottom edge of the list when there is more to scroll (works in light and dark)
         fadeSize: 14, // px of that fade
         subText: true, // show the small second line (switch it off without losing the field / texts)
@@ -1940,6 +1944,7 @@ Object.assign(BSelect.prototype, {
 
 /* Panel UI (same structure and class names as the original AngularJS bselect.html) and its render pass */
 var ICONS = {
+    book: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><path d="M2.5 3.2c1.8-.6 3.7-.5 5.5.6 1.8-1.1 3.7-1.2 5.5-.6v9c-1.8-.6-3.7-.5-5.5.6-1.8-1.1-3.7-1.2-5.5-.6z M8 3.8v8.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>',
     close: '<svg viewBox="0 0 10 10" width="1em" height="1em" aria-hidden="true"><path d="M2 2l6 6M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
     list: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><path d="M5 3.5h9M5 8h9M5 12.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="2" cy="3.5" r="1" fill="currentColor"/><circle cx="2" cy="8" r="1" fill="currentColor"/><circle cx="2" cy="12.5" r="1" fill="currentColor"/></svg>',
     data: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><ellipse cx="8" cy="3.5" rx="5.5" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 3.5v9c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-9M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
@@ -3916,6 +3921,7 @@ Object.assign(BSelect.prototype, {
         var head = el('div', 'bselect-settings-header');
         var title = el('div', 'bselect-settings-title');
         var closeBtn = el('button', 'bselect-settings-close');
+        var guide = el('a', 'bselect-settings-guide');
         var find = el('input', 'bselect-settings-find');
         var findRow = el('div', 'bselect-drawer-find');
 
@@ -3939,8 +3945,24 @@ Object.assign(BSelect.prototype, {
             closeBtn.textContent = '\u00d7';
             find.placeholder = 'Find...';
             head.appendChild(title);
+            head.appendChild(guide);
             head.appendChild(find);
             head.appendChild(closeBtn);
+        }
+
+        // Guide: opens the full feature guide in a new tab, at the section of the open tab
+        guide.href = o.guideUrl || GUIDE_URL;
+        guide.target = '_blank';
+        guide.rel = 'noopener';
+        guide.title = 'Open the guide in a new tab';
+        guide.setAttribute('aria-label', 'Open the guide in a new tab');
+        guide.appendChild(icon('book'));
+        guide.appendChild(el('span', '', 'Guide'));
+        guide.style.display = o.guideButton === false ? 'none' : '';
+
+        if (drawer) {
+            guide.className += ' bselect-settings-guide-drawer';
+            head.insertBefore(guide, closeBtn);
         }
 
         closeBtn.type = 'button';
@@ -4018,6 +4040,7 @@ Object.assign(BSelect.prototype, {
                 var dir = order.indexOf(id) >= order.indexOf(self._settingsTab) ? 1 : -1;
 
                 self._settingsTab = id;
+                guide.href = (o.guideUrl || GUIDE_URL) + '#tab-' + (id === 'custom' || id === 'export' ? 'advanced' : id);
 
                 if (panes[id]._fill) {
                     panes[id]._fill();

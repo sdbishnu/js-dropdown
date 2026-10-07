@@ -27,6 +27,9 @@ fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(root, 'dist', 'bselect.bundle.js'), out);
 fs.writeFileSync(path.join(root, 'dist', 'bselect.css'), cssIn);
 fs.writeFileSync(path.join(root, 'dist', 'bselect.min.css'), cssMin);
+if (fs.existsSync(path.join(root, 'guide.html'))) {
+    fs.writeFileSync(path.join(root, 'dist', 'guide.html'), fs.readFileSync(path.join(root, 'guide.html'), 'utf8').split('__BSELECT_VERSION__').join(version));
+}
 console.log('v' + version, 'dist/bselect.bundle.js', kb(out));
 console.log('v' + version, 'dist/bselect.min.css   ', kb(cssMin));
 

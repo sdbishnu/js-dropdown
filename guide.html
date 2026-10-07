@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BSelect Guide</title>
+<style>
+:root { --bg: #ffffff; --panel: #f6f8fb; --text: #1b2433; --muted: #5c6b80; --line: #e2e8f0; --accent: #2f7fe0; --accent-bg: #e8f1fd; --code: #f1f4f9; --ok: #16a34a; --warn: #b45309; }
+:root[data-theme="dark"] { --bg: #111826; --panel: #172033; --text: #e6ebf3; --muted: #9aa8bd; --line: #26324a; --accent: #6aaaf5; --accent-bg: #1c2d4a; --code: #1b263b; --ok: #4ade80; --warn: #fbbf24; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111826; --panel: #172033; --text: #e6ebf3; --muted: #9aa8bd; --line: #26324a; --accent: #6aaaf5; --accent-bg: #1c2d4a; --code: #1b263b; --ok: #4ade80; --warn: #fbbf24; } }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px; padding: 10px 20px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); }
+header h1 { margin: 0; font-size: 17px; white-space: nowrap; }
+header h1 small { margin-left: 8px; color: var(--muted); font-weight: 400; font-size: 12px; }
+#q { flex: 1; max-width: 420px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--text); font: inherit; font-size: 14px; }
+#q:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.btn { padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); cursor: pointer; font: inherit; font-size: 13px; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+nav { position: sticky; top: 58px; align-self: start; max-height: calc(100vh - 58px); overflow-y: auto; padding: 18px 12px 30px 20px; font-size: 13.5px; }
+nav a { display: block; padding: 3px 8px; border-radius: 6px; color: var(--muted); text-decoration: none; }
+nav a:hover, nav a.on { background: var(--accent-bg); color: var(--accent); }
+nav .grp { margin: 14px 8px 4px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+nav a.sub { padding-left: 20px; }
+main { min-width: 0; padding: 10px 28px 80px; }
+section { padding: 8px 0 18px; border-bottom: 1px solid var(--line); }
+h2 { margin: 26px 0 6px; font-size: 24px; }
+h3 { margin: 22px 0 6px; font-size: 18px; }
+h4 { margin: 16px 0 4px; font-size: 15px; }
+p { margin: 8px 0; }
+.lead { color: var(--muted); font-size: 16px; }
+code { padding: 1px 5px; border-radius: 5px; background: var(--code); font: 13px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+pre { margin: 10px 0; padding: 12px 14px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--code); }
+pre code { padding: 0; background: none; }
+table { width: 100%; margin: 10px 0; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+td:first-child { white-space: nowrap; }
+.tag { display: inline-block; padding: 0 7px; border-radius: 99px; background: var(--accent-bg); color: var(--accent); font-size: 11.5px; font-weight: 600; }
+.note { margin: 12px 0; padding: 10px 14px; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; background: var(--accent-bg); }
+.warn { border-left-color: var(--warn); }
+.try { margin: 14px 0; padding: 16px; border: 1px dashed var(--line); border-radius: 12px; background: var(--panel); }
+.try select { width: 100%; max-width: 320px; }
+.hide { display: none !important; }
+mark { background: color-mix(in srgb, #facc15 55%, transparent); color: inherit; border-radius: 3px; }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } nav { position: static; max-height: none; padding-bottom: 0; } main { padding: 10px 16px 60px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>BSelect <small>Guide</small></h1>
+  <input id="q" type="search" placeholder="Search the guide (option, feature, word)..." aria-label="Search the guide">
+  <button class="btn" id="theme" type="button" title="Light / dark">Theme</button>
+</header>
+
+<div class="layout">
+<nav id="nav"></nav>
+<main id="main">
+
+<section id="start" data-title="Quick start">
+  <h2>Quick start</h2>
+  <p class="lead">BSelect is a custom dropdown written in plain JavaScript (no framework, no jQuery needed) with an AngularJS 1.x wrapper. One component for single and multiple select, local or server data, search, lazy loading, themes and a built-in settings panel.</p>
+  <h3 id="install">Install (two tags)</h3>
+<pre><code>&lt;script src="dist/bselect.bundle.min.js"&gt;&lt;/script&gt;   &lt;!-- loads dist/bselect.min.css by itself --&gt;
+&lt;!-- AngularJS pages add the wrapper after it: --&gt;
+&lt;script src="ng/bselect.ng.js"&gt;&lt;/script&gt;   &lt;!-- angular.module('app', ['bselect']) --&gt;</code></pre>
+  <h3 id="use">Use it</h3>
+<pre><code>// plain JS, on an id
+var ward = bselect('#ward', { options: wards, placeholder: 'Select ward' });
+var user = bselect('#user', { url: 'php/user.php?action=dropdown', multiple: true });
+ward.getValue();  ward.setValue(5);  ward.clear();  ward.reload();  ward.destroy();
+
+&lt;!-- plain HTML, no JS --&gt;
+&lt;select id="empid3" name="emp[3]" data-bselect data-options="staff" data-value="5"&gt;&lt;/select&gt;
+
+&lt;!-- AngularJS --&gt;
+&lt;bselect ng-model="f.user" url="php/user.php?action=dropdown" multiple on-change="changed($value, $items)"&gt;&lt;/bselect&gt;</code></pre>
+  <p>A <code>&lt;select&gt;</code> or <code>&lt;input&gt;</code> target keeps its native value in sync, so normal form submits work. Every option can also be a <code>data-*</code> attribute (<code>data-load="scroll" data-size="lg"</code>).</p>
+  <div class="try" id="tryit"><b>Try it here</b> – open the dropdown and click the gear to explore the settings:<br><br><select id="demo"></select></div>
+  <h3 id="loops">Forms and loops with many dropdowns</h3>
+<pre><code>bselect.data('staff', staffArray);                 // name a big array once (shared, indexed, built once)
+bselect.many('.js-staff', { options: 'staff' });   // build a whole loop in one call</code></pre>
+  <p>120 dropdowns on a 2000-item array build in about 30 ms.</p>
+</section>
+
+<section id="data" data-title="Data and loading">
+  <h2>Data and loading</h2>
+  <table>
+    <tr><th>Option</th><th>What it does</th></tr>
+    <tr><td><code>options</code></td><td>Array (of values, or objects), a name registered with <code>bselect.data()</code>, or a function.</td></tr>
+    <tr><td><code>url</code> + <code>params</code> + <code>method</code> + <code>headers</code></td><td>Load from your API. GET sends a query string, POST a form body.</td></tr>
+    <tr><td><code>handler(params, state)</code></td><td>Your own loader (returns rows or a promise). <code>state</code> has page, pageSize, search, sortDirection.</td></tr>
+    <tr><td><code>valueField</code> / <code>labelField</code></td><td>Which item fields are the value and the text (defaults <code>id</code> and <code>name</code>).</td></tr>
+    <tr><td><code>transform</code>, <code>itemsField</code>, <code>totalField</code>, <code>hasMoreField</code></td><td>Understand any response shape.</td></tr>
+    <tr><td><code>resolve</code> / <code>resolveUrl</code></td><td>Get the labels of saved ids that are not loaded yet.</td></tr>
+  </table>
+  <h3 id="load">Loading modes <span class="tag">option: load</span></h3>
+  <table>
+    <tr><th>Value</th><th>Behaviour</th></tr>
+    <tr><td><code>'scroll'</code> (default)</td><td>Lazy load: the first <code>pageSize</code> rows (20), then more as you scroll, with the "Scroll to continue" strip. Safe for endpoints that ignore paging.</td></tr>
+    <tr><td><code>'all'</code></td><td>Everything at once; local lists are still drawn in slices.</td></tr>
+    <tr><td><code>'button'</code></td><td>A "Show more results" button loads the next page.</td></tr>
+  </table>
+  <p><code>loadOn: 'open'</code> (default) or <code>'init'</code>. <code>pageSize</code> is the rows added each time.</p>
+  <h3 id="speed">Speed on long lists</h3>
+  <ul>
+    <li><b>Virtual scrolling</b> (<code>virtual: 'auto'</code>, <code>virtualFrom: 150</code>): only the rows in view are drawn, so 5,000 rows cost about 20 DOM rows.</li>
+    <li><b>Shared option cache</b>: an array is prepared once for every dropdown that uses it.</li>
+    <li><b>Request cache</b> (<code>cache: 30000</code> ms): the same url + params is not asked twice. <code>bselect.clearCache()</code> / <code>inst.reload()</code> always ask again.</li>
+    <li><b>Preload</b> (<code>preload: true</code>): server lists start loading when the pointer reaches the button or it gets focus, so opening does not wait.</li>
+    <li>One document click listener, delegated row events, the panel DOM is released on close.</li>
+  </ul>
+</section>
+
+<section id="selecting" data-title="Selecting">
+  <h2>Selecting</h2>
+  <h3 id="multi">Single and multiple <span class="tag">multiple</span></h3>
+  <p>Single select shows radio rows; multiple shows checkboxes, <code>min</code> / <code>max</code>, chips (<code>display: 'chips'</code>, <code>maxChips</code>) and the tabs below.</p>
+  <h3 id="tabs">All / Selected tabs <span class="tag">viewTabs · selectAll</span></h3>
+  <table>
+    <tr><th>Tab</th><th>Shows</th><th>Action on the right</th></tr>
+    <tr><td><b>All</b></td><td>The full list (search, lazy load, virtual scroll as usual).</td><td><b>Select all</b> / Unselect all (the rows listed, honours <code>max</code>)</td></tr>
+    <tr><td><b>Selected (n)</b></td><td>Only the chosen rows; unticking a row removes it from the tab.</td><td><b>Clear all</b></td></tr>
+  </table>
+  <p>Single select has no tabs. <code>viewTabs: false</code> turns them off; <code>selectAll: false</code> hides Select all.</p>
+  <h3 id="commit">Apply / Cancel <span class="tag">commit · commitClose</span></h3>
+  <p>With <code>commit: true</code> (multiple select) edits stay pending: the model and the <code>change</code> event update only when you press <b>Apply</b>. <b>Cancel</b> (or closing, by default) discards them. <code>commitClose: 'apply'</code> makes closing apply. Events: <code>apply</code>, <code>cancel</code>.</p>
+  <h3 id="memory">Recent and favourites <span class="tag">recent · favorites</span></h3>
+  <p><code>recent: 5</code> lists the last 5 picks first; <code>favorites: true</code> adds a star to each row and lists starred items first. Both are remembered in the browser (localStorage).</p>
+  <h3 id="validation">Validation, cascade, create</h3>
+  <ul>
+    <li><code>required</code>, <code>min</code>, <code>max</code> with messages; <code>validate()</code>, <code>isValid()</code>.</li>
+    <li><code>dependsOn</code> (+ <code>dependsParam</code>): the child is disabled until the parent has a value, reloads when it changes and clears its own value.</li>
+    <li><code>creatable: true</code>: typing a new text offers "Create ...".</li>
+  </ul>
+</section>
+
+<section id="search" data-title="Search and sort">
+  <h2>Search and sort</h2>
+  <ul>
+    <li>Multi-word search ("john card" needs both words), the matched words are highlighted (<code>highlight</code>). Sub text is searched together with the label.</li>
+    <li><code>searchMode</code> / <code>serverSearch</code>: <b>Auto</b> asks the server only while rows are missing; <b>Browser</b> filters loaded rows; <b>Server</b> always sends <code>search</code>. <code>searchMinChars</code> waits for N letters.</li>
+    <li>The sort button sorts in <b>natural order</b> (Item 2 before Item 10, case and accents ignored). <code>sortBy</code> picks the field, <code>serverSort</code> sends the direction to your API.</li>
+    <li>Keyboard: arrows, Home / End, PageUp / PageDown, type-ahead, Enter, Esc, Tab.</li>
+  </ul>
+</section>
+
+<section id="rows" data-title="Rows, pictures, groups">
+  <h2>Rows, pictures and groups</h2>
+  <p class="note"><b>Pictures and sub text come from your data.</b> Put the values in the array / API rows and point the option at the field. The per-option editors in the settings gear are only for trying things out.</p>
+  <h3 id="subtext">Sub text</h3>
+  <table>
+    <tr><th>Option</th><th>Meaning</th></tr>
+    <tr><td><code>subTextField</code></td><td>Item field with the small second line (e.g. <code>'code'</code>).</td></tr>
+    <tr><td><code>subTextMap</code></td><td><code>{ value: 'text' }</code> per option, set from outside the data (wins over the field; for testing).</td></tr>
+    <tr><td><code>subText</code></td><td><code>false</code> hides the line without losing the field.</td></tr>
+    <tr><td><code>subTextPlace</code></td><td><code>'below'</code> (default) or <code>'beside'</code> (same line after the label).</td></tr>
+  </table>
+  <h3 id="pictures">Pictures</h3>
+  <table>
+    <tr><th>Option</th><th>Meaning</th></tr>
+    <tr><td><code>images</code></td><td><code>'auto'</code> (default), <code>true</code>, <code>false</code>: show pictures.</td></tr>
+    <tr><td><code>imageField</code></td><td>Item field with an image URL, an emoji, an icon class (<code>fa fa-user</code>) or short text.</td></tr>
+    <tr><td><code>imageFor(item)</code></td><td>Decide per option in code.</td></tr>
+    <tr><td><code>avatar</code> / <code>avatarColor</code></td><td>Default picture when an option has none: <code>'initials'</code>, <code>'icon'</code>, <code>'none'</code>; colour <code>'random'</code> (stable per name), <code>'accent'</code> or a colour.</td></tr>
+    <tr><td><code>imageShape</code>, <code>imageSize</code></td><td><code>circle / rounded / square</code>, pixels.</td></tr>
+  </table>
+  <h3 id="groups">Groups and custom rows</h3>
+  <p><code>groupField: 'dept'</code> shows a header per group (keep your data ordered by group). <code>renderItem(item)</code> returns your own row text or element. <code>checkStyle</code> is the row indicator: <code>'box'</code> (default), <code>'tick'</code> or <code>'none'</code>.</p>
+  <h3 id="count">Count line</h3>
+  <p><code>info: true</code> shows "1–20 of 100" (server lists with more pages: "1–20 of 100+"). <code>infoPlace</code>: <code>'top'</code> (under the search, default) or <code>'bottom'</code> (under the list, which then closes the panel with its rounded corners). <code>infoAlign</code>: <code>'right'</code> (default), <code>'left'</code>, <code>'center'</code>.</p>
+</section>
+
+<section id="look" data-title="Look and design">
+  <h2>Look and design</h2>
+  <table>
+    <tr><th>Option</th><th>Values</th></tr>
+    <tr><td><code>mode</code></td><td><code>light</code> (default), <code>dark</code>, <code>auto</code> (follows the OS live).</td></tr>
+    <tr><td><code>palette</code> / <code>background</code></td><td>Palettes slate, midnight, graphite, black, ocean (dark), paper, mint, rose (light) or any colour; text colour adapts.</td></tr>
+    <tr><td><code>size</code>, <code>shape</code>, <code>variant</code>, <code>density</code></td><td><code>sm/md/lg</code>, <code>square/rounded/pill</code>, <code>outline/filled/underline/ghost</code>, <code>compact/normal/comfortable</code>.</td></tr>
+    <tr><td><code>color</code>, <code>borderColor</code>, <code>borderWidth</code>, <code>radius</code></td><td>Accent, border colour and width (Auto, None, 1–3 px or any), exact radius.</td></tr>
+    <tr><td><code>display</code></td><td>How multiple values show: <code>text</code>, <code>chips</code>, <code>count</code>.</td></tr>
+    <tr><td><code>scrollFade</code>, <code>fadeSize</code></td><td>The list fades out at its top / bottom edge where there is more to scroll (default on, 14 px). Works in light and dark; the "scroll to continue" strip stays clear.</td></tr>
+    <tr><td><code>arrow</code>, <code>chevron</code>, <code>clearable</code></td><td>The pointer under the button, the chevron in the field, the round × clear button (drawn as an icon, always centred).</td></tr>
+  </table>
+  <h3 id="separate">Separate design for the button and the dropdown</h3>
+<pre><code>bselect('#ward', {
+  field: { shape: 'pill', size: 'lg' },          // the closed button
+  panel: { mode: 'dark', shape: 'square' }       // the open dropdown
+});</code></pre>
+  <p>The search box, sort button and settings gear always share one shape and height: they follow the dropdown's shape / radius and size, also when changed live in the gear.</p>
+  <h3 id="vars">CSS variables</h3>
+<pre><code>.my-form .bselect { --bselect-color: #0f766e; --bselect-radius: 12px; }</code></pre>
+</section>
+
+<section id="layers" data-title="Defaults and layers">
+  <h2>Configure once, override anywhere</h2>
+  <p>Order (a later layer wins): <b>built-in default → global → per dropdown → own options</b>.</p>
+<pre><code>bselect.defaults({ color: '#0f766e', size: 'sm' });                          // global
+bselect.defaults('#ward', { field: { shape: 'pill' }, panel: { mode: 'dark' } }); // one dropdown, set from any js file
+bselect('#ward', { size: 'md' });                                             // own wins</code></pre>
+  <p>Themes and presets: <code>bselect.theme('hospital', {...})</code>, <code>bselect.preset('wards', { url: '...', theme: 'hospital' })</code>, then <code>bselect('#x', { preset: 'wards' })</code>.</p>
+  <p class="note">The settings gear has an <b>Export</b> tab that writes your changes in exactly this format (global, per dropdown, JSON or <code>data-*</code>). Try things in the gear, copy, paste into your code.</p>
+</section>
+
+<section id="gear" data-title="Settings gear">
+  <h2>The settings gear</h2>
+  <p class="lead">The gear inside the dropdown is a <b>test bench and code generator</b>: change any option, watch the dropdown react, then copy the result from the Export tab. It is on by default; with it off (<code>settingsButton: false</code>) <b>nothing of it is rendered at all</b>. With it on, the popup is built when the gear is clicked and the heavy per-option editors only when their tab is first opened. Use <b>Find</b> to search all settings; <b>Guide</b> opens this page.</p>
+
+  <h3 id="tab-behavior">Behavior tab</h3>
+  <table>
+    <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
+    <tr><td>Selection</td><td><code>multiple</code></td><td>Single or Multiple choice.</td></tr>
+    <tr><td>Loading</td><td><code>load</code></td><td>All, Scroll (default) or Click (button).</td></tr>
+    <tr><td>Rows</td><td><code>pageSize</code></td><td>Rows added each time (10 / 20 / 50 / 100); shown when Loading is not All.</td></tr>
+    <tr><td>Search</td><td><code>search</code></td><td>The search box in the panel header.</td></tr>
+    <tr><td>Sort</td><td><code>sort</code></td><td>The sort button (natural order).</td></tr>
+    <tr><td>Clear ×</td><td><code>clearable</code></td><td>The round × in the closed field.</td></tr>
+    <tr><td>Preview</td><td><code>popover</code></td><td>Hover preview of cut-off or selected values, and the marquee for long rows.</td></tr>
+    <tr><td>Scroll hint</td><td><code>lazyHint</code></td><td>The "Scroll to continue" strip (Scroll loading only).</td></tr>
+    <tr><td>Count</td><td><code>info</code></td><td>The "1–20 of 100" line.</td></tr>
+    <tr><td>Apply / Cancel</td><td><code>commit</code></td><td>Multiple only: edits wait for Apply.</td></tr>
+    <tr><td>All / Selected</td><td><code>viewTabs</code></td><td>Multiple only: the two tabs.</td></tr>
+    <tr><td>Select all</td><td><code>selectAll</code></td><td>Multiple only: Select all / Clear all action.</td></tr>
+    <tr><td>Closing</td><td><code>commitClose</code></td><td>Multiple only: closing discards (default) or applies pending edits.</td></tr>
+  </table>
+
+  <h3 id="tab-look">Look tab</h3>
+  <table>
+    <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
+    <tr><td>Mode</td><td><code>mode</code></td><td>Light, Dark or Auto for the button and the dropdown.</td></tr>
+    <tr><td>Background</td><td><code>palette</code> / <code>background</code></td><td>Palette swatches or any colour; text adapts. Picking one clears the other.</td></tr>
+    <tr><td>Accent</td><td><code>color</code></td><td>Accent colour swatches / custom colour.</td></tr>
+  </table>
+
+  <h3 id="tab-button">Button tab (the closed field)</h3>
+  <table>
+    <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
+    <tr><td>Size</td><td><code>size</code></td><td>S / M / L, or Custom height + font.</td></tr>
+    <tr><td>Shape</td><td><code>shape</code></td><td>Square, Round, Pill, or Custom radius.</td></tr>
+    <tr><td>Style</td><td><code>variant</code></td><td>Outline, Filled, Line, Ghost.</td></tr>
+    <tr><td>Border</td><td><code>borderWidth</code></td><td>Auto, None, 1 / 2 / 3 px, or Custom.</td></tr>
+    <tr><td>Fill / Text / Border / Accent</td><td><code>fieldBackground</code> <code>fieldTextColor</code> <code>borderColor</code> <code>fieldColor</code></td><td>Colours of the button only (× resets to the default).</td></tr>
+    <tr><td>Clear × / Arrow</td><td><code>clearable</code> / <code>chevron</code></td><td>The × and the chevron in the field.</td></tr>
+    <tr><td>Values</td><td><code>display</code></td><td>Multiple only: Text, Chips, Count (Custom: max chips).</td></tr>
+  </table>
+
+  <h3 id="tab-dropdown">Dropdown tab (the open panel)</h3>
+  <table>
+    <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
+    <tr><td>Mode / Palette</td><td><code>panelMode</code> <code>panelPalette</code></td><td>Same as the button, Light, Dark or Auto - only for the dropdown.</td></tr>
+    <tr><td>Shape</td><td><code>panelShape</code></td><td>Corner style of the dropdown (the header controls and the popup follow it).</td></tr>
+    <tr><td>Rows</td><td><code>density</code></td><td>Tight, Normal, Roomy (Custom row height).</td></tr>
+    <tr><td>Layout</td><td><code>rowStyle</code></td><td>Inset (rounded rows) or Flat (edge to edge).</td></tr>
+    <tr><td>Shadow</td><td><code>shadow</code></td><td>None, Soft, Strong.</td></tr>
+    <tr><td>Width / List height / Row font / Edge fade</td><td><code>panelWidth</code> <code>listHeight</code> <code>rowFontSize</code> <code>fadeSize</code></td><td>Sizes in px; × goes back to the starting value.</td></tr>
+    <tr><td>Background / Text / Border / Hover / Selected / Accent</td><td><code>panelBackground</code> <code>panelTextColor</code> <code>panelBorderColor</code> <code>hoverColor</code> <code>selectedColor</code> <code>panelColor</code></td><td>Colours of the dropdown only.</td></tr>
+    <tr><td>Arrow</td><td><code>arrow</code></td><td>The pointer under the button.</td></tr>
+    <tr><td>Preview</td><td><code>popover</code></td><td>Hover preview.</td></tr>
+    <tr><td>Settings button</td><td><code>settings</code></td><td>Hides the gear (not saved: a reload brings it back; use <code>settingsButton: false</code> in code for good).</td></tr>
+    <tr><td>Scroll fade</td><td><code>scrollFade</code></td><td>Edge fade of the list.</td></tr>
+    <tr><td>Sub text group</td><td><code>subText</code> <code>subTextPlace</code> <code>subTextField</code></td><td>On / off, Below / Beside, the field name (suggests your data fields) and a text box per option for testing.</td></tr>
+  </table>
+
+  <h3 id="tab-list">List tab</h3>
+  <table>
+    <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
+    <tr><td>Count</td><td><code>infoPlace</code></td><td>Top or Bottom.</td></tr>
+    <tr><td>Align</td><td><code>infoAlign</code></td><td>Left, Centre, Right.</td></tr>
+    <tr><td>Highlight</td><td><code>highlight</code></td><td>Mark the searched words in the rows.</td></tr>
+    <tr><td>Where</td><td><code>serverSearch</code></td><td>Auto, Browser or Server search.</td></tr>
+    <tr><td>Min letters</td><td><code>searchMinChars</code></td><td>Letters needed before searching.</td></tr>
+    <tr><td>Group by</td><td><code>groupField</code></td><td>Item field for group headers.</td></tr>
+    <tr><td>Favourites / Recent</td><td><code>favorites</code> / <code>recent</code></td><td>Star on each row; remember the last N picks.</td></tr>
+  </table>
+
+  <h3 id="tab-data">Data tab</h3>
+  <table>
+    <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
+    <tr><td>Preload</td><td><code>preload</code></td><td>Start loading when the pointer reaches the button.</td></tr>
+    <tr><td>Cache</td><td><code>cache</code></td><td>Milliseconds a server answer is reused.</td></tr>
+    <tr><td>Virtual / Virtual from</td><td><code>virtual</code> / <code>virtualFrom</code></td><td>Auto, On, Off, and the row count where virtual scrolling starts.</td></tr>
+  </table>
+
+  <h3 id="tab-images">Images tab</h3>
+  <table>
+    <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
+    <tr><td>Show images</td><td><code>images</code></td><td>Pictures on or off (switching back restores the starting value).</td></tr>
+    <tr><td>Field</td><td><code>imageField</code></td><td>Item field with the picture.</td></tr>
+    <tr><td>Default / Colour / Shape / Size</td><td><code>avatar</code> <code>avatarColor</code> <code>imageShape</code> <code>imageSize</code></td><td>Picture for options without one, its colour, shape and size.</td></tr>
+    <tr><td>Per option</td><td><code>imageMap</code></td><td>Test editor: URL, emoji, icon class or upload for each option (real values belong in your data).</td></tr>
+  </table>
+
+  <h3 id="tab-advanced">Advanced and Export tabs</h3>
+  <ul>
+    <li><b>Advanced</b>: font family and raw CSS variables.</li>
+    <li><b>Export</b>: copy the settings as <b>global</b> defaults, <b>per dropdown</b> defaults, <b>JSON</b> or <b>HTML data-attributes</b>; "Changes" lists only what you changed, "All" everything.</li>
+  </ul>
+  <p class="note">Every control is tested one by one (change it, check the config changed, put it back, check it is the same as before): see <code>SETTINGS_TABS.md</code> and <code>test/qa-controls.mjs</code>.</p>
+</section>
+
+<section id="api" data-title="API and events">
+  <h2>API and events</h2>
+  <table>
+    <tr><th>Instance methods</th><td><code>getValue getSelected getText setValue setOptions addOption removeOption reload setParams clear reset validate isValid open close disable enable setAppearance setTheme explain getConfig destroy</code></td></tr>
+    <tr><th>Static</th><td><code>bselect.defaults · preset · theme · data · many · scan · apply · setMode · all · clearCache · invalidate · version</code></td></tr>
+    <tr><th>Events</th><td><code>change open close load error create limit validate apply cancel</code> – <code>inst.on('change', fn)</code> or <code>onChange</code>; DOM events <code>bselect:change</code>, <code>bselect:open</code>, <code>bselect:close</code>.</td></tr>
+    <tr><th>jQuery (optional)</th><td><code>$('#ward').bselect({...})</code>, <code>$('#ward').bselect('getValue')</code></td></tr>
+  </table>
+</section>
+
+<section id="angular" data-title="AngularJS 1.x">
+  <h2>AngularJS 1.x wrapper</h2>
+<pre><code>&lt;bselect ng-model="f.user" preset="users"&gt;&lt;/bselect&gt;
+&lt;bselect ng-model="f.users" url="php/user.php?action=dropdown" load="scroll" multiple display="chips"
+         placeholder="Pick users" params="{active:1}" on-change="changed($value, $items)"&gt;&lt;/bselect&gt;
+&lt;bselect ng-model="f.ward" options="wardList" ng-disabled="locked" ng-required="true"&gt;&lt;/bselect&gt;
+&lt;bselect ng-model="f.ward" url="php/ward.php" depends-on="f.dept" depends-param="dept_id"&gt;&lt;/bselect&gt;</code></pre>
+  <ul>
+    <li>Any option works as a kebab-case attribute; <code>options</code>, <code>params</code>, <code>depends-on</code>, <code>on-change</code>, <code>config</code> are Angular expressions.</li>
+    <li><code>model-type="object"</code> puts the item object(s) in <code>ng-model</code>; <code>ng-required</code>, <code>ng-disabled</code>, <code>ng-change</code> and form validity work.</li>
+    <li>Cheap watchers for <code>ng-repeat</code> forms (90 dropdowns settle in about 70 ms).</li>
+    <li>The old API still works: <code>bselect.bind</code>, <code>server / local</code>, <code>refresh</code>, <code>toParam</code>, grouped <code>config="..."</code>.</li>
+  </ul>
+</section>
+
+<section id="a11y" data-title="Accessibility, files and tests">
+  <h2>Accessibility, files and tests</h2>
+  <ul>
+    <li>ARIA roles (listbox, option, tab), <code>aria-selected</code>, <code>aria-setsize</code> / <code>aria-posinset</code>, screen-reader announcements, focus returns to the button.</li>
+    <li>Files: <code>dist/</code> (generated bundle + css), <code>src/</code>, <code>skin.css</code>, <code>ng/bselect.ng.js</code>. Build with <code>npm run build</code>, test with <code>npm test</code> (headless-browser checks).</li>
+    <li>More docs in the repository: README, FEATURES, LIST_FEATURES, SETTINGS_TABS, CONFIG_LAYERS, APPEARANCE_AND_LOADING, PERFORMANCE, ANGULAR, SETUP_AND_GITHUB, PHASES.</li>
+  </ul>
+</section>
+
+<p class="hide" id="none">Nothing in the guide matches that search.</p>
+</main>
+</div>
+
+<script>
+(function () {
+  var secs = [].slice.call(document.querySelectorAll('main section'));
+  var nav = document.getElementById('nav');
+  var q = document.getElementById('q');
+
+  // navigation built from the sections and their h3 titles
+  var html = '';
+  secs.forEach(function (s) {
+    html += '<a href="#' + s.id + '" data-id="' + s.id + '"><b>' + s.getAttribute('data-title') + '</b></a>';
+    [].forEach.call(s.querySelectorAll('h3[id]'), function (h) {
+      html += '<a class="sub" href="#' + h.id + '">' + (h.firstChild ? h.firstChild.textContent : h.textContent).trim() + '</a>';
+    });
+  });
+  nav.innerHTML = html;
+
+  // theme: follows the system, the button flips and remembers
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem('bselect-guide-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  document.getElementById('theme').addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('bselect-guide-theme', next); } catch (e) {}
+  });
+
+  // search: hides the blocks (h3 + what follows) that do not contain the words, highlights the hits
+  function blocks(sec) {
+    var out = []; var cur = null;
+    [].forEach.call(sec.children, function (n) {
+      if (n.tagName === 'H2') { return; }
+      if (n.tagName === 'H3') { cur = { nodes: [n] }; out.push(cur); } else { if (!cur) { cur = { nodes: [] }; out.push(cur); } cur.nodes.push(n); }
+    });
+    return out;
+  }
+  function clearMarks(root) { [].forEach.call(root.querySelectorAll('mark'), function (m) { m.replaceWith(document.createTextNode(m.textContent)); }); root.normalize(); }
+  function mark(node, words) {
+    if (node.nodeType === 3) {
+      var re = new RegExp('(' + words.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'gi');
+      if (!re.test(node.nodeValue)) { return; }
+      var span = document.createElement('span'); span.innerHTML = node.nodeValue.replace(/[&<]/g, function (c) { return c === '&' ? '&amp;' : '&lt;'; }).replace(re, '<mark>$1</mark>');
+      node.replaceWith.apply(node, span.childNodes.length ? [].slice.call(span.childNodes) : [node]);
+    } else if (node.nodeType === 1 && !/^(SCRIPT|STYLE|MARK|SELECT)$/.test(node.tagName)) { [].slice.call(node.childNodes).forEach(function (c) { mark(c, words); }); }
+  }
+  q.addEventListener('input', function () {
+    var words = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+    var any = false;
+    clearMarks(document.getElementById('main'));
+    secs.forEach(function (sec) {
+      var shown = false;
+      blocks(sec).forEach(function (b) {
+        var text = b.nodes.map(function (n) { return n.textContent; }).join(' ').toLowerCase();
+        var hit = !words.length || words.every(function (w) { return text.indexOf(w) >= 0; });
+        b.nodes.forEach(function (n) { n.classList.toggle('hide', !hit); if (hit && words.length) { mark(n, words); } });
+        shown = shown || hit;
+      });
+      var h2 = sec.querySelector('h2'); if (h2) { h2.classList.toggle('hide', !shown); }
+      sec.classList.toggle('hide', !shown);
+      any = any || shown;
+    });
+    document.getElementById('none').classList.toggle('hide', any);
+  });
+
+  // active link while scrolling
+  var links = [].slice.call(nav.querySelectorAll('a[data-id]'));
+  addEventListener('scroll', function () {
+    var cur = secs[0];
+    secs.forEach(function (s) { if (!s.classList.contains('hide') && s.getBoundingClientRect().top < 120) { cur = s; } });
+    links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-id') === cur.id); });
+  }, { passive: true });
+
+  // live demo: the bundle is next to this page (dist/) or one folder down (repository root)
+  function demo() {
+    var opts = []; for (var i = 1; i <= 60; i++) { opts.push({ id: i, name: 'Staff member ' + i, code: 'EMP-' + i }); }
+    window.bselect('#demo', { options: opts, subTextField: 'code', info: true, multiple: true });
+  }
+  function load(src, fail) { var s = document.createElement('script'); s.src = src; s.onload = demo; s.onerror = fail; document.head.appendChild(s); }
+  load('bselect.bundle.js', function () { load('dist/bselect.bundle.js', function () { document.getElementById('tryit').classList.add('hide'); }); });
+})();
+</script>
+</body>
+</html>

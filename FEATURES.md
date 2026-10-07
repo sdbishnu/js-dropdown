@@ -1,7 +1,7 @@
 # BSelect – every feature built so far (v1.0.0)
 
 Plain JavaScript dropdown (no framework, no jQuery needed) with an AngularJS 1.x wrapper.
-Everything below is **done and covered by `npm test`** (36 headless-browser checks).
+Everything below is **done and covered by `npm test`** (38 headless-browser checks).
 Details for each area are in the linked file; this page is the checklist.
 
 Legend: option name in `code`; **default** is stated where it matters.
@@ -66,6 +66,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 - Button: size, shape, style, **border size** (Auto / None / 1–3 px / Custom), values display, colours
 - Dropdown: mode, palette, shape, rows, layout, shadow, sizes, custom colours, Arrow, Preview, **Settings button on/off**, **Sub text** (field, per-option text, place)
 - Images: show images, default picture, colour, shape, size, per-option picture editor
+- **Guide button** next to Find: opens `guide.html` (built to `dist/guide.html`, next to the bundle; `guideUrl` / `guideButton` options) in a new tab at the section of the open gear tab
 - Export tab: copy the changed settings as global / per-dropdown / JSON / HTML data-attributes
 - User changes can be remembered (`persist`); `settingsButton: false` removes the gear
 
@@ -80,7 +81,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 
 ## 10. Build, tests, packaging
 - `src/` → one bundle (`dist/bselect.bundle.js`, `.min.js`, `bselect.css`, `.min.css`), version injected from `package.json`
-- Mock API server + demo pages; 36 headless-browser checks (`npm test`)
+- Mock API server + demo pages; 38 headless-browser checks (`npm test`)
 - Docs: README, FEATURES (this file), LIST_FEATURES, CONFIG_LAYERS, APPEARANCE_AND_LOADING, PERFORMANCE, ANGULAR, ARCHITECTURE, PHASES, SETUP_AND_GITHUB
 
 ## Removed again (decided not needed)

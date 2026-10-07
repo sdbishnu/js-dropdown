@@ -872,3 +872,10 @@
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--bselect-fade-t), #000 calc(100% - var(--bselect-fade-h) - var(--bselect-fade-b)), transparent calc(100% - var(--bselect-fade-h)), #000 calc(100% - var(--bselect-fade-h)));
     mask-image: linear-gradient(to bottom, transparent 0, #000 var(--bselect-fade-t), #000 calc(100% - var(--bselect-fade-h) - var(--bselect-fade-b)), transparent calc(100% - var(--bselect-fade-h)), #000 calc(100% - var(--bselect-fade-h)));
 }
+/* Guide button in the settings header (next to Find) */
+.bselect-settings-guide { display: inline-flex; align-items: center; gap: 4px; flex: none; height: 24px; padding: 0 8px; border: 1px solid var(--bselect-border); border-radius: var(--bselect-ctl-radius, 8px); background: var(--bselect-surface); color: var(--bselect-color); font: inherit; font-size: 11px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background .12s ease, border-color .12s ease; }
+.bselect-settings-guide:hover { border-color: var(--bselect-color); background: var(--bselect-hover); }
+.bselect-settings-guide svg { width: 13px; height: 13px; }
+.bselect-settings-guide:focus-visible { outline: 2px solid var(--bselect-color); outline-offset: 1px; }
+.bselect-settings-guide-drawer { height: 32px; padding: 0 12px; font-size: 13px; margin-right: 8px; }
+.bselect-settings:not(.bselect-drawer) .bselect-settings-find { width: 70px; }

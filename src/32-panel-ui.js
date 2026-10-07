@@ -1,5 +1,6 @@
 /* Panel UI (same structure and class names as the original AngularJS bselect.html) and its render pass */
 var ICONS = {
+    book: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><path d="M2.5 3.2c1.8-.6 3.7-.5 5.5.6 1.8-1.1 3.7-1.2 5.5-.6v9c-1.8-.6-3.7-.5-5.5.6-1.8-1.1-3.7-1.2-5.5-.6z M8 3.8v8.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>',
     close: '<svg viewBox="0 0 10 10" width="1em" height="1em" aria-hidden="true"><path d="M2 2l6 6M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
     list: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><path d="M5 3.5h9M5 8h9M5 12.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="2" cy="3.5" r="1" fill="currentColor"/><circle cx="2" cy="8" r="1" fill="currentColor"/><circle cx="2" cy="12.5" r="1" fill="currentColor"/></svg>',
     data: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><ellipse cx="8" cy="3.5" rx="5.5" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 3.5v9c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-9M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',

@@ -16,6 +16,8 @@
     'use strict';
 
     var currentScript = document.currentScript;
+    // the guide page is built next to the bundle (dist/guide.html)
+    var GUIDE_URL = currentScript && currentScript.src ? currentScript.src.replace(/bselect[\w.-]*\.js(\?.*)?$/i, 'guide.html') : 'guide.html';
     var sequence = 0;
     var REQ_CACHE = new Map(); // 'METHOD url params' -> { t, promise }  (server answers shared by every dropdown)
     // every text the list shows
@@ -151,6 +153,8 @@
 
         // ---- item content
         groupField: '', // field name to group items under headers
+        guideButton: true, // a Guide button next to Find in the settings gear (opens the guide in a new tab)
+        guideUrl: null, // where the guide is (default: guide.html next to the bundle)
         scrollFade: true, // rows fade out at the top / bottom edge of the list when there is more to scroll (works in light and dark)
         fadeSize: 14, // px of that fade
         subText: true, // show the small second line (switch it off without losing the field / texts)

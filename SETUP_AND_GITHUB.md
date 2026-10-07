@@ -62,6 +62,7 @@ Order (later wins): **built-in default → global (`bselect.defaults`) → per d
 ## 7. Documentation map
 | File | What |
 |---|---|
+| guide.html (also dist/guide.html) | the guide: every feature, option and gear control, searchable, with a live demo; opened by the Guide button in the settings gear |
 | README.md | quick start and option overview |
 | FEATURES.md | complete checklist of what is built |
 | LIST_FEATURES.md | list design, tabs, selecting, rows, requests, groups |

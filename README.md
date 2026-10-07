@@ -86,7 +86,7 @@ Needs a current browser (uses CSS `color-mix()`, `:has()`, `Map` / `Set` / `Weak
 
 | File | Contents |
 |---|---|
-| [guide.html](guide.html) | **the guide**: every feature, option and gear control in one searchable page with a live demo (also built to `dist/guide.html`; the **Guide** button in the settings gear opens it in a new tab) |
+| [guide.html](guide.html) | **the guide** (docs-site layout): sidebar pages, "On this page", copyable code blocks, Ctrl+K search, light / dark, live demo; every feature, option and gear control (also built to `dist/guide.html`; the **Guide** button in the settings gear opens it in a new tab) |
 | [FEATURES.md](FEATURES.md) | complete checklist of every feature built |
 | [SETUP_AND_GITHUB.md](SETUP_AND_GITHUB.md) | clone, build, test runner setup, repository notes |
 | [SETTINGS_TABS.md](SETTINGS_TABS.md) | the settings gear tab by tab (every control, its option, its test result) and how to add / remove / fix one |

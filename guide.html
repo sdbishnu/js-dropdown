@@ -5,64 +5,115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BSelect Guide</title>
 <style>
-:root { --bg: #ffffff; --panel: #f6f8fb; --text: #1b2433; --muted: #5c6b80; --line: #e2e8f0; --accent: #2f7fe0; --accent-bg: #e8f1fd; --code: #f1f4f9; --ok: #16a34a; --warn: #b45309; }
-:root[data-theme="dark"] { --bg: #111826; --panel: #172033; --text: #e6ebf3; --muted: #9aa8bd; --line: #26324a; --accent: #6aaaf5; --accent-bg: #1c2d4a; --code: #1b263b; --ok: #4ade80; --warn: #fbbf24; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111826; --panel: #172033; --text: #e6ebf3; --muted: #9aa8bd; --line: #26324a; --accent: #6aaaf5; --accent-bg: #1c2d4a; --code: #1b263b; --ok: #4ade80; --warn: #fbbf24; } }
+:root { --bg: #ffffff; --text: #334155; --head: #0f172a; --muted: #64748b; --line: #e2e8f0; --soft: #f8fafc; --accent: #0284c7; --accent-bg: #e0f2fe; --code-bg: #0b1120; --code-text: #e2e8f0; --pill: #f1f5f9; }
+:root[data-theme="dark"] { --bg: #0b1120; --text: #cbd5e1; --head: #f1f5f9; --muted: #94a3b8; --line: #1e293b; --soft: #0f172a; --accent: #38bdf8; --accent-bg: #0c2a43; --code-bg: #0f172a; --code-text: #e2e8f0; --pill: #1e293b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0b1120; --text: #cbd5e1; --head: #f1f5f9; --muted: #94a3b8; --line: #1e293b; --soft: #0f172a; --accent: #38bdf8; --accent-bg: #0c2a43; --code-bg: #0f172a; --code-text: #e2e8f0; --pill: #1e293b; } }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 70px; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px; padding: 10px 20px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); }
-header h1 { margin: 0; font-size: 17px; white-space: nowrap; }
-header h1 small { margin-left: 8px; color: var(--muted); font-weight: 400; font-size: 12px; }
-#q { flex: 1; max-width: 420px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--text); font: inherit; font-size: 14px; }
-#q:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-.btn { padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); cursor: pointer; font: inherit; font-size: 13px; }
-.btn:hover { border-color: var(--accent); color: var(--accent); }
-.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
-nav { position: sticky; top: 58px; align-self: start; max-height: calc(100vh - 58px); overflow-y: auto; padding: 18px 12px 30px 20px; font-size: 13.5px; }
-nav a { display: block; padding: 3px 8px; border-radius: 6px; color: var(--muted); text-decoration: none; }
-nav a:hover, nav a.on { background: var(--accent-bg); color: var(--accent); }
-nav .grp { margin: 14px 8px 4px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-nav a.sub { padding-left: 20px; }
-main { min-width: 0; padding: 10px 28px 80px; }
-section { padding: 8px 0 18px; border-bottom: 1px solid var(--line); }
-h2 { margin: 26px 0 6px; font-size: 24px; }
-h3 { margin: 22px 0 6px; font-size: 18px; }
-h4 { margin: 16px 0 4px; font-size: 15px; }
-p { margin: 8px 0; }
-.lead { color: var(--muted); font-size: 16px; }
-code { padding: 1px 5px; border-radius: 5px; background: var(--code); font: 13px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
-pre { margin: 10px 0; padding: 12px 14px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--code); }
-pre code { padding: 0; background: none; }
-table { width: 100%; margin: 10px 0; border-collapse: collapse; font-size: 14px; }
-th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-th { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-td:first-child { white-space: nowrap; }
-.tag { display: inline-block; padding: 0 7px; border-radius: 99px; background: var(--accent-bg); color: var(--accent); font-size: 11.5px; font-weight: 600; }
-.note { margin: 12px 0; padding: 10px 14px; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; background: var(--accent-bg); }
-.warn { border-left-color: var(--warn); }
-.try { margin: 14px 0; padding: 16px; border: 1px dashed var(--line); border-radius: 12px; background: var(--panel); }
-.try select { width: 100%; max-width: 320px; }
-.hide { display: none !important; }
-mark { background: color-mix(in srgb, #facc15 55%, transparent); color: inherit; border-radius: 3px; }
-@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } nav { position: static; max-height: none; padding-bottom: 0; } main { padding: 10px 16px 60px; } }
+html { scroll-padding-top: 84px; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.75 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+/* top bar */
+.top { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 16px; height: 64px; padding: 0 24px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: saturate(1.4) blur(10px); }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--head); font-size: 18px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; }
+.brand i { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #38bdf8, #6366f1); color: #fff; font-style: normal; font-size: 14px; }
+.ver { padding: 1px 8px; border-radius: 99px; background: var(--pill); color: var(--muted); font-size: 11px; font-weight: 600; }
+.spacer { flex: 1; }
+.searchbtn { display: flex; align-items: center; gap: 10px; width: min(340px, 40vw); height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; }
+.searchbtn:hover { border-color: var(--muted); }
+.searchbtn span { flex: 1; text-align: left; }
+kbd { padding: 1px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--muted); font: 600 11px/1.6 ui-monospace, Consolas, monospace; }
+.iconbtn { display: grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); cursor: pointer; }
+.iconbtn:hover { background: var(--pill); color: var(--head); }
+.iconbtn svg { width: 20px; height: 20px; }
+#menu { display: none; }
+/* layout */
+.wrap { display: grid; grid-template-columns: 288px minmax(0, 1fr) 240px; max-width: 1440px; margin: 0 auto; }
+.side { position: sticky; top: 64px; align-self: start; height: calc(100vh - 64px); overflow-y: auto; padding: 28px 20px 40px 28px; border-right: 1px solid var(--line); }
+.side h5 { margin: 24px 0 8px; color: var(--head); font-size: 13px; font-weight: 700; letter-spacing: .01em; }
+.side h5:first-child { margin-top: 0; }
+.side a { display: block; margin-left: -1px; padding: 5px 0 5px 16px; border-left: 1px solid var(--line); color: var(--muted); font-size: 14.5px; text-decoration: none; }
+.side a:hover { border-left-color: var(--muted); color: var(--head); }
+.side a.on { border-left: 2px solid var(--accent); padding-left: 15px; color: var(--accent); font-weight: 600; }
+article.page { display: none; min-width: 0; padding: 40px 56px 60px; }
+article.page.show { display: block; }
+.eyebrow { margin: 0 0 6px; color: var(--accent); font-size: 14px; font-weight: 600; }
+article h1 { margin: 0; color: var(--head); font-size: 36px; line-height: 1.15; letter-spacing: -.025em; }
+.lead { margin: 14px 0 0; max-width: 42rem; color: var(--muted); font-size: 18px; line-height: 1.7; }
+.body { margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--line); max-width: 46rem; }
+.body h3 { margin: 44px 0 10px; color: var(--head); font-size: 22px; letter-spacing: -.015em; scroll-margin-top: 84px; }
+.body h3:first-child { margin-top: 0; }
+.body h4 { margin: 28px 0 6px; color: var(--head); font-size: 16px; }
+.body p { margin: 14px 0; }
+.body ul { margin: 14px 0; padding-left: 22px; }
+.body li { margin: 6px 0; padding-left: 4px; }
+.body li::marker { color: var(--muted); }
+.body :not(pre) > code { padding: 2px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--pill); color: var(--head); font: 500 .86em/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.tag { display: inline-block; margin-left: 6px; padding: 1px 9px; border-radius: 99px; background: var(--accent-bg); color: var(--accent); font-size: 12px; font-weight: 600; vertical-align: middle; }
+.body table { width: 100%; margin: 18px 0; border-collapse: collapse; font-size: 14.5px; }
+.body th { padding: 8px 12px; border-bottom: 1px solid var(--line); color: var(--head); font-size: 13px; font-weight: 600; text-align: left; }
+.body td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.body tr:last-child td { border-bottom: 0; }
+.body td:first-child { color: var(--head); font-weight: 500; }
+.note { display: flex; gap: 12px; margin: 22px 0; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); border-radius: 12px; background: var(--accent-bg); color: var(--head); font-size: 15px; line-height: 1.65; }
+.note::before { content: "i"; flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font: italic 700 13px/1 Georgia, serif; }
+.note > * { margin: 0; }
+/* code blocks */
+.code { margin: 20px 0; overflow: hidden; border-radius: 14px; background: var(--code-bg); box-shadow: inset 0 0 0 1px rgba(148, 163, 184, .16); }
+.code header { display: flex; align-items: center; justify-content: space-between; height: 40px; padding: 0 14px; border-bottom: 1px solid rgba(148, 163, 184, .16); color: #94a3b8; font-size: 12px; font-weight: 600; }
+.code header button { padding: 3px 10px; border: 1px solid rgba(148, 163, 184, .3); border-radius: 7px; background: transparent; color: #cbd5e1; font: inherit; font-size: 12px; cursor: pointer; }
+.code header button:hover { background: rgba(148, 163, 184, .15); }
+.code pre { margin: 0; padding: 16px 18px; overflow-x: auto; color: var(--code-text); font: 13.5px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.t-c { color: #64748b; font-style: italic; } .t-s { color: #7dd3fc; } .t-k { color: #c4b5fd; } .t-n { color: #fda4af; } .t-t { color: #5eead4; } .t-a { color: #fde68a; }
+/* live preview card */
+.try { margin: 22px 0; padding: 28px; border: 1px solid var(--line); border-radius: 14px; background: radial-gradient(color-mix(in srgb, var(--muted) 30%, transparent) 1px, transparent 1px) 0 0 / 16px 16px, var(--soft); }
+.try b { display: block; margin-bottom: 14px; color: var(--head); }
+.try select { width: 100%; max-width: 340px; }
+/* on this page */
+.toc { position: sticky; top: 64px; align-self: start; max-height: calc(100vh - 64px); overflow-y: auto; padding: 40px 24px 40px 8px; font-size: 13.5px; }
+.toc h6 { margin: 0 0 12px; color: var(--head); font-size: 13px; font-weight: 700; }
+.toc a { display: block; padding: 4px 0 4px 12px; border-left: 1px solid var(--line); color: var(--muted); text-decoration: none; line-height: 1.45; }
+.toc a:hover { color: var(--head); }
+.toc a.on { border-left: 2px solid var(--accent); padding-left: 11px; color: var(--accent); font-weight: 600; }
+.pager { display: flex; gap: 16px; max-width: 46rem; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); }
+.pager a { flex: 1; padding: 14px 18px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; }
+.pager a:hover { border-color: var(--accent); }
+.pager small { display: block; color: var(--muted); font-size: 12.5px; }
+.pager b { color: var(--head); }
+.pager a.next { text-align: right; }
+.foot { max-width: 46rem; margin-top: 30px; color: var(--muted); font-size: 13.5px; }
+/* search palette */
+#pal { position: fixed; inset: 0; z-index: 100; display: none; align-items: flex-start; justify-content: center; padding: 12vh 16px 0; background: rgba(15, 23, 42, .55); backdrop-filter: blur(3px); }
+#pal.open { display: flex; }
+.palbox { width: min(640px, 100%); max-height: 70vh; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); box-shadow: 0 25px 60px rgba(0, 0, 0, .35); }
+.palin { display: flex; align-items: center; gap: 12px; padding: 0 18px; border-bottom: 1px solid var(--line); }
+.palin svg { width: 20px; height: 20px; color: var(--muted); flex: none; }
+#palq { flex: 1; height: 56px; border: 0; outline: 0; background: transparent; color: var(--head); font: inherit; font-size: 17px; }
+.pallist { overflow-y: auto; padding: 8px; }
+.palhit { display: block; padding: 10px 14px; border-radius: 10px; color: var(--text); text-decoration: none; }
+.palhit.on { background: var(--accent-bg); }
+.palhit small { display: block; color: var(--muted); font-size: 12px; }
+.palhit b { display: block; color: var(--head); font-size: 15px; }
+.palhit span { display: block; margin-top: 2px; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
+.palhit mark, .palhit b mark { background: transparent; color: var(--accent); font-weight: 700; }
+.palempty { padding: 28px 18px; color: var(--muted); text-align: center; }
+.palfoot { display: flex; gap: 14px; padding: 9px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+@media (max-width: 1180px) { .wrap { grid-template-columns: 260px minmax(0, 1fr); } .toc { display: none; } article.page { padding: 32px 36px 50px; } }
+@media (max-width: 860px) { #menu { display: grid; } .wrap { grid-template-columns: 1fr; } .side { position: fixed; z-index: 45; top: 64px; left: 0; width: 290px; max-width: 86vw; height: calc(100vh - 64px); transform: translateX(-100%); transition: transform .2s ease; background: var(--bg); } .side.open { transform: none; box-shadow: 0 0 40px rgba(0, 0, 0, .3); } article.page { padding: 26px 18px 50px; } article h1 { font-size: 30px; } .searchbtn kbd { display: none; } }
 </style>
 </head>
 <body>
-<header>
-  <h1>BSelect <small>Guide</small></h1>
-  <input id="q" type="search" placeholder="Search the guide (option, feature, word)..." aria-label="Search the guide">
-  <button class="btn" id="theme" type="button" title="Light / dark">Theme</button>
-</header>
-
-<div class="layout">
-<nav id="nav"></nav>
-<main id="main">
-
-<section id="start" data-title="Quick start">
-  <h2>Quick start</h2>
-  <p class="lead">BSelect is a custom dropdown written in plain JavaScript (no framework, no jQuery needed) with an AngularJS 1.x wrapper. One component for single and multiple select, local or server data, search, lazy loading, themes and a built-in settings panel.</p>
-  <h3 id="install">Install (two tags)</h3>
+<div class="top">
+  <button class="iconbtn" id="menu" type="button" aria-label="Menu"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
+  <a class="brand" href="#start"><i>B</i> BSelect <span class="ver">v__BSELECT_VERSION__</span></a>
+  <span class="spacer"></span>
+  <button class="searchbtn" id="searchBtn" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg><span>Quick search...</span><kbd>Ctrl K</kbd></button>
+  <button class="iconbtn" id="theme" type="button" aria-label="Light / dark" title="Light / dark"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M17 11.5A7 7 0 1 1 8.5 3 5.5 5.5 0 0 0 17 11.5z"/></svg></button>
+</div>
+<div class="wrap">
+<nav class="side" id="side" aria-label="Guide"></nav>
+<main>
+<article class="page" id="start" data-group="Getting started" data-title="Quick start" data-lead="A custom dropdown written in plain JavaScript (no framework, no jQuery needed) with an AngularJS 1.x wrapper. One component for single and multiple select, local or server data, search, lazy loading, themes and a built-in settings panel.">
+<h3 id="install">Install (two tags)</h3>
 <pre><code>&lt;script src="dist/bselect.bundle.min.js"&gt;&lt;/script&gt;   &lt;!-- loads dist/bselect.min.css by itself --&gt;
 &lt;!-- AngularJS pages add the wrapper after it: --&gt;
 &lt;script src="ng/bselect.ng.js"&gt;&lt;/script&gt;   &lt;!-- angular.module('app', ['bselect']) --&gt;</code></pre>
@@ -83,11 +134,10 @@ ward.getValue();  ward.setValue(5);  ward.clear();  ward.reload();  ward.destroy
 <pre><code>bselect.data('staff', staffArray);                 // name a big array once (shared, indexed, built once)
 bselect.many('.js-staff', { options: 'staff' });   // build a whole loop in one call</code></pre>
   <p>120 dropdowns on a 2000-item array build in about 30 ms.</p>
-</section>
+</article>
 
-<section id="data" data-title="Data and loading">
-  <h2>Data and loading</h2>
-  <table>
+<article class="page" id="data" data-group="Core concepts" data-title="Data and loading" data-lead="Local arrays, your own API or your own loader function, loaded lazily or all at once, with caches that keep long lists and big forms fast.">
+<table>
     <tr><th>Option</th><th>What it does</th></tr>
     <tr><td><code>options</code></td><td>Array (of values, or objects), a name registered with <code>bselect.data()</code>, or a function.</td></tr>
     <tr><td><code>url</code> + <code>params</code> + <code>method</code> + <code>headers</code></td><td>Load from your API. GET sends a query string, POST a form body.</td></tr>
@@ -112,11 +162,10 @@ bselect.many('.js-staff', { options: 'staff' });   // build a whole loop in one 
     <li><b>Preload</b> (<code>preload: true</code>): server lists start loading when the pointer reaches the button or it gets focus, so opening does not wait.</li>
     <li>One document click listener, delegated row events, the panel DOM is released on close.</li>
   </ul>
-</section>
+</article>
 
-<section id="selecting" data-title="Selecting">
-  <h2>Selecting</h2>
-  <h3 id="multi">Single and multiple <span class="tag">multiple</span></h3>
+<article class="page" id="selecting" data-group="Core concepts" data-title="Selecting" data-lead="Single and multiple choice, the All / Selected tabs, Apply / Cancel, recent picks and favourites, validation, cascades and creating new values.">
+<h3 id="multi">Single and multiple <span class="tag">multiple</span></h3>
   <p>Single select shows radio rows; multiple shows checkboxes, <code>min</code> / <code>max</code>, chips (<code>display: 'chips'</code>, <code>maxChips</code>) and the tabs below.</p>
   <h3 id="tabs">All / Selected tabs <span class="tag">viewTabs · selectAll</span></h3>
   <table>
@@ -135,21 +184,19 @@ bselect.many('.js-staff', { options: 'staff' });   // build a whole loop in one 
     <li><code>dependsOn</code> (+ <code>dependsParam</code>): the child is disabled until the parent has a value, reloads when it changes and clears its own value.</li>
     <li><code>creatable: true</code>: typing a new text offers "Create ...".</li>
   </ul>
-</section>
+</article>
 
-<section id="search" data-title="Search and sort">
-  <h2>Search and sort</h2>
-  <ul>
+<article class="page" id="search" data-group="Core concepts" data-title="Search and sort" data-lead="Multi-word search with highlighting, browser or server search, natural-order sort and full keyboard control.">
+<ul>
     <li>Multi-word search ("john card" needs both words), the matched words are highlighted (<code>highlight</code>). Sub text is searched together with the label.</li>
     <li><code>searchMode</code> / <code>serverSearch</code>: <b>Auto</b> asks the server only while rows are missing; <b>Browser</b> filters loaded rows; <b>Server</b> always sends <code>search</code>. <code>searchMinChars</code> waits for N letters.</li>
     <li>The sort button sorts in <b>natural order</b> (Item 2 before Item 10, case and accents ignored). <code>sortBy</code> picks the field, <code>serverSort</code> sends the direction to your API.</li>
     <li>Keyboard: arrows, Home / End, PageUp / PageDown, type-ahead, Enter, Esc, Tab.</li>
   </ul>
-</section>
+</article>
 
-<section id="rows" data-title="Rows, pictures, groups">
-  <h2>Rows, pictures and groups</h2>
-  <p class="note"><b>Pictures and sub text come from your data.</b> Put the values in the array / API rows and point the option at the field. The per-option editors in the settings gear are only for trying things out.</p>
+<article class="page" id="rows" data-group="Customization" data-title="Rows, pictures and groups" data-lead="Pictures, sub text, group headers, custom rows and the count line. Values come from your data; the settings gear is for trying things out.">
+<p class="note"><b>Pictures and sub text come from your data.</b> Put the values in the array / API rows and point the option at the field. The per-option editors in the settings gear are only for trying things out.</p>
   <h3 id="subtext">Sub text</h3>
   <table>
     <tr><th>Option</th><th>Meaning</th></tr>
@@ -171,11 +218,10 @@ bselect.many('.js-staff', { options: 'staff' });   // build a whole loop in one 
   <p><code>groupField: 'dept'</code> shows a header per group (keep your data ordered by group). <code>renderItem(item)</code> returns your own row text or element. <code>checkStyle</code> is the row indicator: <code>'box'</code> (default), <code>'tick'</code> or <code>'none'</code>.</p>
   <h3 id="count">Count line</h3>
   <p><code>info: true</code> shows "1–20 of 100" (server lists with more pages: "1–20 of 100+"). <code>infoPlace</code>: <code>'top'</code> (under the search, default) or <code>'bottom'</code> (under the list, which then closes the panel with its rounded corners). <code>infoAlign</code>: <code>'right'</code> (default), <code>'left'</code>, <code>'center'</code>.</p>
-</section>
+</article>
 
-<section id="look" data-title="Look and design">
-  <h2>Look and design</h2>
-  <table>
+<article class="page" id="look" data-group="Customization" data-title="Look and design" data-lead="Light, dark and auto modes, palettes, shapes, sizes, separate designs for the button and the dropdown, and a soft fade at the edges of the list.">
+<table>
     <tr><th>Option</th><th>Values</th></tr>
     <tr><td><code>mode</code></td><td><code>light</code> (default), <code>dark</code>, <code>auto</code> (follows the OS live).</td></tr>
     <tr><td><code>palette</code> / <code>background</code></td><td>Palettes slate, midnight, graphite, black, ocean (dark), paper, mint, rose (light) or any colour; text colour adapts.</td></tr>
@@ -193,24 +239,23 @@ bselect.many('.js-staff', { options: 'staff' });   // build a whole loop in one 
   <p>The search box, sort button and settings gear always share one shape and height: they follow the dropdown's shape / radius and size, also when changed live in the gear.</p>
   <h3 id="vars">CSS variables</h3>
 <pre><code>.my-form .bselect { --bselect-color: #0f766e; --bselect-radius: 12px; }</code></pre>
-</section>
+</article>
 
-<section id="layers" data-title="Defaults and layers">
-  <h2>Configure once, override anywhere</h2>
-  <p>Order (a later layer wins): <b>built-in default → global → per dropdown → own options</b>.</p>
+<article class="page" id="layers" data-group="Customization" data-title="Defaults and layers" data-lead="Set a default once, override it per dropdown, and let one dropdown have the last word.">
+<p>Order (a later layer wins): <b>built-in default → global → per dropdown → own options</b>.</p>
 <pre><code>bselect.defaults({ color: '#0f766e', size: 'sm' });                          // global
 bselect.defaults('#ward', { field: { shape: 'pill' }, panel: { mode: 'dark' } }); // one dropdown, set from any js file
 bselect('#ward', { size: 'md' });                                             // own wins</code></pre>
   <p>Themes and presets: <code>bselect.theme('hospital', {...})</code>, <code>bselect.preset('wards', { url: '...', theme: 'hospital' })</code>, then <code>bselect('#x', { preset: 'wards' })</code>.</p>
   <p class="note">The settings gear has an <b>Export</b> tab that writes your changes in exactly this format (global, per dropdown, JSON or <code>data-*</code>). Try things in the gear, copy, paste into your code.</p>
-</section>
+</article>
 
-<section id="gear" data-title="Settings gear">
-  <h2>The settings gear</h2>
-  <p class="lead">The gear inside the dropdown is a <b>test bench and code generator</b>: change any option, watch the dropdown react, then copy the result from the Export tab. It is on by default; with it off (<code>settingsButton: false</code>) <b>nothing of it is rendered at all</b>. With it on, the popup is built when the gear is clicked and the heavy per-option editors only when their tab is first opened. Use <b>Find</b> to search all settings; <b>Guide</b> opens this page.</p>
+<article class="page" id="gear" data-group="Settings gear" data-title="Overview" data-lead="The gear inside the dropdown is a test bench and a code generator: change any option, watch the dropdown react, then copy the result as code.">
+<p>Open the pages on the left to see every control of every tab, its option name and what it does. The <b>Guide</b> button in the gear opens this page at the tab you are looking at.</p>
+</article>
 
-  <h3 id="tab-behavior">Behavior tab</h3>
-  <table>
+<article class="page" id="tab-behavior" data-group="Settings gear" data-title="Behavior" data-lead="Settings gear: Behavior tab.">
+<table>
     <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
     <tr><td>Selection</td><td><code>multiple</code></td><td>Single or Multiple choice.</td></tr>
     <tr><td>Loading</td><td><code>load</code></td><td>All, Scroll (default) or Click (button).</td></tr>
@@ -226,17 +271,19 @@ bselect('#ward', { size: 'md' });                                             //
     <tr><td>Select all</td><td><code>selectAll</code></td><td>Multiple only: Select all / Clear all action.</td></tr>
     <tr><td>Closing</td><td><code>commitClose</code></td><td>Multiple only: closing discards (default) or applies pending edits.</td></tr>
   </table>
+</article>
 
-  <h3 id="tab-look">Look tab</h3>
-  <table>
+<article class="page" id="tab-look" data-group="Settings gear" data-title="Look" data-lead="Settings gear: Look tab.">
+<table>
     <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
     <tr><td>Mode</td><td><code>mode</code></td><td>Light, Dark or Auto for the button and the dropdown.</td></tr>
     <tr><td>Background</td><td><code>palette</code> / <code>background</code></td><td>Palette swatches or any colour; text adapts. Picking one clears the other.</td></tr>
     <tr><td>Accent</td><td><code>color</code></td><td>Accent colour swatches / custom colour.</td></tr>
   </table>
+</article>
 
-  <h3 id="tab-button">Button tab (the closed field)</h3>
-  <table>
+<article class="page" id="tab-button" data-group="Settings gear" data-title="Button" data-lead="Settings gear: Button tab (the closed field).">
+<table>
     <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
     <tr><td>Size</td><td><code>size</code></td><td>S / M / L, or Custom height + font.</td></tr>
     <tr><td>Shape</td><td><code>shape</code></td><td>Square, Round, Pill, or Custom radius.</td></tr>
@@ -246,9 +293,10 @@ bselect('#ward', { size: 'md' });                                             //
     <tr><td>Clear × / Arrow</td><td><code>clearable</code> / <code>chevron</code></td><td>The × and the chevron in the field.</td></tr>
     <tr><td>Values</td><td><code>display</code></td><td>Multiple only: Text, Chips, Count (Custom: max chips).</td></tr>
   </table>
+</article>
 
-  <h3 id="tab-dropdown">Dropdown tab (the open panel)</h3>
-  <table>
+<article class="page" id="tab-dropdown" data-group="Settings gear" data-title="Dropdown" data-lead="Settings gear: Dropdown tab (the open panel).">
+<table>
     <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
     <tr><td>Mode / Palette</td><td><code>panelMode</code> <code>panelPalette</code></td><td>Same as the button, Light, Dark or Auto - only for the dropdown.</td></tr>
     <tr><td>Shape</td><td><code>panelShape</code></td><td>Corner style of the dropdown (the header controls and the popup follow it).</td></tr>
@@ -263,9 +311,10 @@ bselect('#ward', { size: 'md' });                                             //
     <tr><td>Scroll fade</td><td><code>scrollFade</code></td><td>Edge fade of the list.</td></tr>
     <tr><td>Sub text group</td><td><code>subText</code> <code>subTextPlace</code> <code>subTextField</code></td><td>On / off, Below / Beside, the field name (suggests your data fields) and a text box per option for testing.</td></tr>
   </table>
+</article>
 
-  <h3 id="tab-list">List tab</h3>
-  <table>
+<article class="page" id="tab-list" data-group="Settings gear" data-title="List" data-lead="Settings gear: List tab.">
+<table>
     <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
     <tr><td>Count</td><td><code>infoPlace</code></td><td>Top or Bottom.</td></tr>
     <tr><td>Align</td><td><code>infoAlign</code></td><td>Left, Centre, Right.</td></tr>
@@ -275,44 +324,45 @@ bselect('#ward', { size: 'md' });                                             //
     <tr><td>Group by</td><td><code>groupField</code></td><td>Item field for group headers.</td></tr>
     <tr><td>Favourites / Recent</td><td><code>favorites</code> / <code>recent</code></td><td>Star on each row; remember the last N picks.</td></tr>
   </table>
+</article>
 
-  <h3 id="tab-data">Data tab</h3>
-  <table>
+<article class="page" id="tab-data" data-group="Settings gear" data-title="Data" data-lead="Settings gear: Data tab.">
+<table>
     <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
     <tr><td>Preload</td><td><code>preload</code></td><td>Start loading when the pointer reaches the button.</td></tr>
     <tr><td>Cache</td><td><code>cache</code></td><td>Milliseconds a server answer is reused.</td></tr>
     <tr><td>Virtual / Virtual from</td><td><code>virtual</code> / <code>virtualFrom</code></td><td>Auto, On, Off, and the row count where virtual scrolling starts.</td></tr>
   </table>
+</article>
 
-  <h3 id="tab-images">Images tab</h3>
-  <table>
+<article class="page" id="tab-images" data-group="Settings gear" data-title="Images" data-lead="Settings gear: Images tab.">
+<table>
     <tr><th>Control</th><th>Option</th><th>What it does</th></tr>
     <tr><td>Show images</td><td><code>images</code></td><td>Pictures on or off (switching back restores the starting value).</td></tr>
     <tr><td>Field</td><td><code>imageField</code></td><td>Item field with the picture.</td></tr>
     <tr><td>Default / Colour / Shape / Size</td><td><code>avatar</code> <code>avatarColor</code> <code>imageShape</code> <code>imageSize</code></td><td>Picture for options without one, its colour, shape and size.</td></tr>
     <tr><td>Per option</td><td><code>imageMap</code></td><td>Test editor: URL, emoji, icon class or upload for each option (real values belong in your data).</td></tr>
   </table>
+</article>
 
-  <h3 id="tab-advanced">Advanced and Export tabs</h3>
-  <ul>
+<article class="page" id="tab-advanced" data-group="Settings gear" data-title="Advanced and Export" data-lead="Settings gear: Advanced and Export tabs.">
+<ul>
     <li><b>Advanced</b>: font family and raw CSS variables.</li>
     <li><b>Export</b>: copy the settings as <b>global</b> defaults, <b>per dropdown</b> defaults, <b>JSON</b> or <b>HTML data-attributes</b>; "Changes" lists only what you changed, "All" everything.</li>
   </ul>
   <p class="note">Every control is tested one by one (change it, check the config changed, put it back, check it is the same as before): see <code>SETTINGS_TABS.md</code> and <code>test/qa-controls.mjs</code>.</p>
-</section>
+</article>
 
-<section id="api" data-title="API and events">
-  <h2>API and events</h2>
-  <table>
+<article class="page" id="api" data-group="Reference" data-title="API and events" data-lead="Methods, static helpers, events and the optional jQuery plugin.">
+<table>
     <tr><th>Instance methods</th><td><code>getValue getSelected getText setValue setOptions addOption removeOption reload setParams clear reset validate isValid open close disable enable setAppearance setTheme explain getConfig destroy</code></td></tr>
     <tr><th>Static</th><td><code>bselect.defaults · preset · theme · data · many · scan · apply · setMode · all · clearCache · invalidate · version</code></td></tr>
     <tr><th>Events</th><td><code>change open close load error create limit validate apply cancel</code> – <code>inst.on('change', fn)</code> or <code>onChange</code>; DOM events <code>bselect:change</code>, <code>bselect:open</code>, <code>bselect:close</code>.</td></tr>
     <tr><th>jQuery (optional)</th><td><code>$('#ward').bselect({...})</code>, <code>$('#ward').bselect('getValue')</code></td></tr>
   </table>
-</section>
+</article>
 
-<section id="angular" data-title="AngularJS 1.x">
-  <h2>AngularJS 1.x wrapper</h2>
+<article class="page" id="angular" data-group="Reference" data-title="AngularJS 1.x" data-lead="The AngularJS 1.x wrapper has no logic of its own: it connects ng-model, the scope and the digest to the plain-JS core.">
 <pre><code>&lt;bselect ng-model="f.user" preset="users"&gt;&lt;/bselect&gt;
 &lt;bselect ng-model="f.users" url="php/user.php?action=dropdown" load="scroll" multiple display="chips"
          placeholder="Pick users" params="{active:1}" on-change="changed($value, $items)"&gt;&lt;/bselect&gt;
@@ -324,99 +374,169 @@ bselect('#ward', { size: 'md' });                                             //
     <li>Cheap watchers for <code>ng-repeat</code> forms (90 dropdowns settle in about 70 ms).</li>
     <li>The old API still works: <code>bselect.bind</code>, <code>server / local</code>, <code>refresh</code>, <code>toParam</code>, grouped <code>config="..."</code>.</li>
   </ul>
-</section>
+</article>
 
-<section id="a11y" data-title="Accessibility, files and tests">
-  <h2>Accessibility, files and tests</h2>
-  <ul>
+<article class="page" id="a11y" data-group="Reference" data-title="Accessibility, files and tests" data-lead="Keyboard, screen readers, files, the build and the tests.">
+<ul>
     <li>ARIA roles (listbox, option, tab), <code>aria-selected</code>, <code>aria-setsize</code> / <code>aria-posinset</code>, screen-reader announcements, focus returns to the button.</li>
     <li>Files: <code>dist/</code> (generated bundle + css), <code>src/</code>, <code>skin.css</code>, <code>ng/bselect.ng.js</code>. Build with <code>npm run build</code>, test with <code>npm test</code> (headless-browser checks).</li>
     <li>More docs in the repository: README, FEATURES, LIST_FEATURES, SETTINGS_TABS, CONFIG_LAYERS, APPEARANCE_AND_LOADING, PERFORMANCE, ANGULAR, SETUP_AND_GITHUB, PHASES.</li>
   </ul>
-</section>
-
-<p class="hide" id="none">Nothing in the guide matches that search.</p>
+</article>
 </main>
+<aside class="toc" id="toc"></aside>
 </div>
-
+<div id="pal" role="dialog" aria-label="Search the guide"><div class="palbox">
+  <div class="palin"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg><input id="palq" type="search" placeholder="Search the guide (option, feature, word)..." autocomplete="off" aria-label="Search the guide"><kbd>Esc</kbd></div>
+  <div class="pallist" id="pallist"></div>
+  <div class="palfoot"><span><kbd>↑</kbd> <kbd>↓</kbd> to navigate</span><span><kbd>Enter</kbd> to open</span></div>
+</div></div>
 <script>
 (function () {
-  var secs = [].slice.call(document.querySelectorAll('main section'));
-  var nav = document.getElementById('nav');
-  var q = document.getElementById('q');
+  var pages = [].slice.call(document.querySelectorAll('article.page'));
+  var byId = {}; pages.forEach(function (p) { byId[p.id] = p; });
+  var side = document.getElementById('side');
+  var toc = document.getElementById('toc');
+  var current = null;
 
-  // navigation built from the sections and their h3 titles
-  var html = '';
-  secs.forEach(function (s) {
-    html += '<a href="#' + s.id + '" data-id="' + s.id + '"><b>' + s.getAttribute('data-title') + '</b></a>';
-    [].forEach.call(s.querySelectorAll('h3[id]'), function (h) {
-      html += '<a class="sub" href="#' + h.id + '">' + (h.firstChild ? h.firstChild.textContent : h.textContent).trim() + '</a>';
-    });
-  });
-  nav.innerHTML = html;
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
 
-  // theme: follows the system, the button flips and remembers
-  var root = document.documentElement;
-  try { var saved = localStorage.getItem('bselect-guide-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
-  document.getElementById('theme').addEventListener('click', function () {
-    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-    var next = dark ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('bselect-guide-theme', next); } catch (e) {}
-  });
-
-  // search: hides the blocks (h3 + what follows) that do not contain the words, highlights the hits
-  function blocks(sec) {
-    var out = []; var cur = null;
-    [].forEach.call(sec.children, function (n) {
-      if (n.tagName === 'H2') { return; }
-      if (n.tagName === 'H3') { cur = { nodes: [n] }; out.push(cur); } else { if (!cur) { cur = { nodes: [] }; out.push(cur); } cur.nodes.push(n); }
-    });
-    return out;
+  /* ---- code blocks: dark card, language label, copy button, light syntax colours */
+  function highlight(text) {
+    var re = /(<!--[\s\S]*?-->|\/\/[^\n]*|\/\*[\s\S]*?\*\/)|('(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*")|(<\/?[a-zA-Z][\w-]*)|(\b(?:var|let|const|function|return|new|if|else|true|false|null|this)\b)|(\b\d+(?:\.\d+)?\b)|(\s[a-z][\w-]*(?==))/g;
+    return esc(text).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(re, function (m, c, s, t, k, n, a) {
+      var cls = c ? 't-c' : s ? 't-s' : t ? 't-t' : k ? 't-k' : n ? 't-n' : 't-a';
+      return '<span class="' + cls + '">' + esc(m) + '</span>';
+    }).replace(/(^|[^>])<(?!span|\/span)/g, function (m, p) { return p + '&lt;'; });
   }
-  function clearMarks(root) { [].forEach.call(root.querySelectorAll('mark'), function (m) { m.replaceWith(document.createTextNode(m.textContent)); }); root.normalize(); }
-  function mark(node, words) {
-    if (node.nodeType === 3) {
-      var re = new RegExp('(' + words.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'gi');
-      if (!re.test(node.nodeValue)) { return; }
-      var span = document.createElement('span'); span.innerHTML = node.nodeValue.replace(/[&<]/g, function (c) { return c === '&' ? '&amp;' : '&lt;'; }).replace(re, '<mark>$1</mark>');
-      node.replaceWith.apply(node, span.childNodes.length ? [].slice.call(span.childNodes) : [node]);
-    } else if (node.nodeType === 1 && !/^(SCRIPT|STYLE|MARK|SELECT)$/.test(node.tagName)) { [].slice.call(node.childNodes).forEach(function (c) { mark(c, words); }); }
-  }
-  q.addEventListener('input', function () {
-    var words = q.value.toLowerCase().split(/\s+/).filter(Boolean);
-    var any = false;
-    clearMarks(document.getElementById('main'));
-    secs.forEach(function (sec) {
-      var shown = false;
-      blocks(sec).forEach(function (b) {
-        var text = b.nodes.map(function (n) { return n.textContent; }).join(' ').toLowerCase();
-        var hit = !words.length || words.every(function (w) { return text.indexOf(w) >= 0; });
-        b.nodes.forEach(function (n) { n.classList.toggle('hide', !hit); if (hit && words.length) { mark(n, words); } });
-        shown = shown || hit;
-      });
-      var h2 = sec.querySelector('h2'); if (h2) { h2.classList.toggle('hide', !shown); }
-      sec.classList.toggle('hide', !shown);
-      any = any || shown;
+  [].forEach.call(document.querySelectorAll('article.page pre'), function (pre) {
+    var text = pre.textContent.replace(/\n$/, '');
+    var lang = /^\s*</.test(text) ? 'HTML' : /\bangular\b|ng-model/.test(text) && /^\s*</.test(text) ? 'HTML' : /^[.#][\w-]+[\s\S]*\{/.test(text) ? 'CSS' : 'JavaScript';
+    var box = document.createElement('div'); box.className = 'code';
+    var head = document.createElement('header'); head.innerHTML = '<span>' + lang + '</span><button type="button">Copy</button>';
+    var code = document.createElement('pre'); code.innerHTML = lang === 'CSS' ? esc(text) : highlight(text);
+    head.querySelector('button').addEventListener('click', function (e) {
+      var b = e.currentTarget;
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { b.textContent = 'Copied'; }, function () { b.textContent = 'Press Ctrl+C'; });
+      setTimeout(function () { b.textContent = 'Copy'; }, 1500);
     });
-    document.getElementById('none').classList.toggle('hide', any);
+    box.appendChild(head); box.appendChild(code); pre.replaceWith(box);
   });
 
-  // active link while scrolling
-  var links = [].slice.call(nav.querySelectorAll('a[data-id]'));
+  var ver = document.querySelector('.ver'); if (ver && /__BSELECT/.test(ver.textContent)) { ver.style.display = 'none'; }
+
+  /* ---- page headers, sidebar, pager */
+  var groups = []; pages.forEach(function (p) { if (groups.indexOf(p.getAttribute('data-group')) < 0) { groups.push(p.getAttribute('data-group')); } });
+  var nav = '';
+  groups.forEach(function (g) { nav += '<h5>' + g + '</h5>'; pages.forEach(function (p) { if (p.getAttribute('data-group') === g) { nav += '<a href="#' + p.id + '" data-page="' + p.id + '">' + p.getAttribute('data-title') + '</a>'; } }); });
+  side.innerHTML = nav;
+
+  pages.forEach(function (p, i) {
+    var body = document.createElement('div'); body.className = 'body';
+    while (p.firstChild) { body.appendChild(p.firstChild); }
+    var head = '<p class="eyebrow">' + p.getAttribute('data-group') + '</p><h1>' + p.getAttribute('data-title') + '</h1><p class="lead">' + p.getAttribute('data-lead') + '</p>';
+    p.innerHTML = head; p.appendChild(body);
+    var pager = '<div class="pager">';
+    pager += i ? '<a class="prev" href="#' + pages[i - 1].id + '"><small>Previous</small><b>' + pages[i - 1].getAttribute('data-title') + '</b></a>' : '<span style="flex:1"></span>';
+    pager += i < pages.length - 1 ? '<a class="next" href="#' + pages[i + 1].id + '"><small>Next</small><b>' + pages[i + 1].getAttribute('data-title') + '</b></a>' : '<span style="flex:1"></span>';
+    p.insertAdjacentHTML('beforeend', pager + '</div><p class="foot">BSelect guide · <a href="https://github.com/sdbishnu/js-dropdown">github.com/sdbishnu/js-dropdown</a></p>');
+  });
+
+  /* ---- routing: #page or #heading-inside-a-page */
+  function show(hash, scroll) {
+    var id = decodeURIComponent((hash || '').replace('#', '')) || 'start';
+    var target = document.getElementById(id);
+    var page = byId[id] || (target && target.closest && target.closest('article.page')) || byId.start;
+    pages.forEach(function (p) { p.classList.toggle('show', p === page); });
+    [].forEach.call(side.querySelectorAll('a'), function (a) { a.classList.toggle('on', a.getAttribute('data-page') === page.id); });
+    if (current !== page) {
+      current = page;
+      var hs = [].slice.call(page.querySelectorAll('.body h3[id]'));
+      toc.innerHTML = hs.length ? '<h6>On this page</h6>' + hs.map(function (h) { return '<a href="#' + h.id + '" data-h="' + h.id + '">' + (h.firstChild ? h.firstChild.textContent : h.textContent).trim() + '</a>'; }).join('') : '';
+      document.title = page.getAttribute('data-title') + ' - BSelect Guide';
+      if (scroll !== false) { window.scrollTo(0, 0); }
+    }
+    if (target && target !== page && scroll !== false) { target.scrollIntoView(); }
+    document.getElementById('side').classList.remove('open');
+  }
+  addEventListener('hashchange', function () { show(location.hash); });
+
+  /* ---- scroll spy for "On this page" */
   addEventListener('scroll', function () {
-    var cur = secs[0];
-    secs.forEach(function (s) { if (!s.classList.contains('hide') && s.getBoundingClientRect().top < 120) { cur = s; } });
-    links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-id') === cur.id); });
+    var hs = [].slice.call(document.querySelectorAll('article.page.show .body h3[id]'));
+    var cur = null; hs.forEach(function (h) { if (h.getBoundingClientRect().top < 140) { cur = h.id; } });
+    [].forEach.call(toc.querySelectorAll('a'), function (a) { a.classList.toggle('on', a.getAttribute('data-h') === cur); });
   }, { passive: true });
 
-  // live demo: the bundle is next to this page (dist/) or one folder down (repository root)
+  /* ---- theme + mobile menu */
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem('bselect-guide-theme'); if (saved) { root.setAttribute('data-theme', saved); } } catch (e) {}
+  document.getElementById('theme').addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark'; root.setAttribute('data-theme', next);
+    try { localStorage.setItem('bselect-guide-theme', next); } catch (e) {}
+  });
+  document.getElementById('menu').addEventListener('click', function () { side.classList.toggle('open'); });
+
+  /* ---- search palette (Ctrl+K, /, or click): every heading and paragraph of every page */
+  function plain(n) { var c = n.cloneNode(true); [].forEach.call(c.querySelectorAll ? c.querySelectorAll('td,th,li,p,tr,h4,code,b') : [], function (e) { e.insertAdjacentText('afterend', ' '); }); return c.textContent.replace(/\s+/g, ' '); }
+  var index = [];
+  pages.forEach(function (p) {
+    var group = p.getAttribute('data-group'); var title = p.getAttribute('data-title');
+    index.push({ page: p, id: p.id, crumb: group, title: title, text: p.getAttribute('data-lead') });
+    var hs = [].slice.call(p.querySelectorAll('.body h3[id]'));
+    var first = p.querySelector('.body'); var lead = '';
+    [].forEach.call(first.children, function (n) { if (!/^H3$/.test(n.tagName) && !hs.length) { lead += ' ' + plain(n); } });
+    if (!hs.length) { index.push({ page: p, id: p.id, crumb: group + ' › ' + title, title: title, text: lead }); }
+    var cur = null;
+    [].forEach.call(first.children, function (n) {
+      if (n.tagName === 'H3') { cur = { page: p, id: n.id, crumb: group + ' › ' + title, title: (n.firstChild ? n.firstChild.textContent : n.textContent).trim(), text: '' }; index.push(cur); }
+      else if (cur) { cur.text += ' ' + plain(n); }
+    });
+  });
+  var pal = document.getElementById('pal'), palq = document.getElementById('palq'), list = document.getElementById('pallist');
+  var hits = [], sel = 0;
+  function mark(text, words) { var out = esc(text); words.forEach(function (w) { out = out.replace(new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'), '<mark>$1</mark>'); }); return out; }
+  function snippet(text, words) {
+    var low = text.toLowerCase(); var at = -1; words.forEach(function (w) { var i = low.indexOf(w); if (i >= 0 && (at < 0 || i < at)) { at = i; } });
+    var from = Math.max(0, at - 40); var s = text.replace(/\s+/g, ' ').trim();
+    at = s.toLowerCase().indexOf(words[0] || ''); from = Math.max(0, at - 40);
+    return (from ? '…' : '') + s.slice(from, from + 130) + (s.length > from + 130 ? '…' : '');
+  }
+  function render() {
+    var words = palq.value.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) { hits = index.filter(function (e) { return e.id === e.page.id; }).slice(0, 12); }
+    else {
+      hits = index.map(function (e) { var hay = (e.title + ' ' + e.text).toLowerCase(); var ok = words.every(function (w) { return hay.indexOf(w) >= 0; }); var score = !ok ? 0 : 1 + (words.every(function (w) { return e.title.toLowerCase().indexOf(w) >= 0; }) ? 5 : 0); return { e: e, score: score }; })
+        .filter(function (x) { return x.score; }).sort(function (a, b) { return b.score - a.score; }).slice(0, 25).map(function (x) { return x.e; });
+    }
+    sel = 0;
+    list.innerHTML = hits.length ? hits.map(function (e, i) { return '<a class="palhit' + (i ? '' : ' on') + '" href="#' + e.id + '" data-i="' + i + '"><small>' + esc(e.crumb) + '</small><b>' + mark(e.title, words) + '</b>' + (words.length && e.text ? '<span>' + mark(snippet(e.text, words), words) + '</span>' : '') + '</a>'; }).join('') : '<div class="palempty">No results for “' + esc(palq.value) + '”.</div>';
+  }
+  function openPal() { pal.classList.add('open'); palq.value = ''; render(); palq.focus(); }
+  function closePal() { pal.classList.remove('open'); }
+  function go(i) { var e = hits[i]; if (!e) { return; } closePal(); if (location.hash === '#' + e.id) { show('#' + e.id); } else { location.hash = e.id; } }
+  function mv(d) { var items = list.querySelectorAll('.palhit'); if (!items.length) { return; } items[sel].classList.remove('on'); sel = (sel + d + items.length) % items.length; items[sel].classList.add('on'); items[sel].scrollIntoView({ block: 'nearest' }); }
+  document.getElementById('searchBtn').addEventListener('click', openPal);
+  palq.addEventListener('input', render);
+  palq.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); mv(1); } else if (e.key === 'ArrowUp') { e.preventDefault(); mv(-1); } else if (e.key === 'Enter') { e.preventDefault(); go(sel); } });
+  list.addEventListener('click', function (e) { var a = e.target.closest('.palhit'); if (a) { e.preventDefault(); go(parseInt(a.getAttribute('data-i'), 10)); } });
+  pal.addEventListener('mousedown', function (e) { if (e.target === pal) { closePal(); } });
+  addEventListener('keydown', function (e) {
+    if ((e.key === 'k' || e.key === 'K') && (e.ctrlKey || e.metaKey)) { e.preventDefault(); openPal(); }
+    else if (e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { e.preventDefault(); openPal(); }
+    else if (e.key === 'Escape') { closePal(); }
+  });
+
+  show(location.hash, !!location.hash && location.hash.length > 1);
+
+  /* ---- live demo: the bundle is next to this page (dist/) or one folder down (repository root) */
   function demo() {
     var opts = []; for (var i = 1; i <= 60; i++) { opts.push({ id: i, name: 'Staff member ' + i, code: 'EMP-' + i }); }
     window.bselect('#demo', { options: opts, subTextField: 'code', info: true, multiple: true });
   }
   function load(src, fail) { var s = document.createElement('script'); s.src = src; s.onload = demo; s.onerror = fail; document.head.appendChild(s); }
-  load('bselect.bundle.js', function () { load('dist/bselect.bundle.js', function () { document.getElementById('tryit').classList.add('hide'); }); });
+  load('bselect.bundle.js', function () { load('dist/bselect.bundle.js', function () { var t = document.getElementById('tryit'); if (t) { t.style.display = 'none'; } }); });
 })();
 </script>
 </body>

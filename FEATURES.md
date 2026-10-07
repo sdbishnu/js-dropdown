@@ -66,6 +66,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 - Button: size, shape, style, **border size** (Auto / None / 1–3 px / Custom), values display, colours
 - Dropdown: mode, palette, shape, rows, layout, shadow, sizes, custom colours, Arrow, Preview, **Settings button on/off**, **Sub text** (field, per-option text, place)
 - Images: show images, default picture, colour, shape, size, per-option picture editor
+- **The guide** is laid out like a docs site (sidebar pages, "On this page", dark code blocks with Copy, Ctrl+K search palette, light / dark, prev / next, live demo)
 - **Guide button** next to Find: opens `guide.html` (built to `dist/guide.html`, next to the bundle; `guideUrl` / `guideButton` options) in a new tab at the section of the open gear tab
 - Export tab: copy the changed settings as global / per-dropdown / JSON / HTML data-attributes
 - User changes can be remembered (`persist`); `settingsButton: false` removes the gear

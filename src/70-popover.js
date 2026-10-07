@@ -100,7 +100,7 @@ Object.assign(BSelect.prototype, {
     },
 
     /** the preview body for one of the styles: card | chips | list | tooltip | details */
-    _pvBody: function (style, items, max, sample) {
+    _pvBody: function (style, items, max, sample, onMore, expanded) {
         var self = this;
         var shown = items.slice(0, max);
         var more = items.length - shown.length;
@@ -108,8 +108,32 @@ Object.assign(BSelect.prototype, {
         var head;
         var wrap;
 
-        function moreRow() {
-            return more > 0 ? el('div', 'bselect-pv-more', '+ ' + more + ' more') : document.createTextNode('');
+        /** "+ N more" is a button: it opens the whole list (scrollable); when everything is open it becomes "Show less" */
+        function moreRow(inline) {
+            var b;
+
+            if (more > 0) {
+                b = el('button', inline ? 'bselect-pv-more bselect-pv-more-inline' : 'bselect-pv-more', inline ? '+' + more : '+ ' + more + ' more');
+                b.type = 'button';
+                b.title = 'Show all ' + items.length;
+                b.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    onMore(true);
+                });
+                return b;
+            }
+
+            if (expanded && items.length > 1) {
+                b = el('button', 'bselect-pv-more bselect-pv-less', 'Show less');
+                b.type = 'button';
+                b.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    onMore(false);
+                });
+                return b;
+            }
+
+            return document.createTextNode('');
         }
 
         if (style === 'tooltip') {
@@ -128,9 +152,11 @@ Object.assign(BSelect.prototype, {
                             .map(function (i) {
                                 return self._lbl(i);
                             })
-                            .join('  ·  ') + (more > 0 ? '  ·  +' + more : '')
+                            .join('  ·  ') + (more > 0 ? '  ·  ' : '')
                     )
                 );
+                body.appendChild(moreRow(true));
+                body.appendChild(expanded ? el('span', 'bselect-pv-end') : document.createTextNode(''));
             }
 
             return body;
@@ -156,10 +182,16 @@ Object.assign(BSelect.prototype, {
             });
 
             if (more > 0) {
-                wrap.appendChild(el('span', 'bselect-pv-chip bselect-pv-chip-more', '+' + more));
+                wrap.appendChild(moreRow(true));
+                wrap.lastChild.className = 'bselect-pv-chip bselect-pv-chip-more';
             }
 
             body.appendChild(wrap);
+
+            if (expanded && items.length > 1) {
+                body.appendChild(moreRow());
+            }
+
             return body;
         }
 
@@ -232,7 +264,10 @@ Object.assign(BSelect.prototype, {
 
         pop = el('div', 'bselect-pv bselect-pv-' + style);
         pop.setAttribute('role', 'tooltip');
-        pop.appendChild(this._pvBody(style, items, max, forced));
+        this._pvState = { pop: pop, style: style, items: items, max: max, forced: forced };
+        pop.appendChild(this._pvBody(style, items, max, forced, function (all) {
+            self._pvToggle(all);
+        }, false));
 
         // the colours of the field it belongs to (light, dark, custom background, accent)
         cs = getComputedStyle(this.root);
@@ -245,16 +280,35 @@ Object.assign(BSelect.prototype, {
         });
         document.body.appendChild(pop);
         pop.addEventListener('mouseenter', function () {
+            pop._grace = false;
             clearTimeout(self._popTimer);
         });
         pop.addEventListener('mouseleave', function () {
-            self._popoverHide();
+            if (!pop._grace) {
+                self._popoverHide();
+            }
         });
 
-        rect = this.root.getBoundingClientRect();
-        box = pop.getBoundingClientRect();
-        left = Math.max(8, Math.min(rect.left, window.innerWidth - box.width - 8));
-        top = rect.bottom + 9;
+        this._pop = pop;
+        this._pvPlace(pop);
+
+        // a preview asked for from the settings is only a demonstration: it never blocks the pointer and goes away by itself
+        if (sample === true) {
+            pop.classList.add('bselect-pv-demo');
+            this._popTimer = setTimeout(function () {
+                self._popoverHide();
+            }, 3500);
+        }
+    },
+
+    /** below the field, or above it when there is no room (also used again after the list grew) */
+    _pvPlace: function (pop) {
+        var rect = this.root.getBoundingClientRect();
+        var box = pop.getBoundingClientRect();
+        var left = Math.max(8, Math.min(rect.left, window.innerWidth - box.width - 8));
+        var top = rect.bottom + 9;
+
+        pop.classList.remove('bselect-pv-up');
 
         if (this.isOpen || top + box.height > window.innerHeight - 8) {
             top = Math.max(8, rect.top - box.height - 9);
@@ -264,15 +318,34 @@ Object.assign(BSelect.prototype, {
         pop.style.left = left + 'px';
         pop.style.top = top + 'px';
         pop.style.setProperty('--bselect-pv-arrow', Math.max(14, Math.min(rect.left + 22 - left, box.width - 22)) + 'px');
-        this._pop = pop;
+    },
 
-        // a preview asked for from the settings is only a demonstration: it never blocks the pointer and goes away by itself
-        if (sample === true) {
-            pop.classList.add('bselect-pv-demo');
-            this._popTimer = setTimeout(function () {
-                self._popoverHide();
-            }, 2800);
+    /** "+ N more" (all = true) shows every value in a scrollable list, "Show less" goes back */
+    _pvToggle: function (all) {
+        var s = this._pvState;
+        var self = this;
+        var body;
+
+        if (!s || !s.pop || !s.pop.parentNode) {
+            return;
         }
+
+        clearTimeout(this._popTimer); // an opened list stays until the pointer leaves
+        s.pop.classList.remove('bselect-pv-demo'); // from now on it is a normal preview the pointer can rest on
+        body = this._pvBody(s.style, s.items, all ? s.items.length : s.max, s.forced, function (more) {
+            self._pvToggle(more);
+        }, all);
+        s.pop.replaceChild(body, s.pop.querySelector('.bselect-pv-body'));
+        s.pop.classList.toggle('bselect-pv-expanded', !!all);
+        this._pvPlace(s.pop);
+
+        // the box changed size under the pointer: do not close because of that; if the pointer never comes back it goes away by itself
+        s.pop._grace = true;
+        this._popTimer = setTimeout(function () {
+            if (!s.pop.matches(':hover')) {
+                self._popoverHide();
+            }
+        }, 4000);
     },
 
     _popoverHide: function () {

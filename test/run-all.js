@@ -30,6 +30,7 @@ const checks = [
     ['/test/count.html', 'test/qa-clear.mjs'],
     ['/test/fade.html', 'test/qa-fade.mjs'],
     ['/test/preview.html', 'test/qa-preview.mjs'],
+    ['/test/preview.html', 'test/qa-preview-more.mjs'],
     ['/test/count.html', 'test/qa-guide.mjs'],
     ['/dist/guide.html', 'test/qa-guide-page.mjs'],
     ['/test/shape.html', 'test/qa-header.mjs'],

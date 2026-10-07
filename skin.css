@@ -914,3 +914,15 @@
 .bselect-test-btn { padding: 4px 12px; border: 1px solid var(--bselect-color); border-radius: var(--bselect-ctl-radius, 7px); background: color-mix(in srgb, var(--bselect-color) 10%, var(--bselect-bg)); color: var(--bselect-color); cursor: pointer; font: inherit; font-size: 11px; font-weight: 600; }
 .bselect-test-btn:hover { background: color-mix(in srgb, var(--bselect-color) 20%, var(--bselect-bg)); }
 .bselect-pv-demo { pointer-events: none; }
+/* + N more opens the whole list, scrollable */
+button.bselect-pv-more { display: block; width: 100%; border: 0; border-radius: 8px; background: transparent; color: var(--bselect-color, #47a0ec); cursor: pointer; font: inherit; font-size: 11.5px; font-weight: 600; text-align: left; }
+button.bselect-pv-more:hover { background: color-mix(in srgb, var(--bselect-color, #47a0ec) 12%, transparent); }
+button.bselect-pv-more-inline { display: inline; width: auto; padding: 0 6px; border-radius: 99px; text-align: center; }
+.bselect-pv-chip.bselect-pv-chip-more { width: auto; border: 0; background: var(--bselect-surface-3, #eef1f6); color: var(--bselect-color, #47a0ec); font-size: 12px; cursor: pointer; }
+.bselect-pv-chip.bselect-pv-chip-more:hover { background: color-mix(in srgb, var(--bselect-color, #47a0ec) 18%, var(--bselect-bg, #fff)); }
+.bselect-pv-tooltip button.bselect-pv-more-inline { background: rgba(255, 255, 255, .16); color: inherit; font-size: 11px; }
+.bselect-pv-expanded .bselect-pv-body { max-height: min(320px, calc(100vh - 24px)); }
+.bselect-pv-tooltip.bselect-pv-expanded .bselect-pv-body { display: block; max-height: 200px; overflow-y: auto; }
+.bselect-pv-demo .bselect-pv-more { pointer-events: auto; }
+.bselect-pv-demo .bselect-pv-chip-more, .bselect-pv-demo .bselect-pv-less { pointer-events: auto; }
+.bselect-pv-body > .bselect-pv-head { position: sticky; top: -6px; z-index: 1; margin: -6px -6px 0; padding: 10px 14px 6px; background: var(--bselect-bg, #fff); }

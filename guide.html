@@ -241,7 +241,7 @@ bselect.many('.js-staff', { options: 'staff' });   // build a whole loop in one 
     <tr><td><code>'tooltip'</code></td><td>A small inverted tooltip: names separated by dots (a single value shows its sub text underneath).</td></tr>
     <tr><td><code>'details'</code></td><td>Two columns: the name on the left, the sub text and value on the right.</td></tr>
   </table>
-  <p><code>previewDelay</code> is the rest time in ms, <code>previewMax</code> the rows shown before "+ N more". The preview takes the colours of its field (light, dark, custom background, accent) and flips above the field when there is no room below. <code>popover: false</code> turns it off.</p>
+  <p><code>previewDelay</code> is the rest time in ms, <code>previewMax</code> the rows shown before "+ N more". <b>Click "+ N more"</b> (in every style) to open all the values in a scrollable list; the header with the count stays in view and "Show less" goes back. The preview takes the colours of its field (light, dark, custom background, accent) and flips above the field when there is no room below. <code>popover: false</code> turns it off.</p>
   <p class="note">In the settings gear: <b>Button tab → Hover preview</b> has the on/off switch, the five styles, Delay, Max rows and a <b>Show now</b> button. Changing the style shows it right away (the demo never blocks the pointer and hides itself).</p>
   <h3 id="separate">Separate design for the button and the dropdown</h3>
 <pre><code>bselect('#ward', {

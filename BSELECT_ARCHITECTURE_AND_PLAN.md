@@ -53,5 +53,5 @@ D:\APP\dropdown
 * Performance is a feature: shared caches, delegation, released panels, virtual scrolling.
 
 ## Status
-Done and covered by `npm test` (39 checks): core, features, appearance, separate button / dropdown design, settings UI, AngularJS wrapper with the old API, performance, accessibility, packaging.
+Done and covered by `npm test` (40 checks): core, features, appearance, separate button / dropdown design, settings UI, AngularJS wrapper with the old API, performance, accessibility, packaging.
 Open: see [PHASES.md](PHASES.md) (TrainingMaster migration, testing against real module endpoints, retiring the old Angular file).

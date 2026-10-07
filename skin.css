@@ -841,3 +841,8 @@
 .bselect-settings:not(.bselect-drawer) .bselect-rowc-wide .bselect-rowc-text { flex: 0 0 92px; }
 .bselect-settings:not(.bselect-drawer) .bselect-rowc-wide .bselect-text-input { flex: 1; min-width: 0; }
 .bselect-settings:not(.bselect-drawer) .bselect-pill .bselect-pill-text { white-space: nowrap; }
+/* count line at the bottom: it closes the panel, so IT carries the bottom radius and the list above is square */
+.bselect-list-wrap:has(+ .bselect-info-bottom) { border-radius: 0; }
+.bselect-list-wrap:has(+ .bselect-info-bottom) .bselect-lazy-hint, .bselect-list-wrap:has(+ .bselect-info-bottom) .bselect-load-more { border-radius: 0; }
+.bselect-infobar.bselect-info-bottom { padding: 5px 10px; background: var(--bselect-surface-2); }
+.bselect-infobar.bselect-info-bottom:not(:has(~ .bselect-footer)) { border-radius: 0 0 var(--bselect-panel-radius) var(--bselect-panel-radius); }

@@ -567,10 +567,6 @@ Object.assign(BSelect.prototype, {
             pillItems.push(['All / Selected', 'viewTabs', 'All and Selected tabs'], ['Select all', 'selectAll', 'Select all / Clear all button']);
         }
 
-        if (o.multiple) {
-            pillItems.push(['Range select', 'rangeSelect', 'Shift+click, Shift+arrows, Ctrl+A'], ['Paste list', 'pasteIds', 'Paste ids or names into the search']);
-        }
-
         pillItems.push(['Count', 'info', 'Result count line']);
         pills(group(behavior, 'Show'), pillItems);
 
@@ -578,7 +574,6 @@ Object.assign(BSelect.prototype, {
             var bm = group(behavior, 'Multiple');
 
             segmented(bm, 'Closing', 'Closing with pending Apply / Cancel edits', 'commitClose', [['cancel', 'Discard'], ['apply', 'Apply']], o.commitClose === 'apply' ? 'apply' : 'cancel');
-            segmented(bm, 'Paste', 'What a pasted entry is matched with', 'pasteMatch', [['both', 'Both'], ['value', 'Value'], ['label', 'Label']], o.pasteMatch || 'both');
         }
 
         // ================= Look
@@ -719,7 +714,7 @@ Object.assign(BSelect.prototype, {
         colourField(dcolours, 'selectedColor', 'Selected');
         colourField(dcolours, 'panelColor', 'Accent');
         d3.appendChild(dcolours);
-        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['A\u2013Z rail', 'alphaRail', 'Letter strip to jump through long lists']]);
+        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)']]);
 
         // sub text: the small line under (or beside) the label
         var sub1 = group(dropdown, 'Sub text');
@@ -779,26 +774,18 @@ Object.assign(BSelect.prototype, {
 
         // ================= List: tabs, count, rows, search, groups, memory
         var listTab = addTab('list', 'List');
-        var ls1 = group(listTab, 'Count and row marks');
+        var ls1 = group(listTab, 'Count');
 
         segmented(ls1, 'Count', 'Where the "1-20 of 100" line sits', 'infoPlace', [['top', 'Top'], ['bottom', 'Bottom']], o.infoPlace === 'bottom' ? 'bottom' : 'top');
         segmented(ls1, 'Align', 'Side of the count line', 'infoAlign', [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']], o.infoAlign || 'right');
-        segmented(ls1, 'Mark', 'Checkbox / radio style of the rows', 'checkStyle', [['box', 'Box'], ['switch', 'Switch'], ['tick', 'Tick'], ['none', 'None']], o.checkStyle || 'box');
 
-        var ls2 = group(listTab, 'Row details (item fields)');
+        var ls2 = group(listTab, 'Rows');
 
-        fieldText(ls2, 'statusField', 'Status', 'Field with a status colour (ok / warn / error ...)', 'e.g. status');
-        fieldText(ls2, 'badgeField', 'Badge', 'Field shown as a small pill', 'e.g. tag');
-        fieldText(ls2, 'badgeColorField', 'Badge colour', 'Field with the pill colour', 'e.g. tagColor');
-        fieldText(ls2, 'metaField', 'Meta', 'Field shown on the right of the row', 'e.g. price');
-        fieldText(ls2, 'disabledReasonField', 'Disabled why', 'Field with the reason a row is disabled', 'e.g. why');
         pills(ls2, [['Highlight', 'highlight', 'Mark the searched words in the rows']]);
 
         var ls3 = group(listTab, 'Search');
 
-        fieldText(ls3, 'searchFields', 'Fields', 'Item fields searched, comma separated (empty = label + sub text)', 'name, code');
         segmented(ls3, 'Where', 'Search in the browser or ask the server', 'serverSearch', [['', 'Auto', null], ['0', 'Browser', false], ['1', 'Server', true]], o.serverSearch === true ? '1' : o.serverSearch === false ? '0' : '');
-        pills(ls3, [['Ignore accents', 'accentInsensitive', 'jose finds Jos\u00e9']]);
 
         var lg = el('div', 'bselect-fgrid');
 
@@ -808,7 +795,6 @@ Object.assign(BSelect.prototype, {
         var ls4 = group(listTab, 'Groups');
 
         fieldText(ls4, 'groupField', 'Group by', 'Item field to group the rows under headers', 'e.g. dept');
-        pills(ls4, [['Fold', 'groupCollapse', 'Click a header to fold the group'], ['Count', 'groupCount', 'Rows in the group'], ['Select group', 'groupSelect', 'Button to select the whole group'], ['Start open', 'groupsOpen', 'Groups start unfolded']]);
 
         var ls5 = group(listTab, 'Memory');
         var lm = el('div', 'bselect-fgrid');
@@ -822,9 +808,8 @@ Object.assign(BSelect.prototype, {
         var dq = group(dataTab, 'Requests');
         var dqg = el('div', 'bselect-fgrid');
 
-        pills(dq, [['Cancel old', 'abortStale', 'A new request cancels the one still running'], ['Keep rows', 'keepOnError', 'A failed refresh keeps the loaded rows + Retry'], ['Preload', 'preload', 'Start loading when the pointer reaches the button']]);
-        numberField(dqg, 'retry', 'Retries', '', 0, 5, 1);
-        numberField(dqg, 'retryDelay', 'Retry wait', 'ms', 100, 5000, 100);
+        pills(dq, [['Preload', 'preload', 'Start loading when the pointer reaches the button']]);
+
         numberField(dqg, 'cache', 'Cache', 'ms', 0, 600000, 1000);
         dq.appendChild(dqg);
 
@@ -833,7 +818,6 @@ Object.assign(BSelect.prototype, {
 
         segmented(dl, 'Virtual', 'Draw only the rows in view', 'virtual', [['auto', 'Auto'], ['1', 'On', true], ['0', 'Off', false]], o.virtual === true ? '1' : o.virtual === false ? '0' : 'auto');
         numberField(dlg, 'virtualFrom', 'Virtual from', 'rows', 20, 2000, 10);
-        numberField(dlg, 'alphaRailFrom', 'A-Z from', 'rows', 5, 500, 5);
         dl.appendChild(dlg);
 
         body.appendChild(fieldsList);

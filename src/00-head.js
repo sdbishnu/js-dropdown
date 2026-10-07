@@ -18,7 +18,7 @@
     var currentScript = document.currentScript;
     var sequence = 0;
     var REQ_CACHE = new Map(); // 'METHOD url params' -> { t, promise }  (server answers shared by every dropdown)
-    // every text the list shows - override any of them with the texts option
+    // every text the list shows
     var TEXTS = {
         all: 'All',
         selected: 'Selected',
@@ -30,14 +30,8 @@
         selectAll: 'Select all',
         unselectAll: 'Unselect all',
         clearAll: 'Clear all',
-        pasted: '{n} selected from the pasted list',
-        pastedMissing: '{m} not found: {list}',
         limitHit: 'You can select up to {max}',
         retry: 'Retry',
-        loadFailed: 'Could not refresh the list. Showing the last result.',
-        loadMoreFailed: 'Could not load more.',
-        groupSelect: 'Select group',
-        groupUnselect: 'Unselect group',
         nSelected: '{n} selected',
         info: '{from}\u2013{to} of {total}',
         infoMore: '{from}\u2013{to} of {total}+',
@@ -111,26 +105,11 @@
         multiple: false,
         search: true, // search box
         noun: '', // 'ward' -> placeholder 'Select ward', search 'Search ward'
-        abortStale: true, // a new request cancels the one still running (typing fast, switching pages)
-        retry: 2, // automatic retries of a failed load (network errors and HTTP 5xx), with growing waits
-        retryDelay: 500, // ms before the first retry, doubled each time
-        keepOnError: true, // a failed refresh / next page keeps the rows already loaded and shows a Retry note
-        rangeSelect: true, // multiple: Shift+click / Shift+arrows select a range, Ctrl+A selects everything listed
-        pasteIds: true, // multiple: paste a list (comma / semicolon / new line / tab) into the search to select those items
-        pasteMatch: 'both', // what a pasted entry is compared with: 'both' | 'value' | 'label'
-        searchFields: null, // item fields the search looks at, e.g. ['name', 'code'] (default: label + the sub text)
-        accentInsensitive: true, // "jose" finds "José"
-        badgeField: null, // item field shown as a small pill at the end of the row: { badge: 'New' }
-        badgeColorField: null, // item field with the pill colour (css colour or ok / warn / error / info / off)
-        statusField: null, // item field with a status dot colour (css colour or ok / warn / error / info / off)
-        metaField: null, // item field shown right-aligned in the row (price, count, code ...)
-        disabledReasonField: null, // item field with the reason why a row is disabled (small line + tooltip)
         infoPlace: 'top', // where the count line sits: 'top' (under the search) | 'bottom' (under the list)
         infoAlign: 'right', // 'left' | 'right' | 'center'
         info: false, // result line: "1-20 of 100 - 3 selected"
         commit: false, // multiple: edits stay pending until the Apply button (Cancel / closing discards them)
         commitClose: 'cancel', // what closing the panel does with pending edits: 'cancel' | 'apply'
-        texts: null, // translate / reword any text, e.g. { apply: 'Übernehmen', cancel: 'Abbrechen' } (see TEXTS in 00-head.js)
         recent: 0, // remember the last N picked items and list them first (0 = off)
         favorites: false, // a star on each row; starred items are listed first
         memoryKey: '', // storage name for recent/favourites (default: the element id or name). Without one they live until the page closes
@@ -171,12 +150,6 @@
         beforeChange: null, // function(item, selecting) -> false cancels
 
         // ---- item content
-        groupCollapse: true, // with groupField: click a header to fold / unfold its rows (the count stays visible)
-        groupSelect: true, // with groupField + multiple: a button on the header selects / unselects the whole group
-        groupCount: true, // with groupField: show how many rows the group has
-        groupsOpen: true, // false = groups start folded
-        alphaRail: false, // A-Z strip on the right: jump to the first row of a letter (sorted lists)
-        alphaRailFrom: 30, // show the rail only from this many rows
         groupField: '', // field name to group items under headers
         subText: true, // show the small second line (switch it off without losing the field / texts)
         subTextField: '', // item field with the small second line
@@ -246,7 +219,7 @@
         showSelectedImage: true, // single select: show the selected item's image/icon in the field
         display: 'text', // multiple: 'text' ("A, B") | 'chips' | 'count' ("3 selected")
         maxChips: 3, // chips shown before "+N"
-        checkStyle: 'box', // 'box' (checkbox / radio) | 'switch' (on / off toggle) | 'tick' | 'none'
+        checkStyle: 'box', // 'box' | 'tick' | 'none'
         width: '', // field width, e.g. '100%' '240px'
         panelWidth: null, // fixed panel width in px (default: field width, 240-350)
         listHeight: null, // list height in px

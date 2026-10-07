@@ -765,12 +765,6 @@
 .bselect-viewtab, .bselect-footer-cancel, .bselect-footer-apply { font-family: inherit; }
 .bselect-footer-count { display: flex; align-items: center; gap: 6px; min-height: 16px; }
 .bselect-footer-count:not(:empty)::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; flex: none; }
-/* richer rows: status dot, badge, meta, disabled reason */
-.bselect-status-dot { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; vertical-align: middle; flex: none; box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 8%, transparent); }
-.bselect-badge { --bselect-badge: var(--bselect-color); flex: none; margin-left: 6px; padding: 1px 7px; border-radius: 99px; background: color-mix(in srgb, var(--bselect-badge) 14%, var(--bselect-bg)); color: color-mix(in srgb, var(--bselect-badge) 78%, var(--bselect-text)); font-size: 10px; font-weight: 600; line-height: 16px; white-space: nowrap; }
-.bselect-item-meta { flex: none; margin-left: 8px; color: var(--bselect-muted); font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.bselect-item-reason { display: block; color: var(--bselect-danger); font-size: 10.5px; }
-.bselect-disabled-item .bselect-badge, .bselect-disabled-item .bselect-item-meta { opacity: .6; }
 .bselect-infobar { padding: 3px 10px; border-bottom: 1px solid var(--bselect-line); background: var(--bselect-bg); color: var(--bselect-muted); font-size: 10.5px; }
 /* normal radio / checkbox: same size, small square checkbox, round radio (not affected by the shape setting) */
 .bselect-radio, .bselect-checkbox { width: 16px; height: 16px; flex: none; box-sizing: border-box; }
@@ -781,13 +775,6 @@
 .bselect-infobar.bselect-info-left { text-align: left; }
 .bselect-infobar.bselect-info-center { text-align: center; }
 .bselect-infobar.bselect-info-bottom { border-top: 1px solid var(--bselect-line); border-bottom: 0; }
-/* checkStyle:'switch' - every radio / checkbox is an on / off toggle */
-.bselect-check-switch .bselect-radio, .bselect-check-switch .bselect-checkbox { position: relative; width: 28px; height: 16px; border: 0; border-radius: 99px; background: color-mix(in srgb, var(--bselect-text) 24%, var(--bselect-bg)); font-size: 0; transition: background .18s ease; }
-.bselect-check-switch .bselect-radio::after, .bselect-check-switch .bselect-checkbox::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .3); transition: transform .18s ease; }
-.bselect-check-switch .bselect-radio span { display: none; }
-.bselect-check-switch .bselect-radio.bselect-checked, .bselect-check-switch .bselect-checkbox.bselect-checked { background: var(--bselect-color); animation: none; }
-.bselect-check-switch .bselect-radio.bselect-checked::after, .bselect-check-switch .bselect-checkbox.bselect-checked::after { transform: translateX(12px); }
-.bselect-check-switch .bselect-control { width: auto; flex: none; }
 /* settings: every on / off choice is a toggle switch (label left, switch right) */
 .bselect-settings .bselect-pills, .bselect-settings:not(.bselect-drawer) .bselect-pills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 14px; padding: 4px 4px 4px; }
 .bselect-settings .bselect-pill, .bselect-settings:not(.bselect-drawer) .bselect-pill { position: relative; justify-content: space-between; gap: 8px; padding: 5px 2px; border: 0; border-radius: 6px; background: transparent; color: var(--bselect-text); font-size: 11px; font-weight: 500; text-align: left; }
@@ -851,27 +838,6 @@
 .bselect-subrow { display: flex; align-items: center; gap: 5px; padding: 2px 0; }
 .bselect-subrow-name { flex: 0 0 62px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--bselect-text); font-size: 10.5px; }
 .bselect-subrow .bselect-text-input { flex: 1; min-width: 0; height: 22px; font-size: 10.5px; }
-/* paste result / short notes inside the panel */
-.bselect-note { padding: 4px 10px; border-bottom: 1px solid var(--bselect-line); font-size: 11px; line-height: 1.35; }
-.bselect-note-ok { background: color-mix(in srgb, #16a34a 10%, var(--bselect-bg)); color: color-mix(in srgb, #16a34a 80%, var(--bselect-text)); }
-.bselect-note-warn { background: color-mix(in srgb, #f59e0b 14%, var(--bselect-bg)); color: color-mix(in srgb, #b45309 75%, var(--bselect-text)); }
-.bselect-note-action { margin-left: 8px; padding: 1px 8px; border: 1px solid currentColor; border-radius: 6px; background: transparent; color: inherit; cursor: pointer; font: inherit; font-size: 10.5px; font-weight: 600; }
-.bselect-note-action:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
-/* groups: fold, count, select group */
-.bselect-group-head { display: flex; align-items: center; gap: 6px; }
-.bselect-group-fold { cursor: pointer; user-select: none; }
-.bselect-group-fold:hover { color: var(--bselect-text); }
-.bselect-group-caret { display: inline-block; width: 10px; font-size: 10px; transition: transform .15s ease; }
-.bselect-group-closed .bselect-group-caret { transform: rotate(-90deg); }
-.bselect-group-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bselect-group-count { padding: 0 6px; border-radius: 99px; background: var(--bselect-surface-3); color: var(--bselect-muted); font-size: 10px; font-weight: 600; line-height: 16px; }
-.bselect-group-pick { padding: 1px 6px; border: 0; border-radius: 5px; background: transparent; color: var(--bselect-color); cursor: pointer; font: inherit; font-size: 10px; font-weight: 600; text-transform: none; letter-spacing: 0; }
-.bselect-group-pick:hover { background: var(--bselect-hover); }
-/* A-Z rail */
-.bselect-rail { position: absolute; right: 3px; z-index: 6; width: 15px; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; padding: 2px 0; border-radius: 8px; background: color-mix(in srgb, var(--bselect-bg) 82%, transparent); touch-action: none; user-select: none; }
-.bselect-rail-letter { display: block; width: 100%; color: var(--bselect-color); cursor: pointer; font-size: 9px; font-weight: 700; line-height: 1; text-align: center; }
-.bselect-rail-letter:hover { background: var(--bselect-hover); border-radius: 4px; }
-.bselect-has-rail .bselect-list-wrap { padding-right: 16px; }
 .bselect-settings:not(.bselect-drawer) .bselect-rowc-wide .bselect-rowc-text { flex: 0 0 92px; }
 .bselect-settings:not(.bselect-drawer) .bselect-rowc-wide .bselect-text-input { flex: 1; min-width: 0; }
 .bselect-settings:not(.bselect-drawer) .bselect-pill .bselect-pill-text { white-space: nowrap; }

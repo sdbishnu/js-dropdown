@@ -111,38 +111,6 @@ Object.assign(BSelect.prototype, {
     },
 
     /** text with the searched words wrapped in <mark> (built with text nodes, never innerHTML) */
-    /** split like String.split(re) but find the matches in the accent-free copy of the text */
-    _markFolded: function (text, re) {
-        var plain = '';
-        var parts = [];
-        var last = 0;
-        var m;
-        var c;
-        var i;
-
-        for (i = 0; i < text.length; i++) {
-            c = fold(text.charAt(i));
-            plain += c.length === 1 ? c : text.charAt(i);
-        }
-
-        re.lastIndex = 0;
-
-        while ((m = re.exec(plain)) && m[0]) {
-            parts.push(text.slice(last, m.index), text.slice(m.index, m.index + m[0].length));
-            last = m.index + m[0].length;
-        }
-
-        parts.push(text.slice(last));
-        return parts;
-    },
-
-    /** status colour names the statusField / badgeColorField understand */
-    _tone: function (value) {
-        var tones = { ok: '#16a34a', success: '#16a34a', active: '#16a34a', warn: '#f59e0b', warning: '#f59e0b', error: '#dc2626', danger: '#dc2626', info: '#3b82f6', off: '#94a3b8', inactive: '#94a3b8' };
-
-        return tones[String(value).toLowerCase()] || String(value);
-    },
-
     _markText: function (parent, text) {
         var tokens = this.opts.highlight === false ? [] : this._queryTokens();
         var key = tokens.join(' ');
@@ -175,14 +143,7 @@ Object.assign(BSelect.prototype, {
         }
 
         re = this._markRe;
-        text = String(text);
-
-        if (this.opts.accentInsensitive !== false) {
-            parts = this._markFolded(text, re);
-        } else {
-            parts = text.split(re);
-        }
-
+        parts = String(text).split(re);
 
         for (i = 0; i < parts.length; i++) {
             if (!parts[i]) {
@@ -266,40 +227,9 @@ Object.assign(BSelect.prototype, {
             }
         }
 
-        if (o.statusField && item[o.statusField]) {
-            var dot = el('span', 'bselect-status-dot');
-
-            dot.style.background = this._tone(item[o.statusField]);
-            main.insertBefore(dot, main.firstChild);
-        }
-
-        if (o.disabledReasonField && item[o.disabledReasonField] && this._isDisabled(item)) {
-            var why = el('small', 'bselect-item-reason');
-
-            why.textContent = String(item[o.disabledReasonField]);
-            text.appendChild(why);
-            li.title = why.textContent;
-        }
-
         li.appendChild(text);
 
-        if (o.badgeField && item[o.badgeField]) {
-            var badge = el('span', 'bselect-badge');
-
-            badge.textContent = String(item[o.badgeField]);
-
-            if (o.badgeColorField && item[o.badgeColorField]) {
-                badge.style.setProperty('--bselect-badge', this._tone(item[o.badgeColorField]));
-            }
-
-            li.appendChild(badge);
-        }
-
-        if (o.metaField && item[o.metaField] !== undefined && item[o.metaField] !== null && item[o.metaField] !== '') {
-            li.appendChild(el('span', 'bselect-item-meta', String(item[o.metaField])));
-        }
-
-        if (selected && o.checkStyle !== 'box' && o.checkStyle !== 'switch') {
+        if (selected && o.checkStyle !== 'box') {
             li.appendChild(el('span', 'bselect-selected-mark', '✓'));
         }
 
@@ -358,7 +288,7 @@ Object.assign(BSelect.prototype, {
                 }
             }
 
-            if (o.checkStyle !== 'box' && o.checkStyle !== 'switch') {
+            if (o.checkStyle !== 'box') {
                 mark = li.querySelector('.bselect-selected-mark');
 
                 if (on && !mark) {
@@ -530,7 +460,7 @@ Object.assign(BSelect.prototype, {
         var i = from + dir;
 
         while (i >= 0 && i <= max) {
-            if (i >= visible.length || (!this._isDisabled(visible[i]) && !(this.opts.groupField && visible[i][this.opts.groupField] && this._groupFolded(String(visible[i][this.opts.groupField]))))) {
+            if (i >= visible.length || !this._isDisabled(visible[i])) {
                 return i;
             }
 
@@ -597,9 +527,6 @@ Object.assign(BSelect.prototype, {
             }
         } else if (key === 'Tab') {
             this.close();
-        } else if ((key === 'a' || key === 'A') && (event.ctrlKey || event.metaKey) && this.isOpen && this.opts.multiple && this.opts.rangeSelect !== false && (event.target !== this.input || !this.input.value)) {
-            event.preventDefault();
-            this._selectAllListed();
         } else if (key === 'ArrowDown' || key === 'ArrowUp') {
             event.preventDefault();
 
@@ -608,18 +535,6 @@ Object.assign(BSelect.prototype, {
             }
 
             next = this._step(this.active, key === 'ArrowDown' ? 1 : -1, visible);
-
-            // Shift+arrow extends the selection from the anchor row
-            if (event.shiftKey && this.opts.multiple && this.opts.rangeSelect !== false && next >= 0 && next < visible.length) {
-                if (this._anchorValue === undefined && this.active >= 0 && this.active < visible.length) {
-                    this._anchorValue = this._val(visible[this.active]);
-                    this._selectItems([visible[this.active]]);
-                }
-
-                this._setActive(next);
-                this._selectRange(next);
-                return;
-            }
 
             this._setActive(next);
         } else if (key === 'PageDown' || key === 'PageUp') {

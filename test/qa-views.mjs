@@ -1,4 +1,4 @@
-// result info (top), Apply / Cancel commit mode, texts
+// result info (top), Apply / Cancel commit mode
 export default async function run(page) {
   const o = {};
   const ev = () => page.evaluate(() => (document.documentElement.dataset.ev || '').split(',').filter(Boolean));
@@ -16,7 +16,7 @@ export default async function run(page) {
   o.afterApply = await ev();
   if (await page.locator('.bselect-viewtab').count()) throw new Error('tabs should be gone');
   if (!/1.20 of 100/.test(o.info)) throw new Error('info ' + o.info);
-  if (!/Übernehmen/.test(o.apply)) throw new Error('texts not applied');
+  if (o.apply !== 'Apply') throw new Error('apply label ' + o.apply);
   if (o.pending.some((e) => e.startsWith('change'))) throw new Error('change fired before Apply: ' + o.pending);
   if (!o.afterCancel.includes('cancel') || o.afterCancel.some((e) => e.startsWith('change'))) throw new Error('cancel wrong ' + o.afterCancel);
   if (!o.afterApply.includes('apply') || !o.afterApply.includes('change:3')) throw new Error('apply wrong ' + o.afterApply);

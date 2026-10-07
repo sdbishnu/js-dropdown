@@ -1,7 +1,7 @@
 # BSelect – every feature built so far (v1.0.0)
 
 Plain JavaScript dropdown (no framework, no jQuery needed) with an AngularJS 1.x wrapper.
-Everything below is **done and covered by `npm test`** (34 headless-browser checks).
+Everything below is **done and covered by `npm test`** (30 headless-browser checks).
 Details for each area are in the linked file; this page is the checklist.
 
 Legend: option name in `code`; **default** is stated where it matters.
@@ -17,7 +17,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 - Create new value by typing: `creatable`
 - Public API: `getValue getSelected getText setValue setOptions addOption removeOption reload setParams clear reset validate isValid open close disable enable setAppearance setTheme explain getConfig destroy`
 - Static API: `bselect.defaults / preset / theme / data / many / scan / apply / setMode / all / clearCache / invalidate / version`
-- Events: `change open close load error create limit validate apply cancel paste retry` (callbacks `onChange` … and DOM events `bselect:change|open|close`)
+- Events: `change open close load error create limit validate apply cancel` (callbacks `onChange` … and DOM events `bselect:change|open|close`)
 - `data-*` attributes for every option, jQuery plugin (optional)
 
 ## 2. Loading and speed ([PERFORMANCE.md](PERFORMANCE.md))
@@ -27,29 +27,22 @@ Legend: option name in `code`; **default** is stated where it matters.
 - Shared normalised option cache per array, request cache (`cache`), preload on hover / focus (`preload`)
 - One document click listener, delegated row events, panel DOM released on close, light selection updates
 - `bselect.data()` + `bselect.many()` for forms with many dropdowns in a loop (120 dropdowns × 2000 options ≈ 30 ms)
-- Stale requests aborted (`abortStale`), automatic retry (`retry`, `retryDelay`), keep rows on error + Retry note (`keepOnError`)
 
 ## 3. Search
 - Multi-word search with highlight, server or browser search (`searchMode`), `searchMinChars`
-- Several fields (`searchFields`), accent-insensitive (`accentInsensitive`, default on)
-- Paste a list of ids / names into the search to select them (`pasteIds`, `pasteMatch`)
 
 ## 4. Selecting ([LIST_FEATURES.md](LIST_FEATURES.md))
 - **All | Selected (n)** tabs for multiple select; All = Select all / Unselect all, Selected = Clear all; none for single select (`viewTabs`, `selectAll`)
-- Shift+click range, Shift+arrows, Ctrl/Cmd+A (`rangeSelect`)
 - Apply / Cancel commit mode (`commit`, `commitClose`, events `apply` / `cancel`)
 - Recent picks and favourites (`recent`, `favorites`, saved in localStorage)
-- Groups: `groupField` with fold / unfold, row count, select whole group, folded start (`groupCollapse`, `groupCount`, `groupSelect`, `groupsOpen`)
-- A–Z rail for long lists (`alphaRail`, `alphaRailFrom`)
+- Groups: `groupField` shows a header per group
 - Count line "1–20 of 100" (`info`, `infoPlace`, `infoAlign`)
 
 ## 5. Rows
 - Option pictures: image URL, emoji, icon class, initials with a stable random colour, `imageField`, `imageFor`, `imageMap`, `avatar`, `avatarColor`
 - Sub text under (or beside) the label: `subTextField`, `subTextMap` (per option), `subText`, `subTextPlace`
-- Status dot, badge, right-side meta, disabled reason: `statusField`, `badgeField`, `badgeColorField`, `metaField`, `disabledReasonField`
-- Custom row: `renderItem`; selection indicator `checkStyle` (`box` default, `switch`, `tick`, `none`)
+- Custom row: `renderItem`; selection indicator `checkStyle` (`box` default, `tick`, `none`)
 - Hover preview of long / selected values and marquee (`valuePreview`)
-- Texts can be reworded or translated: `texts` (every label of the list)
 
 ## 6. Look ([APPEARANCE_AND_LOADING.md](APPEARANCE_AND_LOADING.md), [CONFIG_LAYERS.md](CONFIG_LAYERS.md))
 - Light / dark / auto (follows the OS live), default is **light**; palettes (slate, midnight, graphite, black, ocean, paper, mint, rose) and any custom background
@@ -63,12 +56,12 @@ Legend: option name in `code`; **default** is stated where it matters.
 ## 7. Settings gear (inside the dropdown, on by default)
 - Popup beside the panel, 22.1875 rem wide (355 px), animated tabs with a sliding highlight
 - Tabs: Behavior · Look · Button · Dropdown · **List** · **Data** · Images · Advanced · Export
-- **Every option has a control in the gear** so it can be tested live and then copied from Export as code (global / per dropdown / JSON / data-attributes): tabs, select all, range select, paste, Apply / Cancel, count (place / align), row marks, row detail fields (status, badge, badge colour, meta, disabled reason, image, sub text), search fields / where / accents / min letters, groups, favourites / recent, requests (cancel, keep rows, preload, retries, wait, cache), long lists (virtual, A–Z)
+- **Every option has a control in the gear** so it can be tested live and then copied from Export as code (global / per dropdown / JSON / data-attributes): tabs, select all, Apply / Cancel, count (place / align), image field, sub text, group by, highlight, search where / min letters, favourites / recent, preload, cache, long lists (virtual)
 - **With the gear off (`settingsButton: false`) nothing of the settings is rendered** (no button, no popup, no per-option editors); with it on, the popup is built on click and the heavy per-option editors (images, sub text) only when their tab is first opened
 - Segmented choices with **Custom** value inputs, Off | On segments for yes / no options, swatches, find box, Reset
-- Behavior: Single / Multiple, Loading, Rows, Search, Sort, Clear ×, Preview, Scroll hint, Apply / Cancel, Range select, Paste list, Count
+- Behavior: Single / Multiple, Loading, Rows, Search, Sort, Clear ×, Preview, Scroll hint, All / Selected, Select all, Apply / Cancel, Count
 - Button: size, shape, style, **border size** (Auto / None / 1–3 px / Custom), values display, colours
-- Dropdown: mode, palette, shape, rows, layout, shadow, sizes, custom colours, Arrow, Preview, **Settings button on/off**, A–Z rail, **Sub text** (field, per-option text, place)
+- Dropdown: mode, palette, shape, rows, layout, shadow, sizes, custom colours, Arrow, Preview, **Settings button on/off**, **Sub text** (field, per-option text, place)
 - Images: show images, default picture, colour, shape, size, per-option picture editor
 - Export tab: copy the changed settings as global / per-dropdown / JSON / HTML data-attributes
 - User changes can be remembered (`persist`); `settingsButton: false` removes the gear
@@ -86,6 +79,9 @@ Legend: option name in `code`; **default** is stated where it matters.
 - `src/` → one bundle (`dist/bselect.bundle.js`, `.min.js`, `bselect.css`, `.min.css`), version injected from `package.json`
 - Mock API server + demo pages; 33 headless-browser checks (`npm test`)
 - Docs: README, FEATURES (this file), LIST_FEATURES, CONFIG_LAYERS, APPEARANCE_AND_LOADING, PERFORMANCE, ANGULAR, ARCHITECTURE, PHASES, SETUP_AND_GITHUB
+
+## Removed again (decided not needed)
+Range select (Shift+click, Shift+arrows, Ctrl+A), paste a list of ids, request cancel / retry / keep-rows, fold / count / select-group headers and the A–Z rail, status / badge / meta / disabled-reason row fields, searchFields and accent-insensitive search, the `texts` option, and the `switch` row mark style (box / tick / none stay).
 
 ## Not built yet (open list, see [PHASES.md](PHASES.md))
 Table-style columns with sticky header · tree lists · RTL and ready language packs · phone bottom sheet · fuzzy search · drag to reorder · inline create form · undo after Clear all · TrainingMaster migration (needs your go-ahead) · tests against real module endpoints.

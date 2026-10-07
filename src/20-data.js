@@ -17,11 +17,6 @@ function matchesAll(text, tokens) {
     return true;
 }
 
-/** "José" -> "Jose" (search and highlight ignore accents) */
-function fold(text) {
-    return text.normalize ? text.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : text;
-}
-
 function sharedOptions(inst, array) {
     var o = inst.opts;
     var key = o.valueField + '|' + o.labelField;
@@ -269,34 +264,8 @@ Object.assign(BSelect.prototype, {
         return { page: this.page, pageSize: this.opts.pageSize, search: this.query, sortDirection: this.sortDir };
     },
 
-    /** _fetch + automatic retries (network errors, HTTP 5xx) with a growing wait; stops when a newer request started */
-    _fetchRetry: function (params, signal, id, attempt) {
-        var self = this;
-        var o = this.opts;
-
-        return this._fetch(params, signal).catch(function (error) {
-            var retriable = error && error.name !== 'AbortError' && !/^HTTP 4/.test(error.message || '');
-
-            if (!retriable || attempt >= (o.retry === undefined || o.retry === null ? 2 : Number(o.retry)) || id !== self.requestId) {
-                throw error;
-            }
-
-            self._emit('retry', attempt + 1, error);
-
-            return new Promise(function (resolve) {
-                setTimeout(resolve, (Number(o.retryDelay) || 500) * Math.pow(2, attempt));
-            }).then(function () {
-                if (id !== self.requestId) {
-                    throw error;
-                }
-
-                return self._fetchRetry(params, signal, id, attempt + 1);
-            });
-        });
-    },
-
     /** One page of data: your handler(params, state) when given, otherwise an HTTP call to url. */
-    _fetch: function (params, signal) {
+    _fetch: function (params) {
         var o = this.opts;
 
         var ttl = o.cache === true || o.cache === null || o.cache === undefined ? 30000 : Number(o.cache) || 0;
@@ -305,11 +274,11 @@ Object.assign(BSelect.prototype, {
         var promise;
 
         if (typeof o.handler === 'function') {
-            return Promise.resolve(o.handler(params, Object.assign(this._state(), { signal: signal || null }))).then(unwrapResponse);
+            return Promise.resolve(o.handler(params, this._state())).then(unwrapResponse);
         }
 
         if (!ttl) {
-            return this._request(o.url, params, signal);
+            return this._request(o.url, params);
         }
 
         key = String(o.method).toUpperCase() + ' ' + o.url + ' ' + JSON.stringify(params, Object.keys(params).sort());
@@ -329,14 +298,10 @@ Object.assign(BSelect.prototype, {
     },
 
     /** One HTTP call -> parsed JSON. GET => query string, otherwise form-encoded body. */
-    _request: function (url, params, signal) {
+    _request: function (url, params) {
         var o = this.opts;
         var method = String(o.method).toUpperCase();
         var init = { method: method, credentials: 'same-origin', headers: Object.assign({}, o.headers) };
-
-        if (signal) {
-            init.signal = signal;
-        }
         var body = new URLSearchParams();
 
         Object.keys(params).forEach(function (key) {
@@ -395,9 +360,6 @@ Object.assign(BSelect.prototype, {
         var o = this.opts;
         var id = ++this.requestId;
         var extra = {};
-        var prev = null;
-        var ctl = null;
-        var ttl = o.cache === true || o.cache === null || o.cache === undefined ? 30000 : Number(o.cache) || 0;
 
         if (!this._isServer()) {
             return;
@@ -411,7 +373,6 @@ Object.assign(BSelect.prototype, {
         }
 
         if (!append) {
-            prev = this.items;
             this.page = 1;
             this.items = [];
             this._limit = this._firstLimit();
@@ -438,17 +399,7 @@ Object.assign(BSelect.prototype, {
         this.error = null;
         this._render();
 
-        // cancel the request that is still running (not when answers are shared through the request cache)
-        if (this._ctl) {
-            this._ctl.abort();
-            this._ctl = null;
-        }
-
-        if (o.abortStale !== false && !ttl && window.AbortController) {
-            ctl = this._ctl = new AbortController();
-        }
-
-        return this._fetchRetry(this._params(extra), ctl && ctl.signal, id, 0)
+        return this._fetch(this._params(extra))
             .then(function (json) {
                 var data;
 
@@ -497,33 +448,10 @@ Object.assign(BSelect.prototype, {
                     return;
                 }
 
-                if (error && error.name === 'AbortError') {
-                    return;
-                }
-
                 self.loading = false;
                 self.loadingMore = false;
-
-                // keep what is already there and offer a retry instead of an empty error page
-                if (o.keepOnError !== false && (append ? self.items.length : prev && prev.length)) {
-                    if (!append) {
-                        self.items = prev;
-                        self._memo = null;
-                    } else {
-                        self.page--; // retry asks for the same page again
-                    }
-
-                    self.loaded = true;
-                    self.error = null;
-                    self._render();
-                    self._note(self._t(append ? 'loadMoreFailed' : 'loadFailed'), 'warn', self._t('retry'), function () {
-                        self._load(append);
-                    });
-                } else {
-                    self.error = error;
-                    self._render();
-                }
-
+                self.error = error;
+                self._render();
                 self._emit('error', error);
             });
     },
@@ -634,38 +562,11 @@ Object.assign(BSelect.prototype, {
 
     /** text the search looks at: the label (and the small second line when there is one), lower case */
     _searchText: function (item) {
-        var o = this.opts;
-
-        var fields = this._searchFields();
-        var text;
-
-        if (fields) {
-            text = fields
-                .map(function (name) {
-                    return item[name] === undefined || item[name] === null ? '' : item[name];
-                })
-                .join(' ');
-        } else {
-            text = this._lbl(item) + (this._subText(item) ? ' ' + this._subText(item) : '');
-        }
-
-        text = text.toLowerCase();
-        return o.accentInsensitive === false ? text : fold(text);
+        return (this._lbl(item) + (this._subText(item) ? ' ' + this._subText(item) : '')).toLowerCase();
     },
 
     _searchKey: function () {
-        return (this._hasSub() ? this.opts.subTextField || '*' : '') + '|' + (this._subVer || 0) + '|' + String(this.opts.searchFields || '') + '|' + (this.opts.accentInsensitive === false ? 0 : 1);
-    },
-
-    /** searchFields as an array (accepts 'name,code' too), or null */
-    _searchFields: function () {
-        var f = this.opts.searchFields;
-
-        if (!f) {
-            return null;
-        }
-
-        return typeof f === 'string' ? f.split(',').map(function (x) { return x.trim(); }).filter(Boolean) : f;
+        return (this._hasSub() ? this.opts.subTextField || '*' : '') + '|' + (this._subVer || 0);
     },
 
     /** lower-case search text of the shared items (built once, only when someone searches) */
@@ -682,13 +583,7 @@ Object.assign(BSelect.prototype, {
 
     /** "john card" -> ['john', 'card']: every word must match */
     _queryTokens: function () {
-        var q = this.query ? this.query.toLowerCase() : '';
-
-        if (this.opts.accentInsensitive !== false) {
-            q = fold(q);
-        }
-
-        return q.split(/\s+/).filter(Boolean);
+        return this.query ? this.query.toLowerCase().split(/\s+/).filter(Boolean) : [];
     },
 
     /** the rows of the Selected / Recent / Favourites tab */
@@ -725,8 +620,6 @@ Object.assign(BSelect.prototype, {
         var i;
         var field;
         var dir;
-        var order;
-        var groups;
 
         // same input as last time -> same list (it is asked for several times per render and key press)
         if (memo && memo.items === list && memo.len === list.length && memo.key === key) {
@@ -764,25 +657,6 @@ Object.assign(BSelect.prototype, {
 
                 return x < y ? -dir : x > y ? dir : 0;
             });
-        }
-
-        // grouped lists keep every group together (groups in order of first appearance, rows keep their order inside)
-        if (o.groupField) {
-            order = {};
-            groups = [];
-            list.forEach(function (item) {
-                var g = item[o.groupField] || '';
-
-                if (!order[g]) {
-                    order[g] = [];
-                    groups.push(g);
-                }
-
-                order[g].push(item);
-            });
-            list = [].concat.apply([], groups.map(function (g) {
-                return order[g];
-            }));
         }
 
         list = this._withMemory(list);

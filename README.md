@@ -51,7 +51,7 @@ bselect.many('.js-staff', { options: 'staff' });      // build a whole loop in o
 | **Search** | multi-word, match highlight, server or browser search (`searchMode`), `searchMinChars` |
 | **Look** | `mode` (light / dark / auto), `palette`, `background`, `size`, `shape`, `variant`, `display: 'chips'`, icons, images / emoji / initials, `theme`, [separate `field:` / `panel:` design](CONFIG_LAYERS.md) |
 | **Settings** | gear in the panel: Behavior · Look · Button · Dropdown · Images · Advanced · Export (copy the result as global / per-dropdown config) |
-| **List** | `info` (result count, bottom), `commit` (Apply / Cancel for multiple), `texts` (reword / translate), rows: `statusField` `badgeField` `badgeColorField` `metaField` `disabledReasonField`, `searchFields`, `accentInsensitive` — see [LIST_FEATURES.md](LIST_FEATURES.md) |
+| **List** | `info` (result count), `commit` (Apply / Cancel for multiple), `viewTabs` (All / Selected), sub text (`subTextField`, `subTextMap`, `subTextPlace`) — see [LIST_FEATURES.md](LIST_FEATURES.md) |
 | **Access** | keyboard (arrows, Home / End, PageUp / PageDown, type-ahead), screen-reader announcements, focus handling |
 
 Events: `inst.on('change' \| 'open' \| 'close' \| 'load' \| 'error' \| 'create' \| 'limit' \| 'validate', fn)` or `onChange` etc.; DOM events `bselect:change`, `bselect:open`, `bselect:close`.
@@ -74,7 +74,7 @@ Any option can also be a `data-*` attribute. Details: [CONFIG_LAYERS.md](CONFIG_
 npm install          # terser (minified build)
 npm run build        # dist/bselect.bundle.js, .min.js, bselect.css, .min.css
 npm run serve        # demo + mock API on http://localhost:8765
-npm test             # builds, then runs all 34 headless-browser checks
+npm test             # builds, then runs all 30 headless-browser checks
 ```
 Demo pages (with the server running): `/demo-grid.html` (10 dropdowns in one line, test toggles, light/dark switch) · `/demo.html` · `/demo-angular.html` · `/demo-angular-loop.html` · `/test/virtual.html` · `/test/search-a11y.html` · `/test/memory.html`.
 

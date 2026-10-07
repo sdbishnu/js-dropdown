@@ -102,7 +102,6 @@ Object.assign(BSelect.prototype, {
 
         i = this._indexIn(this.selected, this._val(item));
         selecting = i < 0;
-        this._anchorValue = this._val(item);
 
         if (this.opts.beforeChange && this.opts.beforeChange(item, selecting) === false) {
             return;
@@ -133,143 +132,6 @@ Object.assign(BSelect.prototype, {
         }
 
         this._changed();
-    },
-
-    /** select several items at once (range, Ctrl+A, paste): one change event, honours max, skips disabled. Returns how many were added. */
-    _selectItems: function (items) {
-        var self = this;
-        var added = 0;
-        var hitMax = false;
-
-        items.forEach(function (item) {
-            if (!item || self._isDisabled(item) || self._indexIn(self.selected, self._val(item)) >= 0) {
-                return;
-            }
-
-            if (self._atMax()) {
-                hitMax = true;
-                return;
-            }
-
-            self.selected.push(item);
-            self._memPicked(item);
-            added++;
-        });
-
-        if (hitMax) {
-            this._emit('limit', this.opts.max);
-            this._flash(this._t('limitHit', { max: this.opts.max }));
-        }
-
-        if (added) {
-            this._changed();
-        }
-
-        return added;
-    },
-
-    /** Shift+click / Shift+arrow: everything between the anchor row and this row is selected */
-    _selectRange: function (toIndex) {
-        var list = this._shown || [];
-        var from = this._anchorValue === undefined ? -1 : this._indexOfShown(this._anchorValue);
-        var a;
-        var b;
-
-        if (from < 0) {
-            from = toIndex;
-        }
-
-        a = Math.min(from, toIndex);
-        b = Math.max(from, toIndex);
-
-        return this._selectItems(list.slice(a, b + 1));
-    },
-
-    _indexOfShown: function (value) {
-        var list = this._shown || [];
-        var i;
-
-        for (i = 0; i < list.length; i++) {
-            if (String(this._val(list[i])) === String(value)) {
-                return i;
-            }
-        }
-
-        return -1;
-    },
-
-    /** Ctrl+A: every row currently listed */
-    _selectAllListed: function () {
-        return this._selectItems(this._visible());
-    },
-
-    /** a pasted list ("12, 15\nAnn") -> select the matching items, tell what was not found */
-    _pasteList: function (text) {
-        var self = this;
-        var o = this.opts;
-        var entries = String(text).split(/[\r\n\t,;]+/).map(function (x) { return x.trim(); }).filter(Boolean);
-        var pool = (this.items || []).concat(this.known || []);
-        var byValue = {};
-        var byLabel = {};
-        var found = [];
-        var missing = [];
-        var added;
-
-        if (entries.length < 2) {
-            return false;
-        }
-
-        pool.forEach(function (item) {
-            byValue[String(self._val(item)).toLowerCase()] = byValue[String(self._val(item)).toLowerCase()] || item;
-            byLabel[fold(String(self._lbl(item)).toLowerCase())] = byLabel[fold(String(self._lbl(item)).toLowerCase())] || item;
-        });
-
-        entries.forEach(function (entry) {
-            var key = entry.toLowerCase();
-            var hit = (o.pasteMatch !== 'label' && byValue[key]) || (o.pasteMatch !== 'value' && byLabel[fold(key)]) || null;
-
-            if (hit) {
-                found.push(hit);
-            } else {
-                missing.push(entry);
-            }
-        });
-
-        added = this._selectItems(found);
-        this._note(this._t('pasted', { n: found.length }) + (missing.length ? ' \u00b7 ' + this._t('pastedMissing', { m: missing.length, list: missing.slice(0, 5).join(', ') + (missing.length > 5 ? '\u2026' : '') }) : ''), missing.length ? 'warn' : 'ok');
-        this._emit('paste', { found: found.length, missing: missing, added: added });
-        return true;
-    },
-
-    /** short message inside the open panel (under the search) */
-    _note: function (text, tone, actionLabel, action) {
-        var self = this;
-
-        if (!this.noteBox) {
-            return;
-        }
-
-        this.noteBox.textContent = text;
-        this.noteBox.className = 'bselect-note bselect-note-' + (tone || 'ok');
-
-        if (action) {
-            var button = el('button', 'bselect-note-action', actionLabel);
-
-            button.type = 'button';
-            button.addEventListener('click', function () {
-                self.noteBox.style.display = 'none';
-                action();
-            });
-            this.noteBox.appendChild(button);
-        }
-
-        this.noteBox.style.display = '';
-        clearTimeout(this._noteTimer);
-        this._noteTimer = setTimeout(function () {
-            if (self.noteBox) {
-                self.noteBox.style.display = 'none';
-            }
-        }, action ? 12000 : 4000);
     },
 
     _toggleAll: function () {
@@ -348,10 +210,9 @@ Object.assign(BSelect.prototype, {
         return this.opts.multiple ? texts : texts[0] || '';
     },
 
-    /** a text of the list, with {name} placeholders: this._t('info', { from: 1, to: 20, total: 100 }) */
+    /** a text of the list (one place for all labels), with {name} placeholders: this._t('info', { from: 1, to: 20, total: 100 }) */
     _t: function (key, vars) {
-        var custom = this.opts.texts && this.opts.texts[key];
-        var text = String(custom !== undefined && custom !== null ? custom : TEXTS[key] !== undefined ? TEXTS[key] : key);
+        var text = String(TEXTS[key] !== undefined ? TEXTS[key] : key);
 
         return text.replace(/\{(\w+)\}/g, function (m, name) {
             return vars && vars[name] !== undefined ? vars[name] : m;

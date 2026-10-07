@@ -7,7 +7,6 @@ const DEPTS = [{ id: 1, name: 'Surgery' }, { id: 2, name: 'Medicine' }];
 const WARDS = { 1: [{ id: 11, name: 'Surgery Ward 1' }, { id: 12, name: 'Surgery Ward 2' }], 2: [{ id: 21, name: 'Medicine Ward 1' }] };
 const log = [];
 function body(req) { return new Promise((r) => { let d = ''; req.on('data', (c) => (d += c)); req.on('end', () => r(d)); }); }
-let failNext = 0; // /api/failnext?n=2 -> the next 2 calls of /api/items answer 500
 http.createServer(async (req, res) => {
     const u = new URL(req.url, 'http://x');
     if (u.pathname.startsWith('/api/')) {
@@ -18,8 +17,6 @@ http.createServer(async (req, res) => {
         else if (u.pathname === '/api/depts') out = +p.n ? Array.from({ length: +p.n }, (_, i) => ({ id: i + 1, name: DEPTS[i] ? DEPTS[i].name : 'Department ' + (i + 1) })) : DEPTS;
         else if (u.pathname === '/api/wards') out = +p.n ? Array.from({ length: +p.n }, (_, i) => ({ id: p.parent * 1000 + i + 1, name: (WARDS[p.parent] && WARDS[p.parent][i] ? WARDS[p.parent][i].name : 'Dept ' + p.parent + ' Ward ' + (i + 1)) })) : WARDS[p.parent] || [];
         else if (u.pathname === '/api/resolve') out = { items: ITEMS.filter((i) => String(p.ids).split(',').includes(String(i.id))) };
-        else if (u.pathname === '/api/failnext') { failNext = +p.n || 0; out = { failNext }; }
-        else if (u.pathname === '/api/items' && failNext > 0) { failNext--; res.writeHead(500); return res.end('x'); }
         else if (u.pathname === '/api/fail') { res.writeHead(500); return res.end('x'); }
         else {
             const all = +p.total ? makeItems(+p.total) : ITEMS;
@@ -29,7 +26,7 @@ http.createServer(async (req, res) => {
             else out = { items: list };
         }
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        return setTimeout(() => res.end(JSON.stringify(out)), u.pathname === '/api/items' ? +p.delay || 250 : 0);
+        return setTimeout(() => res.end(JSON.stringify(out)), u.pathname === '/api/items' ? 250 : 0);
     }
     const rel = decodeURIComponent(u.pathname === '/' ? '/demo.html' : u.pathname);
     // /old/* = the existing AngularJS version in common/dropdown, for side-by-side comparison

@@ -146,6 +146,8 @@ Object.assign(BSelect.prototype, {
             button.title = label;
             var pane = el('div', 'bselect-pane');
 
+            pane.setAttribute('data-tab', id);
+
             button.type = 'button';
             button.setAttribute('role', 'tab');
             button.addEventListener('click', function () {
@@ -224,6 +226,8 @@ Object.assign(BSelect.prototype, {
                 grid = el('div', 'bselect-pills');
                 items.forEach(function (item) {
                     var label = el('label', 'bselect-pill');
+
+                    label.setAttribute('data-key', item[1]);
                     var input = el('input');
 
                     label.title = item[2] || '';
@@ -233,7 +237,10 @@ Object.assign(BSelect.prototype, {
                     input.addEventListener('change', function () {
                         label.classList.toggle('bselect-pill-on', input.checked);
                         label.querySelector('.bselect-seg-mini').style.setProperty('--i', input.checked ? 1 : 0);
-                        self._setting(item[1], input.checked);
+                        // switching back to what the dropdown started with restores that exact value (e.g. images: 'auto')
+                        var started = self._base ? self._base[item[1]] : undefined;
+
+                        self._setting(item[1], started !== undefined && !!started === input.checked ? started : input.checked);
                     });
                     label.appendChild(input);
                     label.appendChild(el('span', 'bselect-pill-text', item[0]));
@@ -378,6 +385,7 @@ Object.assign(BSelect.prototype, {
 
             // roomy layouts stack the control under the label when there are many buttons
             row = line(into, label, hint, seg, drawer ? total >= 4 : total >= 5);
+            row.setAttribute('data-key', key);
 
             if (inline) {
                 row.parentNode.insertBefore(inline, row.nextSibling);
@@ -473,6 +481,7 @@ Object.assign(BSelect.prototype, {
             var row = line(into, label, hint, input);
 
             row.classList.add('bselect-rowc-wide');
+            row.setAttribute('data-key', key);
             return row;
         }
 
@@ -496,21 +505,32 @@ Object.assign(BSelect.prototype, {
             input.step = step || 1;
             input.placeholder = 'auto';
             input.value = o[key] === null || o[key] === undefined || o[key] === '' ? '' : o[key];
+
+            // the value the dropdown started with (empty box / the x button go back to it)
+            function started() {
+                var b = self._base ? self._base[key] : undefined;
+
+                return b === undefined ? null : b;
+            }
+
             input.addEventListener('input', function () {
                 var n = parseFloat(input.value);
 
-                self._setting(key, isNaN(n) ? null : Math.max(min, Math.min(max, n)));
+                self._setting(key, isNaN(n) ? started() : Math.max(min, Math.min(max, n)));
             });
             clear.type = 'button';
             clear.title = 'Back to default';
             clear.addEventListener('click', function () {
-                input.value = '';
-                self._setting(key, null);
+                input.value = started() === null ? '' : started();
+                self._setting(key, started());
             });
             holder.appendChild(input);
             holder.appendChild(el('em', '', unit));
             holder.appendChild(clear);
-            return field(into, label, holder);
+            var fieldEl = field(into, label, holder);
+
+            fieldEl.setAttribute('data-key', key);
+            return fieldEl;
         }
 
         function colourField(into, key, label) {
@@ -534,7 +554,10 @@ Object.assign(BSelect.prototype, {
             holder.appendChild(input);
             holder.appendChild(code);
             holder.appendChild(clear);
-            return field(into, label, holder);
+            var fieldEl = field(into, label, holder);
+
+            fieldEl.setAttribute('data-key', key);
+            return fieldEl;
         }
 
         // ================= Behavior
@@ -739,7 +762,7 @@ Object.assign(BSelect.prototype, {
         subFieldInput.addEventListener('change', function () {
             self._setting('subTextField', subFieldInput.value.trim());
         });
-        line(sub1, 'Field', 'Item field with the sub text', subFieldInput);
+        line(sub1, 'Field', 'Item field with the sub text', subFieldInput).setAttribute('data-key', 'subTextField');
         sub1.appendChild(subList);
         sub1.appendChild(el('div', 'bselect-card-title', 'Per option (for testing - normally the text comes from your data field)'));
 

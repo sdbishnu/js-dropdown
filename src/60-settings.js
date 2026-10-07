@@ -173,8 +173,16 @@ Object.assign(BSelect.prototype, {
         } else if (key === 'mode') {
             o.palette = '';
             o.background = '';
-        } else if (key === 'images' && value && o.avatar === 'none') {
-            o.avatar = 'initials';
+        } else if (key === 'images') {
+            // images on without a default picture shows initials; the previous choice comes back when images go off and on again
+            if (!value) {
+                this._avatarBefore = o.avatar;
+            } else if (this._avatarBefore) {
+                o.avatar = this._avatarBefore;
+                this._avatarBefore = null;
+            } else if (o.avatar === 'none') {
+                o.avatar = 'initials';
+            }
         } else if (key === 'size') {
             o.fieldHeight = null;
             o.fontSize = null;

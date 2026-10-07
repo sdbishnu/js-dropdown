@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>controls</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:20px;width:900px;font-family:system-ui"><div style="display:flex;gap:14px"><select id="a"></select><select id="b"></select></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var depts=['Cardiology','Neurology','Surgery'],data=[];
+for(var i=1;i<=40;i++)data.push({id:i,name:'Staff '+i,code:'EMP-'+i,dept:depts[i%3],photo:''});
+var inst={a:bselect('#a',{options:data,sort:true}),b:bselect('#b',{options:data,multiple:true,sort:true})};
+document.addEventListener('dumpcfg',function(){var c=inst[document.documentElement.dataset.t].getConfig();document.documentElement.dataset.cfg=JSON.stringify(c,function(k,v){return(typeof v==='function'||(v&&v.nodeType))?undefined:v});});
+</script></body></html>

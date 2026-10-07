@@ -1,6 +1,6 @@
 # BSelect – Phases and status
 
-Location `D:\APP\dropdown` · core in `src/` → `npm run build` → `dist/` · tests: `npm test` (33 headless-browser checks, all passing).
+Location `D:\APP\dropdown` · core in `src/` → `npm run build` → `dist/` · tests: `npm test` (34 headless-browser checks, all passing).
 Decision: vanilla core first, AngularJS wrapper over it, migrate pages last. The old Angular `bselect.js` in `d:\xampp\htdocs\dev\common\dropdown` is untouched.
 
 Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
@@ -24,6 +24,7 @@ Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
 | 3k | List improvements (option driven) | result count line, All / Selected tabs, Apply / Cancel commit mode, sub text, settings button on/off | LIST_FEATURES.md, `qa-views`, `qa-tabs`, `qa-subtext` |
 | 3l | Removed again | range select, paste ids, request cancel / retry, group fold / A–Z rail, status / badge / meta / reason rows, searchFields + accents, `texts`, switch row mark | - |
 | 3m | Settings gear covers the kept options | List and Data tabs, field-name boxes with suggestions, lazy per-option editors, nothing rendered when the gear is off | `qa-gear-all` |
+| 3n | Settings gear tested control by control | `data-key` on every control, `qa-controls` changes + restores each one (121 checks, single + multiple), SETTINGS_TABS.md generated; fixes: number boxes go back to the starting value, switches restore the exact default, images / default-picture restore | `qa-controls`, `test/make-controls-doc.js` |
 | 5 | Documentation | README + the docs in this folder | README.md |
 
 ## Open
@@ -39,7 +40,7 @@ Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
 ## How to verify
 ```
 npm run serve   →  http://localhost:8765/demo-grid.html  (and the other demo / test pages)
-npm test        →  PASS / FAIL for all 33 checks
+npm test        →  PASS / FAIL for all 34 checks
 ```
 
 ## Fix log

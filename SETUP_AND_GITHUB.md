@@ -65,6 +65,7 @@ Order (later wins): **built-in default → global (`bselect.defaults`) → per d
 | README.md | quick start and option overview |
 | FEATURES.md | complete checklist of what is built |
 | LIST_FEATURES.md | list design, tabs, selecting, rows, requests, groups |
+| SETTINGS_TABS.md | the settings gear tab by tab: every control, option, test result; how to add / remove / fix one |
 | CONFIG_LAYERS.md | config layers, separate button / dropdown design, settings tabs |
 | APPEARANCE_AND_LOADING.md | themes, backgrounds, images, loading modes, old names |
 | PERFORMANCE.md | loops, virtual scroll, caches, accessibility, build sizes |

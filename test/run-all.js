@@ -28,6 +28,7 @@ const checks = [
     ['/test/count.html', 'test/qa-count.mjs'],
     ['/test/count.html', 'test/qa-count-radius.mjs'],
     ['/test/shape.html', 'test/qa-header.mjs'],
+    ['/test/controls.html', 'test/qa-controls.mjs', 480000], // 121 controls, changed and put back one by one
     ['/test/subtext.html', 'test/qa-subtext.mjs'],
     ['/test/tabs.html', 'test/qa-tabs.mjs'],
     ['/test/gear-all.html', 'test/qa-gear-all.mjs'],
@@ -49,8 +50,8 @@ let failed = 0;
 setTimeout(() => {
     spawnSync('node', [path.join(root, 'build.js')], { cwd: root, stdio: 'inherit' });
 
-    checks.forEach(([page, script]) => {
-        const result = spawnSync('node', [runner, base + page, '--script', path.join(root, script)], { encoding: 'utf8', timeout: 120000 });
+    checks.forEach(([page, script, ms]) => {
+        const result = spawnSync('node', [runner, base + page, '--script', path.join(root, script)], { encoding: 'utf8', timeout: ms || 120000 });
         const text = (result.stdout || '') + (result.stderr || '');
         const error = /SCRIPT ERROR/.test(text) || result.status !== 0;
 

@@ -1936,7 +1936,8 @@ Object.assign(BSelect.prototype, {
 
             // drop the panel (rows, listeners): it is rebuilt in a few ms on the next open
             this._mqStop();
-            this.panel = this.list = this.wrap = this.input = this.viewBar = this.allBtn = this.handle = this._shown = this.footer = this.footerCount = this.viewInfo = null;
+            this.panel = this.list = this.wrap = this.input = this.viewBar = this.allBtn = this.handle = this._shown = this._footerMerged = false;
+            this.footer = this.footerCount = this.viewInfo = null;
             this.view = 'all';
             this.gearBtn = this.sortBtn = this.searchHolder = this.searchClear = null;
 
@@ -2075,6 +2076,8 @@ Object.assign(BSelect.prototype, {
 
             if (o.infoPlace !== 'bottom') {
                 panel.appendChild(this.viewInfo);
+            } else if (this._commitOn()) {
+                this.viewInfo.className = 'bselect-infobar bselect-info-merged'; // lives inside the Apply / Cancel bar
             }
         }
 
@@ -2203,7 +2206,7 @@ Object.assign(BSelect.prototype, {
         panel.appendChild(wrap);
         this.lazyHintVisible = true;
 
-        if (this.viewInfo && o.infoPlace === 'bottom') {
+        if (this.viewInfo && o.infoPlace === 'bottom' && !this._commitOn()) {
             panel.appendChild(this.viewInfo);
         }
 
@@ -2371,6 +2374,21 @@ Object.assign(BSelect.prototype, {
         }
     },
 
+    /** the pending-edits marker of the Apply / Cancel bar: text on its own, a dot in front of the count when the count shares the bar */
+    _updateFooter: function () {
+        if (!this.footerCount) {
+            return;
+        }
+
+        if (this._footerMerged) {
+            this.footerCount.textContent = '';
+            this.footerCount.title = this._dirty ? this._t('pending') : '';
+            this.footerCount.classList.toggle('bselect-footer-dot', !!this._dirty);
+        } else {
+            this.footerCount.textContent = this._dirty ? this._t('pending') : '';
+        }
+    },
+
     /** Apply / Cancel bar (commit mode) */
     _buildFooter: function () {
         var self = this;
@@ -2380,6 +2398,7 @@ Object.assign(BSelect.prototype, {
 
         this.footerCount = el('span', 'bselect-footer-count');
         cancel.type = apply.type = 'button';
+        this._footerMerged = !!this.viewInfo && this.viewInfo.classList.contains('bselect-info-merged');
         cancel.addEventListener('click', function () {
             self._cancel();
         });
@@ -2387,6 +2406,12 @@ Object.assign(BSelect.prototype, {
             self._apply();
         });
         bar.appendChild(this.footerCount);
+
+        if (this._footerMerged) {
+            bar.classList.add('bselect-footer-merged');
+            bar.appendChild(this.viewInfo);
+        }
+
         bar.appendChild(cancel);
         bar.appendChild(apply);
         return bar;
@@ -2540,9 +2565,7 @@ Object.assign(BSelect.prototype, {
         this._updateViewBar(visible, shown);
         this._updateFades();
 
-        if (this.footerCount) {
-            this.footerCount.textContent = this._dirty ? this._t('pending') : '';
-        }
+        this._updateFooter();
 
         // "Results for ..." header
         if (this.query) {
@@ -3053,9 +3076,7 @@ Object.assign(BSelect.prototype, {
         visible = this._visible();
         this._updateViewBar(visible, this._shown);
 
-        if (this.footerCount) {
-            this.footerCount.textContent = this._dirty ? this._t('pending') : '';
-        }
+        this._updateFooter();
 
     },
 

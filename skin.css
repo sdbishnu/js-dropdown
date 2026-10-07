@@ -926,3 +926,9 @@ button.bselect-pv-more-inline { display: inline; width: auto; padding: 0 6px; bo
 .bselect-pv-demo .bselect-pv-more { pointer-events: auto; }
 .bselect-pv-demo .bselect-pv-chip-more, .bselect-pv-demo .bselect-pv-less { pointer-events: auto; }
 .bselect-pv-body > .bselect-pv-head { position: sticky; top: -6px; z-index: 1; margin: -6px -6px 0; padding: 10px 14px 6px; background: var(--bselect-bg, #fff); }
+/* count + Apply / Cancel in ONE bottom bar: count left, buttons right */
+.bselect-footer-merged .bselect-footer-count { flex: none; min-height: 0; }
+.bselect-footer-merged .bselect-footer-count:not(.bselect-footer-dot) { display: none; }
+.bselect-footer-merged .bselect-footer-dot { display: block; width: 8px; height: 8px; min-height: 8px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 0 3px color-mix(in srgb, #f59e0b 22%, transparent); }
+.bselect-footer-merged .bselect-footer-dot::before { display: none; }
+.bselect-footer-merged .bselect-infobar { flex: 1; min-width: 0; padding: 0; border: 0; background: none; color: var(--bselect-muted); font-size: 11px; text-align: left; white-space: nowrap; }

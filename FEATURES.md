@@ -1,7 +1,7 @@
 # BSelect – every feature built so far (v1.0.0)
 
 Plain JavaScript dropdown (no framework, no jQuery needed) with an AngularJS 1.x wrapper.
-Everything below is **done and covered by `npm test`** (40 headless-browser checks).
+Everything below is **done and covered by `npm test`** (41 headless-browser checks).
 Details for each area are in the linked file; this page is the checklist.
 
 Legend: option name in `code`; **default** is stated where it matters.
@@ -36,7 +36,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 - Apply / Cancel commit mode (`commit`, `commitClose`, events `apply` / `cancel`)
 - Recent picks and favourites (`recent`, `favorites`, saved in localStorage)
 - Groups: `groupField` shows a header per group
-- Count line "1–20 of 100" (`info`, `infoPlace`, `infoAlign`)
+- Count line "1–20 of 100" (`info`, `infoPlace`, `infoAlign`); with the count at the bottom and Apply / Cancel on, both share one bar (count left, buttons right)
 
 ## 5. Rows
 - Option pictures: image URL, emoji, icon class, initials with a stable random colour, `imageField`, `imageFor`, `imageMap`, `avatar`, `avatarColor`
@@ -82,7 +82,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 
 ## 10. Build, tests, packaging
 - `src/` → one bundle (`dist/bselect.bundle.js`, `.min.js`, `bselect.css`, `.min.css`), version injected from `package.json`
-- Mock API server + demo pages; 40 headless-browser checks (`npm test`)
+- Mock API server + demo pages; 41 headless-browser checks (`npm test`)
 - Docs: README, FEATURES (this file), LIST_FEATURES, CONFIG_LAYERS, APPEARANCE_AND_LOADING, PERFORMANCE, ANGULAR, ARCHITECTURE, PHASES, SETUP_AND_GITHUB
 
 ## Removed again (decided not needed)

@@ -302,9 +302,7 @@ Object.assign(BSelect.prototype, {
         visible = this._visible();
         this._updateViewBar(visible, this._shown);
 
-        if (this.footerCount) {
-            this.footerCount.textContent = this._dirty ? this._t('pending') : '';
-        }
+        this._updateFooter();
 
     },
 

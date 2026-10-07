@@ -188,7 +188,8 @@ Object.assign(BSelect.prototype, {
 
             // drop the panel (rows, listeners): it is rebuilt in a few ms on the next open
             this._mqStop();
-            this.panel = this.list = this.wrap = this.input = this.viewBar = this.allBtn = this.handle = this._shown = this.footer = this.footerCount = this.viewInfo = null;
+            this.panel = this.list = this.wrap = this.input = this.viewBar = this.allBtn = this.handle = this._shown = this._footerMerged = false;
+            this.footer = this.footerCount = this.viewInfo = null;
             this.view = 'all';
             this.gearBtn = this.sortBtn = this.searchHolder = this.searchClear = null;
 

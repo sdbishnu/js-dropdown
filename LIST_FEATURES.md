@@ -21,6 +21,8 @@ Single select (radio) has no tabs. `viewTabs: false` turns them off, `selectAll:
 | `commit: true` | multiple select: edits stay pending, `change` and the model update only on **Apply**. Events: `apply`, `cancel` (`onApply`, `onCancel`) |
 | `commitClose: 'cancel' \| 'apply'` | what closing the panel does with pending edits (default discards) |
 
+**Count + Apply / Cancel together:** when `info`, `commit` and `infoPlace: 'bottom'` are all on, the count and the buttons share **one bottom bar**: the count on the left (with an orange dot while edits are pending) and Cancel / Apply on the right. With the count at the top, or with either feature off, they stay separate (`infoAlign` does not apply to the merged bar).
+
 ## Rows
 | Option | Meaning |
 |---|---|

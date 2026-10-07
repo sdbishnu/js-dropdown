@@ -27,6 +27,7 @@ const checks = [
     ['/test/views.html', 'test/qa-views.mjs'],
     ['/test/count.html', 'test/qa-count.mjs'],
     ['/test/count.html', 'test/qa-count-radius.mjs'],
+    ['/test/count.html', 'test/qa-clear.mjs'],
     ['/test/shape.html', 'test/qa-header.mjs'],
     ['/test/controls.html', 'test/qa-controls.mjs', 480000], // 121 controls, changed and put back one by one
     ['/test/subtext.html', 'test/qa-subtext.mjs'],

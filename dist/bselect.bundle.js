@@ -213,7 +213,7 @@
         shadow: 'soft', // 'none' | 'soft' | 'strong' | any css box-shadow
         icon: '', // leading icon in the field: css class (fa fa-user) | image url | short text/emoji
         chevron: true, // show the arrow
-        clearIcon: '×', // text of the clear button
+        clearIcon: '×', // the clear button: the default × is an icon; any other text is shown as given
         prefix: '', // fixed text before the value, e.g. 'Ward:'
         suffix: '', // fixed text after the value
         label: '', // label shown above the field
@@ -1757,7 +1757,13 @@ Object.assign(BSelect.prototype, {
             [this.leadEl, this.prefixEl, this.label, this.chipsEl, this.suffixEl].forEach(function (node) {
                 text.appendChild(node);
             });
-            this.clearBtn = el('span', 'bselect-clear', o.clearIcon);
+            // the default x is drawn as an icon (always centred); a custom clearIcon text is used as given
+            this.clearBtn = el('span', 'bselect-clear', o.clearIcon === '×' ? '' : o.clearIcon);
+
+            if (o.clearIcon === '×') {
+                this.clearBtn.innerHTML = ICONS.close;
+            }
+
             actions.appendChild(this.clearBtn);
             actions.appendChild(el('span', 'bselect-chevron'));
             trigger.appendChild(text);
@@ -1932,6 +1938,7 @@ Object.assign(BSelect.prototype, {
 
 /* Panel UI (same structure and class names as the original AngularJS bselect.html) and its render pass */
 var ICONS = {
+    close: '<svg viewBox="0 0 10 10" width="1em" height="1em" aria-hidden="true"><path d="M2 2l6 6M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
     list: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><path d="M5 3.5h9M5 8h9M5 12.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="2" cy="3.5" r="1" fill="currentColor"/><circle cx="2" cy="8" r="1" fill="currentColor"/><circle cx="2" cy="12.5" r="1" fill="currentColor"/></svg>',
     data: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><ellipse cx="8" cy="3.5" rx="5.5" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 3.5v9c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-9M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     search: '<svg viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10 10l4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
@@ -2021,7 +2028,8 @@ Object.assign(BSelect.prototype, {
             this.input.setAttribute('aria-controls', this.id + '-list');
             holder = el('span', 'bselect-search-placeholder');
             holder.appendChild(el('span', 'bselect-item-label', o.searchPlaceholder));
-            clearBtn = el('button', 'bselect-search-clear', '×');
+            clearBtn = el('button', 'bselect-search-clear');
+            clearBtn.innerHTML = ICONS.close;
             clearBtn.type = 'button';
             clearBtn.style.display = 'none';
             clearBtn.setAttribute('aria-label', 'Clear search');

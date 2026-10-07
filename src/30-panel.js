@@ -18,7 +18,13 @@ Object.assign(BSelect.prototype, {
             [this.leadEl, this.prefixEl, this.label, this.chipsEl, this.suffixEl].forEach(function (node) {
                 text.appendChild(node);
             });
-            this.clearBtn = el('span', 'bselect-clear', o.clearIcon);
+            // the default x is drawn as an icon (always centred); a custom clearIcon text is used as given
+            this.clearBtn = el('span', 'bselect-clear', o.clearIcon === '×' ? '' : o.clearIcon);
+
+            if (o.clearIcon === '×') {
+                this.clearBtn.innerHTML = ICONS.close;
+            }
+
             actions.appendChild(this.clearBtn);
             actions.appendChild(el('span', 'bselect-chevron'));
             trigger.appendChild(text);

@@ -1,6 +1,6 @@
 # BSelect – Phases and status
 
-Location `D:\APP\dropdown` · core in `src/` → `npm run build` → `dist/` · tests: `npm test` (34 headless-browser checks, all passing).
+Location `D:\APP\dropdown` · core in `src/` → `npm run build` → `dist/` · tests: `npm test` (35 headless-browser checks, all passing).
 Decision: vanilla core first, AngularJS wrapper over it, migrate pages last. The old Angular `bselect.js` in `d:\xampp\htdocs\dev\common\dropdown` is untouched.
 
 Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
@@ -40,7 +40,7 @@ Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
 ## How to verify
 ```
 npm run serve   →  http://localhost:8765/demo-grid.html  (and the other demo / test pages)
-npm test        →  PASS / FAIL for all 34 checks
+npm test        →  PASS / FAIL for all 35 checks
 ```
 
 ## Fix log

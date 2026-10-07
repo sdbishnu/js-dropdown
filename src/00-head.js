@@ -212,7 +212,7 @@
         shadow: 'soft', // 'none' | 'soft' | 'strong' | any css box-shadow
         icon: '', // leading icon in the field: css class (fa fa-user) | image url | short text/emoji
         chevron: true, // show the arrow
-        clearIcon: '×', // text of the clear button
+        clearIcon: '×', // the clear button: the default × is an icon; any other text is shown as given
         prefix: '', // fixed text before the value, e.g. 'Ward:'
         suffix: '', // fixed text after the value
         label: '', // label shown above the field

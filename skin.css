@@ -859,3 +859,10 @@
 /* nine tabs: the active one gets enough room for its name */
 .bselect-settings:not(.bselect-drawer) .bselect-tab-active { flex: 3.6 1 0; }
 .bselect-settings:not(.bselect-drawer) .bselect-tab { padding: 0 2px; }
+/* clear icons: a centred round button with a drawn x */
+.bselect-clear, .bselect-search-clear { box-sizing: border-box; line-height: 1; padding: 0; transition: background .12s ease, color .12s ease; }
+.bselect-clear { width: 18px; height: 18px; flex: none; font-size: 9px; background: color-mix(in srgb, var(--bselect-danger) 9%, transparent); }
+.bselect-clear:hover { background: color-mix(in srgb, var(--bselect-danger) 18%, transparent); }
+.bselect-clear svg, .bselect-search-clear svg { display: block; width: 1em; height: 1em; }
+.bselect-search-clear { width: 20px; height: 20px; border-radius: 50%; font-size: 9px; top: 50%; transform: translateY(-50%); }
+.bselect-search-clear:hover { background: var(--bselect-hover); color: var(--bselect-text); }

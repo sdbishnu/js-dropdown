@@ -1,7 +1,7 @@
 # BSelect – every feature built so far (v1.0.0)
 
 Plain JavaScript dropdown (no framework, no jQuery needed) with an AngularJS 1.x wrapper.
-Everything below is **done and covered by `npm test`** (32 headless-browser checks).
+Everything below is **done and covered by `npm test`** (33 headless-browser checks).
 Details for each area are in the linked file; this page is the checklist.
 
 Legend: option name in `code`; **default** is stated where it matters.
@@ -50,6 +50,8 @@ Legend: option name in `code`; **default** is stated where it matters.
 - Display of chosen values: text / chips / count, `maxChips`
 - **Separate design for the button and the dropdown** (`field:` / `panel:` groups)
 - Arrow under the button, open animation without a "jump", rounded panel
+- **Search box, sort button and settings gear share one shape and height** (they follow the dropdown's shape / radius and size setting, also when changed live in the gear); the settings popup and its tabs / segments / inputs follow the same radius
+- Sort button sorts in **natural order** (Item 2 before Item 10, accents and case ignored)
 - Themes and presets (`bselect.theme`, `bselect.preset`), CSS variables for plain-CSS restyling
 - Layers: **built-in default → global → per dropdown → own** (`bselect.defaults(...)`)
 

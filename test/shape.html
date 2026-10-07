@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>shape</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:20px;width:900px;font-family:system-ui"><div style="display:flex;gap:14px;flex-wrap:wrap"><select id="a"></select><select id="b"></select><select id="c"></select></div>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var opts=[];for(var i=1;i<=30;i++)opts.push({id:i,name:'Item '+i});
+bselect('#a',{options:opts,sort:true,panel:{shape:'square'},field:{shape:'square'}});
+bselect('#b',{options:opts,sort:true,panel:{shape:'rounded'},field:{shape:'rounded'}});
+bselect('#c',{options:opts,sort:true,panel:{shape:'pill'},field:{shape:'pill'}});
+</script></body></html>

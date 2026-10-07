@@ -652,8 +652,10 @@ Object.assign(BSelect.prototype, {
                 var x = a[field] === undefined || a[field] === null ? '' : a[field];
                 var y = b[field] === undefined || b[field] === null ? '' : b[field];
 
-                if (typeof x === 'string') x = x.toLowerCase();
-                if (typeof y === 'string') y = y.toLowerCase();
+                // natural order: 'Item 2' before 'Item 10', accents and case ignored
+                if (typeof x === 'string' && typeof y === 'string') {
+                    return x.localeCompare(y, undefined, { numeric: true, sensitivity: 'base' }) * dir;
+                }
 
                 return x < y ? -dir : x > y ? dir : 0;
             });

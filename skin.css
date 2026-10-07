@@ -846,3 +846,16 @@
 .bselect-list-wrap:has(+ .bselect-info-bottom) .bselect-lazy-hint, .bselect-list-wrap:has(+ .bselect-info-bottom) .bselect-load-more { border-radius: 0; }
 .bselect-infobar.bselect-info-bottom { padding: 5px 10px; background: var(--bselect-surface-2); }
 .bselect-infobar.bselect-info-bottom:not(:has(~ .bselect-footer)) { border-radius: 0 0 var(--bselect-panel-radius) var(--bselect-panel-radius); }
+/* header controls (search, sort, gear) and the settings popup share ONE shape: it follows the dropdown's shape / radius setting */
+.bselect-panel, .bselect-settings-wrap { --bselect-ctl-radius: min(calc(var(--bselect-panel-radius) * .7), 14px); --bselect-ctl-inner: max(0px, calc(var(--bselect-ctl-radius) - 2px)); --bselect-ctl-h: 30px; }
+.bselect-size-lg.bselect-panel, .bselect-size-lg .bselect-panel { --bselect-ctl-h: 36px; }
+.bselect-size-sm.bselect-panel, .bselect-size-sm .bselect-panel { --bselect-ctl-h: 26px; }
+.bselect-search input { height: var(--bselect-ctl-h); border-radius: var(--bselect-ctl-radius); }
+.bselect-action { width: var(--bselect-ctl-h); height: var(--bselect-ctl-h); border-radius: var(--bselect-ctl-radius); }
+.bselect-settings:not(.bselect-drawer) { border-radius: var(--bselect-panel-radius); }
+.bselect-settings:not(.bselect-drawer) .bselect-settings-badge, .bselect-settings:not(.bselect-drawer) .bselect-settings-close, .bselect-settings:not(.bselect-drawer) .bselect-settings-find, .bselect-settings:not(.bselect-drawer) .bselect-text-input, .bselect-settings:not(.bselect-drawer) .bselect-num, .bselect-settings:not(.bselect-drawer) .bselect-footer-gap + button, .bselect-settings:not(.bselect-drawer) .bselect-settings-footer button { border-radius: var(--bselect-ctl-radius); }
+.bselect-settings:not(.bselect-drawer) .bselect-tabs, .bselect-settings:not(.bselect-drawer) .bselect-seg, .bselect-settings:not(.bselect-drawer) .bselect-seg-mini { border-radius: var(--bselect-ctl-radius); }
+.bselect-settings:not(.bselect-drawer) .bselect-tab, .bselect-settings:not(.bselect-drawer) .bselect-tab-ind, .bselect-settings:not(.bselect-drawer) .bselect-seg::before, .bselect-settings:not(.bselect-drawer) .bselect-seg button, .bselect-settings:not(.bselect-drawer) .bselect-seg-mini b { border-radius: var(--bselect-ctl-inner); }
+/* nine tabs: the active one gets enough room for its name */
+.bselect-settings:not(.bselect-drawer) .bselect-tab-active { flex: 3.6 1 0; }
+.bselect-settings:not(.bselect-drawer) .bselect-tab { padding: 0 2px; }

@@ -2071,6 +2071,11 @@ Object.assign(BSelect.prototype, {
             panel.classList.add('bselect-panel-has-header');
         }
 
+        // a rebuilt panel must not re-attach pieces of the previous build (count line, Apply / Cancel bar)
+        this.viewInfo = null;
+        this.footer = this.footerCount = null;
+        this._footerMerged = false;
+
         if (o.info) {
             this.viewInfo = el('div', 'bselect-infobar bselect-info-' + (o.infoAlign || 'right') + (o.infoPlace === 'bottom' ? ' bselect-info-bottom' : ''));
 

@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>cnt</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:30px;width:420px;font-family:system-ui"><select id="a"></select><br><br><select id="b"></select><br><br><select id="c"></select><br><br><select id="d"></select>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var opts=[];for(var i=1;i<=100;i++)opts.push({id:i,name:'Item '+i});
+bselect('#a',{options:opts,info:true});                                   // single, top
+bselect('#b',{options:opts,info:true,infoPlace:'bottom'});               // single, bottom
+bselect('#c',{options:opts,multiple:true,info:true,infoPlace:'bottom',commit:true}); // merged with Apply/Cancel
+bselect('#d',{options:opts,multiple:true,info:true,commit:true});        // top + commit
+</script></body></html>

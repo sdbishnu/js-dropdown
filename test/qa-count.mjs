@@ -10,6 +10,9 @@ export default async function run(page) {
   // a: defaults -> top, right
   await page.click('.bselect-trigger >> nth=0'); await page.waitForTimeout(300);
   o.a = await info();
+  // compact: the count sits right under the search box (small gap, no separator line between them)
+  o.gap = await page.evaluate(() => { const p = document.querySelector('.bselect-panel'); const s = p.querySelector('.bselect-search input').getBoundingClientRect(); const i = p.querySelector('.bselect-infobar').getBoundingClientRect(); return { gap: Math.round(i.top - s.bottom), height: Math.round(i.height) }; });
+  if (o.gap.gap > 6 || o.gap.height > 24) throw new Error('count line not compact ' + JSON.stringify(o.gap));
   // change live from the gear
   await page.click('.bselect-settings-action'); await page.waitForTimeout(500);
   const S = '.bselect-settings';

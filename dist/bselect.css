@@ -833,6 +833,9 @@
 .bselect-list-wrap:has(+ .bselect-info-bottom) .bselect-lazy-hint, .bselect-list-wrap:has(+ .bselect-info-bottom) .bselect-load-more { border-radius: 0; }
 .bselect-infobar.bselect-info-bottom { padding: 5px 10px; background: var(--bselect-surface-2); }
 .bselect-infobar.bselect-info-bottom:not(:has(~ .bselect-footer)) { border-radius: 0 0 var(--bselect-panel-radius) var(--bselect-panel-radius); }
+/* count line under the search: part of the header block, no extra gap (search -> count is tight) */
+.bselect-header:has(+ .bselect-infobar:not(.bselect-info-bottom)) { padding-bottom: 3px; border-bottom: 0; }
+.bselect-infobar:not(.bselect-info-bottom) { margin-top: 0; padding: 0 12px 5px; background: var(--bselect-surface-2); line-height: 13px; }
 /* header controls (search, sort, gear) and the settings popup share ONE shape: it follows the dropdown's shape / radius setting */
 .bselect-panel, .bselect-settings-wrap { --bselect-ctl-radius: min(calc(var(--bselect-panel-radius) * .7), 14px); --bselect-ctl-inner: max(0px, calc(var(--bselect-ctl-radius) - 2px)); --bselect-ctl-h: 30px; }
 .bselect-size-lg.bselect-panel, .bselect-size-lg .bselect-panel { --bselect-ctl-h: 36px; }

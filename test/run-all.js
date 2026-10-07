@@ -28,6 +28,7 @@ const checks = [
     ['/test/count.html', 'test/qa-count.mjs'],
     ['/test/count.html', 'test/qa-count-radius.mjs'],
     ['/test/merge.html', 'test/qa-merge.mjs'],
+    ['/test/cnt.html', 'test/qa-count-off.mjs'],
     ['/test/count.html', 'test/qa-clear.mjs'],
     ['/test/fade.html', 'test/qa-fade.mjs'],
     ['/test/preview.html', 'test/qa-preview.mjs'],

@@ -866,3 +866,9 @@
 .bselect-clear svg, .bselect-search-clear svg { display: block; width: 1em; height: 1em; }
 .bselect-search-clear { width: 20px; height: 20px; border-radius: 50%; font-size: 9px; top: 50%; transform: translateY(-50%); }
 .bselect-search-clear:hover { background: var(--bselect-hover); color: var(--bselect-text); }
+/* top / bottom edge fade of the list (alpha only, so it works on any light or dark background) */
+.bselect-list-wrap.bselect-fade {
+    --bselect-fade-t: 0px; --bselect-fade-b: 0px; --bselect-fade-h: 0px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--bselect-fade-t), #000 calc(100% - var(--bselect-fade-h) - var(--bselect-fade-b)), transparent calc(100% - var(--bselect-fade-h)), #000 calc(100% - var(--bselect-fade-h)));
+    mask-image: linear-gradient(to bottom, transparent 0, #000 var(--bselect-fade-t), #000 calc(100% - var(--bselect-fade-h) - var(--bselect-fade-b)), transparent calc(100% - var(--bselect-fade-h)), #000 calc(100% - var(--bselect-fade-h)));
+}

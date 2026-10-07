@@ -1,7 +1,7 @@
 # BSelect – every feature built so far (v1.0.0)
 
 Plain JavaScript dropdown (no framework, no jQuery needed) with an AngularJS 1.x wrapper.
-Everything below is **done and covered by `npm test`** (35 headless-browser checks).
+Everything below is **done and covered by `npm test`** (36 headless-browser checks).
 Details for each area are in the linked file; this page is the checklist.
 
 Legend: option name in `code`; **default** is stated where it matters.
@@ -51,6 +51,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 - **Separate design for the button and the dropdown** (`field:` / `panel:` groups)
 - Arrow under the button, open animation without a "jump", rounded panel
 - **Search box, sort button and settings gear share one shape and height** (they follow the dropdown's shape / radius and size setting, also when changed live in the gear); the settings popup and its tabs / segments / inputs follow the same radius
+- **Scroll fade:** the list fades out at its top / bottom edge where there is more to scroll (light and dark; the "scroll to continue" strip stays clear); `scrollFade`, `fadeSize`, switch + size in the gear
 - Sort button sorts in **natural order** (Item 2 before Item 10, accents and case ignored)
 - Themes and presets (`bselect.theme`, `bselect.preset`), CSS variables for plain-CSS restyling
 - Layers: **built-in default → global → per dropdown → own** (`bselect.defaults(...)`)
@@ -79,7 +80,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 
 ## 10. Build, tests, packaging
 - `src/` → one bundle (`dist/bselect.bundle.js`, `.min.js`, `bselect.css`, `.min.css`), version injected from `package.json`
-- Mock API server + demo pages; 35 headless-browser checks (`npm test`)
+- Mock API server + demo pages; 36 headless-browser checks (`npm test`)
 - Docs: README, FEATURES (this file), LIST_FEATURES, CONFIG_LAYERS, APPEARANCE_AND_LOADING, PERFORMANCE, ANGULAR, ARCHITECTURE, PHASES, SETUP_AND_GITHUB
 
 ## Removed again (decided not needed)

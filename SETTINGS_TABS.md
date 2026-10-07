@@ -1,6 +1,6 @@
 # BSelect – settings gear, tab by tab
 
-Generated from `test/qa-controls.mjs` (every control is changed and put back, in single and multiple mode). **121 control checks, all with a result below.**
+Generated from `test/qa-controls.mjs` (every control is changed and put back, in single and multiple mode). **125 control checks, all with a result below.**
 
 Work through one tab at a time: keep it, fix it or remove it, then re-run the check (see the end of this file).
 
@@ -56,6 +56,7 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 | Width | `panelWidth` | number box | single + multiple | ok |
 | List height | `listHeight` | number box | single + multiple | ok |
 | Row font | `rowFontSize` | number box | single + multiple | ok |
+| Edge fade | `fadeSize` | number box | single + multiple | ok |
 | Background | `panelBackground` | colour | single + multiple | ok |
 | Text | `panelTextColor` | colour | single + multiple | ok |
 | Border | `panelBorderColor` | colour | single + multiple | ok |
@@ -65,6 +66,7 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 | Arrow | `arrow` | Off / On | single + multiple | ok |
 | Preview | `popover` | Off / On | single + multiple | ok |
 | Settings button | `settings` | Off / On | single + multiple | ok |
+| Scroll fade | `scrollFade` | Off / On | single + multiple | ok |
 | Sub text | `subText` | Off / On | single + multiple | ok |
 | Place | `subTextPlace` | choice buttons | single + multiple | ok |
 | Field | `subTextField` | text box | single + multiple | ok |

@@ -151,6 +151,8 @@
 
         // ---- item content
         groupField: '', // field name to group items under headers
+        scrollFade: true, // rows fade out at the top / bottom edge of the list when there is more to scroll (works in light and dark)
+        fadeSize: 14, // px of that fade
         subText: true, // show the small second line (switch it off without losing the field / texts)
         subTextField: '', // item field with the small second line
         subTextMap: null, // { '<value>': 'text' } per-option sub text set from outside the data (wins over the field)

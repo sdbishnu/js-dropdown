@@ -287,6 +287,8 @@ Object.assign(BSelect.prototype, {
                 }
             }
 
+            self._updateFades(); // after the strip showed / hid, so the bottom fade ends where the list really ends
+
             if (nearEnd && o.load !== 'button') {
                 self._more();
             }
@@ -296,6 +298,30 @@ Object.assign(BSelect.prototype, {
         this.panel = panel;
         this._applyPanelAppearance();
         this._resizeInit(panel);
+    },
+
+    /** top / bottom edge fade of the list: only on the side that has more rows to scroll to; the sticky "scroll to continue" strip stays clear */
+    _updateFades: function () {
+        var wrap = this.wrap;
+        var o = this.opts;
+        var size = o.scrollFade === false ? 0 : Math.max(0, Number(o.fadeSize === null || o.fadeSize === undefined ? 14 : o.fadeSize));
+        var strip;
+        var hint = 0;
+
+        if (!wrap) {
+            return;
+        }
+
+        strip = wrap.querySelector('.bselect-lazy-hint-sticky, .bselect-load-more');
+
+        if (strip && strip.offsetParent !== null && getComputedStyle(strip).display !== 'none') {
+            hint = strip.offsetHeight;
+        }
+
+        wrap.classList.toggle('bselect-fade', size > 0);
+        wrap.style.setProperty('--bselect-fade-t', size && wrap.scrollTop > 1 ? size + 'px' : '0px');
+        wrap.style.setProperty('--bselect-fade-b', size && wrap.scrollTop + wrap.clientHeight < wrap.scrollHeight - hint - 1 ? size + 'px' : '0px');
+        wrap.style.setProperty('--bselect-fade-h', hint + 'px');
     },
 
     /** multiple select only: [All | Selected (n)] tabs and the action of the tab (Select all / Clear all) */
@@ -564,6 +590,7 @@ Object.assign(BSelect.prototype, {
         }
 
         this._updateViewBar(visible, shown);
+        this._updateFades();
 
         if (this.footerCount) {
             this.footerCount.textContent = this._dirty ? this._t('pending') : '';

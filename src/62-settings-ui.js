@@ -725,6 +725,7 @@ Object.assign(BSelect.prototype, {
         numberField(dgrid, 'panelWidth', 'Width', 'px', 240, 600, 10);
         numberField(dgrid, 'listHeight', 'List height', 'px', 120, 600, 10);
         numberField(dgrid, 'rowFontSize', 'Row font', 'px', 9, 24, 1);
+        numberField(dgrid, 'fadeSize', 'Edge fade', 'px', 0, 40, 1);
         d2.appendChild(dgrid);
 
         var d3 = group(dropdown, 'Custom colours');
@@ -737,7 +738,7 @@ Object.assign(BSelect.prototype, {
         colourField(dcolours, 'selectedColor', 'Selected');
         colourField(dcolours, 'panelColor', 'Accent');
         d3.appendChild(dcolours);
-        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)']]);
+        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['Scroll fade', 'scrollFade', 'Rows fade out at the top / bottom edge of the list']]);
 
         // sub text: the small line under (or beside) the label
         var sub1 = group(dropdown, 'Sub text');

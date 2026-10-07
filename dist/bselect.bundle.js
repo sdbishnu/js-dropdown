@@ -152,6 +152,8 @@
 
         // ---- item content
         groupField: '', // field name to group items under headers
+        scrollFade: true, // rows fade out at the top / bottom edge of the list when there is more to scroll (works in light and dark)
+        fadeSize: 14, // px of that fade
         subText: true, // show the small second line (switch it off without losing the field / texts)
         subTextField: '', // item field with the small second line
         subTextMap: null, // { '<value>': 'text' } per-option sub text set from outside the data (wins over the field)
@@ -2225,6 +2227,8 @@ Object.assign(BSelect.prototype, {
                 }
             }
 
+            self._updateFades(); // after the strip showed / hid, so the bottom fade ends where the list really ends
+
             if (nearEnd && o.load !== 'button') {
                 self._more();
             }
@@ -2234,6 +2238,30 @@ Object.assign(BSelect.prototype, {
         this.panel = panel;
         this._applyPanelAppearance();
         this._resizeInit(panel);
+    },
+
+    /** top / bottom edge fade of the list: only on the side that has more rows to scroll to; the sticky "scroll to continue" strip stays clear */
+    _updateFades: function () {
+        var wrap = this.wrap;
+        var o = this.opts;
+        var size = o.scrollFade === false ? 0 : Math.max(0, Number(o.fadeSize === null || o.fadeSize === undefined ? 14 : o.fadeSize));
+        var strip;
+        var hint = 0;
+
+        if (!wrap) {
+            return;
+        }
+
+        strip = wrap.querySelector('.bselect-lazy-hint-sticky, .bselect-load-more');
+
+        if (strip && strip.offsetParent !== null && getComputedStyle(strip).display !== 'none') {
+            hint = strip.offsetHeight;
+        }
+
+        wrap.classList.toggle('bselect-fade', size > 0);
+        wrap.style.setProperty('--bselect-fade-t', size && wrap.scrollTop > 1 ? size + 'px' : '0px');
+        wrap.style.setProperty('--bselect-fade-b', size && wrap.scrollTop + wrap.clientHeight < wrap.scrollHeight - hint - 1 ? size + 'px' : '0px');
+        wrap.style.setProperty('--bselect-fade-h', hint + 'px');
     },
 
     /** multiple select only: [All | Selected (n)] tabs and the action of the tab (Select all / Clear all) */
@@ -2502,6 +2530,7 @@ Object.assign(BSelect.prototype, {
         }
 
         this._updateViewBar(visible, shown);
+        this._updateFades();
 
         if (this.footerCount) {
             this.footerCount.textContent = this._dirty ? this._t('pending') : '';
@@ -3547,7 +3576,7 @@ Object.assign(BSelect.prototype, {
 });
 
 /* Sort button, settings gear + popup, optional saved preferences (localStorage) */
-var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'viewTabs', 'selectAll', 'commitClose', 'infoPlace', 'infoAlign', 'imageField', 'serverSearch', 'searchMinChars', 'recent', 'favorites', 'highlight', 'preload', 'cache', 'virtual', 'virtualFrom', 'groupField'];
+var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'scrollFade', 'fadeSize', 'viewTabs', 'selectAll', 'commitClose', 'infoPlace', 'infoAlign', 'imageField', 'serverSearch', 'searchMinChars', 'recent', 'favorites', 'highlight', 'preload', 'cache', 'virtual', 'virtualFrom', 'groupField'];
 
 Object.assign(BSelect.prototype, {
     _prefKey: function () {
@@ -4559,6 +4588,7 @@ Object.assign(BSelect.prototype, {
         numberField(dgrid, 'panelWidth', 'Width', 'px', 240, 600, 10);
         numberField(dgrid, 'listHeight', 'List height', 'px', 120, 600, 10);
         numberField(dgrid, 'rowFontSize', 'Row font', 'px', 9, 24, 1);
+        numberField(dgrid, 'fadeSize', 'Edge fade', 'px', 0, 40, 1);
         d2.appendChild(dgrid);
 
         var d3 = group(dropdown, 'Custom colours');
@@ -4571,7 +4601,7 @@ Object.assign(BSelect.prototype, {
         colourField(dcolours, 'selectedColor', 'Selected');
         colourField(dcolours, 'panelColor', 'Accent');
         d3.appendChild(dcolours);
-        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)']]);
+        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['Scroll fade', 'scrollFade', 'Rows fade out at the top / bottom edge of the list']]);
 
         // sub text: the small line under (or beside) the label
         var sub1 = group(dropdown, 'Sub text');

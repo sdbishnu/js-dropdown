@@ -1,7 +1,7 @@
 # BSelect – every feature built so far (v1.0.0)
 
 Plain JavaScript dropdown (no framework, no jQuery needed) with an AngularJS 1.x wrapper.
-Everything below is **done and covered by `npm test`** (38 headless-browser checks).
+Everything below is **done and covered by `npm test`** (39 headless-browser checks).
 Details for each area are in the linked file; this page is the checklist.
 
 Legend: option name in `code`; **default** is stated where it matters.
@@ -42,7 +42,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 - Option pictures: image URL, emoji, icon class, initials with a stable random colour, `imageField`, `imageFor`, `imageMap`, `avatar`, `avatarColor`
 - Sub text under (or beside) the label: `subTextField`, `subTextMap` (per option), `subText`, `subTextPlace`
 - Custom row: `renderItem`; selection indicator `checkStyle` (`box` default, `tick`, `none`)
-- Hover preview of long / selected values and marquee (`valuePreview`)
+- **Hover preview** of the selected values with **5 looks** (card, chips, list, tooltip, details), delay and max rows, in the field's own colours, plus the marquee for long text (`popover`, `previewStyle`, `previewDelay`, `previewMax`; gear: Button tab → Hover preview, with a Show now button)
 
 ## 6. Look ([APPEARANCE_AND_LOADING.md](APPEARANCE_AND_LOADING.md), [CONFIG_LAYERS.md](CONFIG_LAYERS.md))
 - Light / dark / auto (follows the OS live), default is **light**; palettes (slate, midnight, graphite, black, ocean, paper, mint, rose) and any custom background
@@ -82,7 +82,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 
 ## 10. Build, tests, packaging
 - `src/` → one bundle (`dist/bselect.bundle.js`, `.min.js`, `bselect.css`, `.min.css`), version injected from `package.json`
-- Mock API server + demo pages; 38 headless-browser checks (`npm test`)
+- Mock API server + demo pages; 39 headless-browser checks (`npm test`)
 - Docs: README, FEATURES (this file), LIST_FEATURES, CONFIG_LAYERS, APPEARANCE_AND_LOADING, PERFORMANCE, ANGULAR, ARCHITECTURE, PHASES, SETUP_AND_GITHUB
 
 ## Removed again (decided not needed)

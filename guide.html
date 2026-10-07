@@ -231,6 +231,18 @@ bselect.many('.js-staff', { options: 'staff' });   // build a whole loop in one 
     <tr><td><code>scrollFade</code>, <code>fadeSize</code></td><td>The list fades out at its top / bottom edge where there is more to scroll (default on, 14 px). Works in light and dark; the "scroll to continue" strip stays clear.</td></tr>
     <tr><td><code>arrow</code>, <code>chevron</code>, <code>clearable</code></td><td>The pointer under the button, the chevron in the field, the round × clear button (drawn as an icon, always centred).</td></tr>
   </table>
+  <h3 id="preview">Hover preview <span class="tag">popover · previewStyle · previewDelay · previewMax</span></h3>
+  <p>Rest the pointer on a closed field and a preview of the selected values appears (default after 500 ms). Pick one of five looks with <code>previewStyle</code>:</p>
+  <table>
+    <tr><th>Style</th><th>Looks like</th></tr>
+    <tr><td><code>'card'</code> (default)</td><td>A soft card: a header with the count, then one row per value with its picture, name and sub text. A single value becomes one big card.</td></tr>
+    <tr><td><code>'chips'</code></td><td>Rounded chips that wrap, with the picture inside. Best for many short values.</td></tr>
+    <tr><td><code>'list'</code></td><td>A tidy numbered list.</td></tr>
+    <tr><td><code>'tooltip'</code></td><td>A small inverted tooltip: names separated by dots (a single value shows its sub text underneath).</td></tr>
+    <tr><td><code>'details'</code></td><td>Two columns: the name on the left, the sub text and value on the right.</td></tr>
+  </table>
+  <p><code>previewDelay</code> is the rest time in ms, <code>previewMax</code> the rows shown before "+ N more". The preview takes the colours of its field (light, dark, custom background, accent) and flips above the field when there is no room below. <code>popover: false</code> turns it off.</p>
+  <p class="note">In the settings gear: <b>Button tab → Hover preview</b> has the on/off switch, the five styles, Delay, Max rows and a <b>Show now</b> button. Changing the style shows it right away (the demo never blocks the pointer and hides itself).</p>
   <h3 id="separate">Separate design for the button and the dropdown</h3>
 <pre><code>bselect('#ward', {
   field: { shape: 'pill', size: 'lg' },          // the closed button
@@ -263,7 +275,7 @@ bselect('#ward', { size: 'md' });                                             //
     <tr><td>Search</td><td><code>search</code></td><td>The search box in the panel header.</td></tr>
     <tr><td>Sort</td><td><code>sort</code></td><td>The sort button (natural order).</td></tr>
     <tr><td>Clear ×</td><td><code>clearable</code></td><td>The round × in the closed field.</td></tr>
-    <tr><td>Preview</td><td><code>popover</code></td><td>Hover preview of cut-off or selected values, and the marquee for long rows.</td></tr>
+    <tr><td>Preview</td><td><code>popover</code></td><td>Hover preview of the selected values (five looks, see the Button tab), and the marquee for long rows.</td></tr>
     <tr><td>Scroll hint</td><td><code>lazyHint</code></td><td>The "Scroll to continue" strip (Scroll loading only).</td></tr>
     <tr><td>Count</td><td><code>info</code></td><td>The "1–20 of 100" line.</td></tr>
     <tr><td>Apply / Cancel</td><td><code>commit</code></td><td>Multiple only: edits wait for Apply.</td></tr>
@@ -291,6 +303,10 @@ bselect('#ward', { size: 'md' });                                             //
     <tr><td>Border</td><td><code>borderWidth</code></td><td>Auto, None, 1 / 2 / 3 px, or Custom.</td></tr>
     <tr><td>Fill / Text / Border / Accent</td><td><code>fieldBackground</code> <code>fieldTextColor</code> <code>borderColor</code> <code>fieldColor</code></td><td>Colours of the button only (× resets to the default).</td></tr>
     <tr><td>Clear × / Arrow</td><td><code>clearable</code> / <code>chevron</code></td><td>The × and the chevron in the field.</td></tr>
+    <tr><td>Hover preview: Preview</td><td><code>popover</code></td><td>The hover preview on or off.</td></tr>
+    <tr><td>Hover preview: Style</td><td><code>previewStyle</code></td><td>Card, Chips, List, Tip (tooltip) or Details; the chosen look is shown right away.</td></tr>
+    <tr><td>Hover preview: Delay / Max rows</td><td><code>previewDelay</code> <code>previewMax</code></td><td>Rest time in ms before it shows, and the rows shown before "+ N more".</td></tr>
+    <tr><td>Hover preview: Try it</td><td>(button)</td><td>Shows the preview now; uses the first rows when nothing is selected.</td></tr>
     <tr><td>Values</td><td><code>display</code></td><td>Multiple only: Text, Chips, Count (Custom: max chips).</td></tr>
   </table>
 </article>
@@ -306,7 +322,6 @@ bselect('#ward', { size: 'md' });                                             //
     <tr><td>Width / List height / Row font / Edge fade</td><td><code>panelWidth</code> <code>listHeight</code> <code>rowFontSize</code> <code>fadeSize</code></td><td>Sizes in px; × goes back to the starting value.</td></tr>
     <tr><td>Background / Text / Border / Hover / Selected / Accent</td><td><code>panelBackground</code> <code>panelTextColor</code> <code>panelBorderColor</code> <code>hoverColor</code> <code>selectedColor</code> <code>panelColor</code></td><td>Colours of the dropdown only.</td></tr>
     <tr><td>Arrow</td><td><code>arrow</code></td><td>The pointer under the button.</td></tr>
-    <tr><td>Preview</td><td><code>popover</code></td><td>Hover preview.</td></tr>
     <tr><td>Settings button</td><td><code>settings</code></td><td>Hides the gear (not saved: a reload brings it back; use <code>settingsButton: false</code> in code for good).</td></tr>
     <tr><td>Scroll fade</td><td><code>scrollFade</code></td><td>Edge fade of the list.</td></tr>
     <tr><td>Sub text group</td><td><code>subText</code> <code>subTextPlace</code> <code>subTextField</code></td><td>On / off, Below / Beside, the field name (suggests your data fields) and a text box per option for testing.</td></tr>

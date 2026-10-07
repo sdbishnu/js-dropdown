@@ -688,6 +688,22 @@ Object.assign(BSelect.prototype, {
         b2.appendChild(bgrid);
         pills(group(button), [['Clear \u00d7', 'clearable', 'Clear button in the field'], ['Arrow', 'chevron', 'Chevron in the field']]);
 
+        // hover preview: 5 looks + timing, with a button that shows it right away (a changed look is shown by itself)
+        var pv = group(button, 'Hover preview');
+        var pvg = el('div', 'bselect-fgrid');
+        var pvTry = el('button', 'bselect-test-btn', 'Show now');
+
+        pills(pv, [['Preview', 'popover', 'Hover preview of the selected values']]);
+        segmented(pv, 'Style', 'How the preview looks', 'previewStyle', [['card', 'Card'], ['chips', 'Chips'], ['list', 'List'], ['tooltip', 'Tip'], ['details', 'Details']], o.previewStyle || 'card');
+        numberField(pvg, 'previewDelay', 'Delay', 'ms', 0, 3000, 100);
+        numberField(pvg, 'previewMax', 'Max rows', '', 1, 30, 1);
+        pv.appendChild(pvg);
+        pvTry.type = 'button';
+        pvTry.addEventListener('click', function () {
+            self._popoverShow(true);
+        });
+        line(pv, 'Try it', 'Show the preview now (uses the first rows when nothing is selected)', pvTry);
+
         // ================= Dropdown: the open panel and its rows
         var dropdown = addTab('dropdown', 'Dropdown');
         var d1 = group(dropdown, 'Theme and rows');
@@ -756,7 +772,7 @@ Object.assign(BSelect.prototype, {
         colourField(dcolours, 'selectedColor', 'Selected');
         colourField(dcolours, 'panelColor', 'Accent');
         d3.appendChild(dcolours);
-        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['Scroll fade', 'scrollFade', 'Rows fade out at the top / bottom edge of the list']]);
+        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['Scroll fade', 'scrollFade', 'Rows fade out at the top / bottom edge of the list']]);
 
         // sub text: the small line under (or beside) the label
         var sub1 = group(dropdown, 'Sub text');

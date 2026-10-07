@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>preview</title><link rel="stylesheet" href="../dist/bselect.css"></head>
+<body style="padding:30px;width:420px;font-family:system-ui"><select id="m"></select><br><br><select id="s"></select><br><br><select id="d"></select>
+<script src="../dist/bselect.bundle.js"></script>
+<script>
+var data=[];for(var i=1;i<=30;i++)data.push({id:i,name:'Staff member '+i,code:'EMP-'+i,photo:i%3?'':'🩺'});
+bselect('#m',{options:data,multiple:true,subTextField:'code',imageField:'photo',images:true,previewDelay:100,value:[1,2,3,4,5,6,7,8,9,10,11,12]});
+bselect('#s',{options:data,subTextField:'code',imageField:'photo',images:true,previewDelay:100,value:4});
+bselect('#d',{options:data,multiple:true,mode:'dark',previewDelay:100,value:[1,2]});
+</script></body></html>

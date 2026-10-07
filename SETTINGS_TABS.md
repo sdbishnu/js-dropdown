@@ -1,6 +1,6 @@
 # BSelect – settings gear, tab by tab
 
-Generated from `test/qa-controls.mjs` (every control is changed and put back, in single and multiple mode). **125 control checks, all with a result below.**
+Generated from `test/qa-controls.mjs` (every control is changed and put back, in single and multiple mode). **131 control checks, all with a result below.**
 
 Work through one tab at a time: keep it, fix it or remove it, then re-run the check (see the end of this file).
 
@@ -42,6 +42,10 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 | Accent | `fieldColor` | colour | single + multiple | ok |
 | Clear × | `clearable` | Off / On | single + multiple | ok |
 | Arrow | `chevron` | Off / On | single + multiple | ok |
+| Preview | `popover` | Off / On | single + multiple | ok |
+| Style | `previewStyle` | choice buttons | single + multiple | ok |
+| Delay | `previewDelay` | number box | single + multiple | ok |
+| Max rows | `previewMax` | number box | single + multiple | ok |
 | Values | `display` | choice buttons | multiple only | ok |
 
 ## Dropdown
@@ -64,7 +68,6 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 | Selected | `selectedColor` | colour | single + multiple | ok |
 | Accent | `panelColor` | colour | single + multiple | ok |
 | Arrow | `arrow` | Off / On | single + multiple | ok |
-| Preview | `popover` | Off / On | single + multiple | ok |
 | Settings button | `settings` | Off / On | single + multiple | ok |
 | Scroll fade | `scrollFade` | Off / On | single + multiple | ok |
 | Sub text | `subText` | Off / On | single + multiple | ok |

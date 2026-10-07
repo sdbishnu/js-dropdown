@@ -131,7 +131,10 @@
         settings: true, // settings gear in the panel header (set false, or bselect.defaults({ settingsButton: false }), to hide it)
         persist: false, // true | 'key' - remember user settings in localStorage
         resizable: true, // drag handle to resize the panel
-        popover: true, // full selected text after hovering 2s
+        popover: true, // hover preview of the selected values (after previewDelay)
+        previewStyle: 'card', // 'card' | 'chips' | 'list' | 'tooltip' | 'details'
+        previewDelay: 500, // ms the pointer rests on the field before the preview shows
+        previewMax: 8, // rows / chips shown before '+ N more'
         viewTabs: true, // multiple: All | Selected tabs under the search (All: Select all, Selected: Clear all)
         selectAll: true, // select/unselect all (multiple)
         disabled: false,
@@ -3581,7 +3584,7 @@ Object.assign(BSelect.prototype, {
 });
 
 /* Sort button, settings gear + popup, optional saved preferences (localStorage) */
-var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'scrollFade', 'fadeSize', 'viewTabs', 'selectAll', 'commitClose', 'infoPlace', 'infoAlign', 'imageField', 'serverSearch', 'searchMinChars', 'recent', 'favorites', 'highlight', 'preload', 'cache', 'virtual', 'virtualFrom', 'groupField'];
+var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'scrollFade', 'fadeSize', 'previewStyle', 'previewDelay', 'previewMax', 'viewTabs', 'selectAll', 'commitClose', 'infoPlace', 'infoAlign', 'imageField', 'serverSearch', 'searchMinChars', 'recent', 'favorites', 'highlight', 'preload', 'cache', 'virtual', 'virtualFrom', 'groupField'];
 
 Object.assign(BSelect.prototype, {
     _prefKey: function () {
@@ -3737,6 +3740,10 @@ Object.assign(BSelect.prototype, {
 
         o[key] = value;
         this._memo = null; // the visible list depends on many settings (search fields, groups, sort ...)
+
+        if (key === 'previewStyle' || key === 'previewMax') {
+            this._popoverShow(true); // the changed look is shown right away
+        }
 
         if (key.indexOf('subText') === 0) {
             this._subVer = (this._subVer || 0) + 1; // search text of the rows changed
@@ -4556,6 +4563,22 @@ Object.assign(BSelect.prototype, {
         b2.appendChild(bgrid);
         pills(group(button), [['Clear \u00d7', 'clearable', 'Clear button in the field'], ['Arrow', 'chevron', 'Chevron in the field']]);
 
+        // hover preview: 5 looks + timing, with a button that shows it right away (a changed look is shown by itself)
+        var pv = group(button, 'Hover preview');
+        var pvg = el('div', 'bselect-fgrid');
+        var pvTry = el('button', 'bselect-test-btn', 'Show now');
+
+        pills(pv, [['Preview', 'popover', 'Hover preview of the selected values']]);
+        segmented(pv, 'Style', 'How the preview looks', 'previewStyle', [['card', 'Card'], ['chips', 'Chips'], ['list', 'List'], ['tooltip', 'Tip'], ['details', 'Details']], o.previewStyle || 'card');
+        numberField(pvg, 'previewDelay', 'Delay', 'ms', 0, 3000, 100);
+        numberField(pvg, 'previewMax', 'Max rows', '', 1, 30, 1);
+        pv.appendChild(pvg);
+        pvTry.type = 'button';
+        pvTry.addEventListener('click', function () {
+            self._popoverShow(true);
+        });
+        line(pv, 'Try it', 'Show the preview now (uses the first rows when nothing is selected)', pvTry);
+
         // ================= Dropdown: the open panel and its rows
         var dropdown = addTab('dropdown', 'Dropdown');
         var d1 = group(dropdown, 'Theme and rows');
@@ -4624,7 +4647,7 @@ Object.assign(BSelect.prototype, {
         colourField(dcolours, 'selectedColor', 'Selected');
         colourField(dcolours, 'panelColor', 'Accent');
         d3.appendChild(dcolours);
-        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Preview', 'popover', 'Hover preview of the selected values'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['Scroll fade', 'scrollFade', 'Rows fade out at the top / bottom edge of the list']]);
+        pills(group(dropdown, 'Behaviour'), [['Arrow', 'arrow', 'Pointer under the button'], ['Settings button', 'settings', 'Gear in the dropdown (a page reload brings it back)'], ['Scroll fade', 'scrollFade', 'Rows fade out at the top / bottom edge of the list']]);
 
         // sub text: the small line under (or beside) the label
         var sub1 = group(dropdown, 'Sub text');
@@ -5325,7 +5348,7 @@ Object.assign(BSelect.prototype, {
     },
 });
 
-/* Hover popover with the full selected values (after 2s) and marquee scrolling for overflowing text */
+/* Hover preview of the selected values (5 styles: card | chips | list | tooltip | details) and marquee scrolling for overflowing text */
 Object.assign(BSelect.prototype, {
     /** Marquee on hover/focus for any container holding a .bselect-item-label. */
     _marquee: function (node) {
@@ -5390,9 +5413,12 @@ Object.assign(BSelect.prototype, {
                 return;
             }
 
-            self._popTimer = setTimeout(function () {
-                self._popoverShow();
-            }, 2000);
+            self._popTimer = setTimeout(
+                function () {
+                    self._popoverShow();
+                },
+                Number(self.opts.previewDelay === null || self.opts.previewDelay === undefined ? 500 : self.opts.previewDelay)
+            );
         });
         this.textBox.addEventListener('mouseleave', function () {
             cancel();
@@ -5402,12 +5428,142 @@ Object.assign(BSelect.prototype, {
         });
     },
 
-    _popoverShow: function () {
+    /** one value as a row: picture + label + sub text (the card style) */
+    _pvRow: function (item, big) {
+        var row = el('div', 'bselect-pv-row' + (big ? ' bselect-pv-row-big' : ''));
+        var pic = el('span');
+        var text = el('span', 'bselect-pv-text');
+        var sub = this._subText(item);
+
+        if (this._fillPicture(pic, item, 'bselect-pv-pic')) {
+            row.appendChild(pic);
+        }
+
+        text.appendChild(el('strong', '', this._lbl(item)));
+
+        if (sub) {
+            text.appendChild(el('small', '', sub));
+        }
+
+        row.appendChild(text);
+        return row;
+    },
+
+    /** the preview body for one of the styles: card | chips | list | tooltip | details */
+    _pvBody: function (style, items, max, sample) {
         var self = this;
+        var shown = items.slice(0, max);
+        var more = items.length - shown.length;
+        var body = el('div', 'bselect-pv-body');
+        var head;
+        var wrap;
+
+        function moreRow() {
+            return more > 0 ? el('div', 'bselect-pv-more', '+ ' + more + ' more') : document.createTextNode('');
+        }
+
+        if (style === 'tooltip') {
+            if (items.length === 1) {
+                body.appendChild(el('strong', '', this._lbl(items[0])));
+
+                if (this._subText(items[0])) {
+                    body.appendChild(el('small', '', this._subText(items[0])));
+                }
+            } else {
+                body.appendChild(
+                    el(
+                        'span',
+                        '',
+                        shown
+                            .map(function (i) {
+                                return self._lbl(i);
+                            })
+                            .join('  ·  ') + (more > 0 ? '  ·  +' + more : '')
+                    )
+                );
+            }
+
+            return body;
+        }
+
+        head = el('div', 'bselect-pv-head');
+        head.appendChild(el('span', 'bselect-pv-title', sample ? 'Preview (sample)' : items.length > 1 || this.opts.multiple ? 'Selected values' : 'Selected value'));
+        head.appendChild(el('span', 'bselect-pv-count', String(items.length)));
+
+        if (style === 'chips') {
+            body.appendChild(head);
+            wrap = el('div', 'bselect-pv-chips');
+            shown.forEach(function (item) {
+                var chip = el('span', 'bselect-pv-chip');
+                var pic = el('span');
+
+                if (self._fillPicture(pic, item, 'bselect-pv-pic')) {
+                    chip.appendChild(pic);
+                }
+
+                chip.appendChild(el('span', '', self._lbl(item)));
+                wrap.appendChild(chip);
+            });
+
+            if (more > 0) {
+                wrap.appendChild(el('span', 'bselect-pv-chip bselect-pv-chip-more', '+' + more));
+            }
+
+            body.appendChild(wrap);
+            return body;
+        }
+
+        if (style === 'list') {
+            body.appendChild(head);
+            wrap = el('ol', 'bselect-pv-ol');
+            shown.forEach(function (item) {
+                wrap.appendChild(el('li', '', self._lbl(item)));
+            });
+            body.appendChild(wrap);
+            body.appendChild(moreRow());
+            return body;
+        }
+
+        if (style === 'details') {
+            body.appendChild(head);
+            wrap = el('div', 'bselect-pv-table');
+            shown.forEach(function (item) {
+                var r = el('div', 'bselect-pv-tr');
+                var sub = self._subText(item);
+
+                r.appendChild(el('span', 'bselect-pv-k', self._lbl(item)));
+                r.appendChild(el('span', 'bselect-pv-v', (sub ? sub + '  ·  ' : '') + String(self._val(item))));
+                wrap.appendChild(r);
+            });
+            body.appendChild(wrap);
+            body.appendChild(moreRow());
+            return body;
+        }
+
+        // card (default): one value = one big card, several = header + rich rows
+        if (items.length === 1 && !this.opts.multiple) {
+            body.appendChild(this._pvRow(items[0], true));
+            return body;
+        }
+
+        body.appendChild(head);
+        shown.forEach(function (item) {
+            body.appendChild(self._pvRow(item, false));
+        });
+        body.appendChild(moreRow());
+        return body;
+    },
+
+    /** show the preview of the selected values; sample === true (settings "Show preview") uses the first rows when nothing is selected */
+    _popoverShow: function (sample) {
+        var self = this;
+        var o = this.opts;
+        var style = ['card', 'chips', 'list', 'tooltip', 'details'].indexOf(o.previewStyle) >= 0 ? o.previewStyle : 'card';
+        var items = this.selected;
+        var max = Math.max(1, Number(o.previewMax === null || o.previewMax === undefined ? 8 : o.previewMax));
+        var forced = false;
         var pop;
-        var header;
-        var count;
-        var list;
+        var cs;
         var rect;
         var box;
         var left;
@@ -5415,30 +5571,28 @@ Object.assign(BSelect.prototype, {
 
         this._popoverHide();
 
-        if (this.isOpen || !this.selected.length) {
+        if (!items.length && sample === true) {
+            items = (this.items && this.items.length ? this.items : this.known).slice(0, 3);
+            forced = true;
+        }
+
+        if ((this.isOpen && sample !== true) || !items.length) {
             return;
         }
 
-        pop = el('div', 'bselect-value-popover');
+        pop = el('div', 'bselect-pv bselect-pv-' + style);
         pop.setAttribute('role', 'tooltip');
+        pop.appendChild(this._pvBody(style, items, max, forced));
 
-        if (this.root.classList.contains('bselect-dark')) {
-            pop.classList.add('bselect-pop-dark');
-        }
+        // the colours of the field it belongs to (light, dark, custom background, accent)
+        cs = getComputedStyle(this.root);
+        ['--bselect-bg', '--bselect-text', '--bselect-muted', '--bselect-line', '--bselect-border', '--bselect-color', '--bselect-surface-2', '--bselect-surface-3', '--bselect-hover', '--bselect-panel-radius', '--bselect-img-radius'].forEach(function (name) {
+            var v = cs.getPropertyValue(name);
 
-        header = el('div', 'bselect-value-popover-header');
-        header.appendChild(el('span', 'bselect-value-popover-caption', 'Selected values'));
-        count = el('span', 'bselect-value-popover-count', String(this.selected.length));
-        header.appendChild(count);
-        pop.appendChild(header);
-        list = el('div', 'bselect-value-popover-list');
-        this.selected.forEach(function (item) {
-            var row = el('div', 'bselect-value-popover-item');
-            row.appendChild(el('span', '', self._lbl(item)));
-            list.appendChild(row);
+            if (v && v.trim()) {
+                pop.style.setProperty(name, v.trim());
+            }
         });
-        pop.appendChild(list);
-        pop.style.setProperty('--bselect-popover-color', getComputedStyle(this.root).getPropertyValue('--bselect-color').trim() || '#47a0ec');
         document.body.appendChild(pop);
         pop.addEventListener('mouseenter', function () {
             clearTimeout(self._popTimer);
@@ -5450,16 +5604,25 @@ Object.assign(BSelect.prototype, {
         rect = this.root.getBoundingClientRect();
         box = pop.getBoundingClientRect();
         left = Math.max(8, Math.min(rect.left, window.innerWidth - box.width - 8));
-        top = rect.bottom + 7;
+        top = rect.bottom + 9;
 
-        if (top + box.height > window.innerHeight - 8) {
-            top = Math.max(8, rect.top - box.height - 7);
-            pop.classList.add('bselect-value-popover-up');
+        if (this.isOpen || top + box.height > window.innerHeight - 8) {
+            top = Math.max(8, rect.top - box.height - 9);
+            pop.classList.add('bselect-pv-up');
         }
 
         pop.style.left = left + 'px';
         pop.style.top = top + 'px';
+        pop.style.setProperty('--bselect-pv-arrow', Math.max(14, Math.min(rect.left + 22 - left, box.width - 22)) + 'px');
         this._pop = pop;
+
+        // a preview asked for from the settings is only a demonstration: it never blocks the pointer and goes away by itself
+        if (sample === true) {
+            pop.classList.add('bselect-pv-demo');
+            this._popTimer = setTimeout(function () {
+                self._popoverHide();
+            }, 2800);
+        }
     },
 
     _popoverHide: function () {

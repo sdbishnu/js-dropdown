@@ -130,7 +130,10 @@
         settings: true, // settings gear in the panel header (set false, or bselect.defaults({ settingsButton: false }), to hide it)
         persist: false, // true | 'key' - remember user settings in localStorage
         resizable: true, // drag handle to resize the panel
-        popover: true, // full selected text after hovering 2s
+        popover: true, // hover preview of the selected values (after previewDelay)
+        previewStyle: 'card', // 'card' | 'chips' | 'list' | 'tooltip' | 'details'
+        previewDelay: 500, // ms the pointer rests on the field before the preview shows
+        previewMax: 8, // rows / chips shown before '+ N more'
         viewTabs: true, // multiple: All | Selected tabs under the search (All: Select all, Selected: Clear all)
         selectAll: true, // select/unselect all (multiple)
         disabled: false,

@@ -1,5 +1,5 @@
 /* Sort button, settings gear + popup, optional saved preferences (localStorage) */
-var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'scrollFade', 'fadeSize', 'viewTabs', 'selectAll', 'commitClose', 'infoPlace', 'infoAlign', 'imageField', 'serverSearch', 'searchMinChars', 'recent', 'favorites', 'highlight', 'preload', 'cache', 'virtual', 'virtualFrom', 'groupField'];
+var PREF_KEYS = ['search', 'sort', 'multiple', 'load', 'pageSize', 'clearable', 'color', 'borderColor', 'borderWidth', 'mode', 'size', 'shape', 'variant', 'display', 'popover', 'lazyHint', 'density', 'palette', 'background', 'images', 'avatar', 'avatarColor', 'imageShape', 'imageSize', 'radius', 'fontSize', 'rowHeight', 'panelWidth', 'listHeight', 'textColor', 'hoverColor', 'selectedColor', 'panelBackground', 'fontFamily', 'shadow', 'style', 'imageMap', 'rowStyle', 'fieldHeight', 'maxChips', 'fieldBackground', 'fieldTextColor', 'fieldColor', 'panelMode', 'panelPalette', 'panelTextColor', 'panelBorderColor', 'panelShape', 'panelRadius', 'panelColor', 'rowFontSize', 'arrow', 'chevron', 'info', 'commit', 'subText', 'subTextField', 'subTextMap', 'subTextPlace', 'scrollFade', 'fadeSize', 'previewStyle', 'previewDelay', 'previewMax', 'viewTabs', 'selectAll', 'commitClose', 'infoPlace', 'infoAlign', 'imageField', 'serverSearch', 'searchMinChars', 'recent', 'favorites', 'highlight', 'preload', 'cache', 'virtual', 'virtualFrom', 'groupField'];
 
 Object.assign(BSelect.prototype, {
     _prefKey: function () {
@@ -155,6 +155,10 @@ Object.assign(BSelect.prototype, {
 
         o[key] = value;
         this._memo = null; // the visible list depends on many settings (search fields, groups, sort ...)
+
+        if (key === 'previewStyle' || key === 'previewMax') {
+            this._popoverShow(true); // the changed look is shown right away
+        }
 
         if (key.indexOf('subText') === 0) {
             this._subVer = (this._subVer || 0) + 1; // search text of the rows changed

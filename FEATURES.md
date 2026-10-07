@@ -1,7 +1,7 @@
 # BSelect – every feature built so far (v1.0.0)
 
 Plain JavaScript dropdown (no framework, no jQuery needed) with an AngularJS 1.x wrapper.
-Everything below is **done and covered by `npm test`** (30 headless-browser checks).
+Everything below is **done and covered by `npm test`** (31 headless-browser checks).
 Details for each area are in the linked file; this page is the checklist.
 
 Legend: option name in `code`; **default** is stated where it matters.

@@ -25,6 +25,7 @@ const checks = [
     ['/test/memory.html', 'test/qa-memory.mjs'],
     ['/test/mode-check.html', 'test/qa-defaults.mjs'],
     ['/test/views.html', 'test/qa-views.mjs'],
+    ['/test/count.html', 'test/qa-count.mjs'],
     ['/test/subtext.html', 'test/qa-subtext.mjs'],
     ['/test/tabs.html', 'test/qa-tabs.mjs'],
     ['/test/gear-all.html', 'test/qa-gear-all.mjs'],

@@ -27,6 +27,7 @@ Status: ✅ done and tested · 🟡 done, needs a real-world check · ⏳ open
 | 3n | Settings gear tested control by control | `data-key` on every control, `qa-controls` changes + restores each one (121 checks, single + multiple), SETTINGS_TABS.md generated; fixes: number boxes go back to the starting value, switches restore the exact default, images / default-picture restore | `qa-controls`, `test/make-controls-doc.js` |
 | 3o | Guide page + Guide button | docs-site style guide (sidebar pages, on-this-page, Ctrl+K search, code blocks, live demo), deep links per gear tab, built to dist/, Guide button next to Find | `qa-guide`, `qa-guide-page` |
 | 3p | Hover preview redesign | card (default) / chips / list / tooltip / details, delay, max rows, field colours, gear controls + Show now | `qa-preview` |
+| 3q | Settings review: Behavior tab done | all 13 Behavior controls reviewed and kept; Count Off fixed at the bottom / merged bar; Count + Apply / Cancel in one bar; count line tight under the search; compact settings popup spacing | SETTINGS_TABS.md, qa-count-off, qa-merge, qa-count |
 | 5 | Documentation | README + the docs in this folder | README.md |
 
 ## Open

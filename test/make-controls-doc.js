@@ -9,6 +9,10 @@ const from = text.indexOf('script ');
 const to = text.indexOf('\n\nconsole');
 const data = JSON.parse(text.slice(from + 7, to));
 const TABS = ['Behavior', 'Look', 'Button', 'Dropdown', 'List', 'Data', 'Images'];
+// the tab-by-tab review (one control at a time): update this when a tab has been gone through
+const REVIEW = {
+    Behavior: 'done - all 13 controls kept (Selection, Loading, Rows, Search, Sort, Clear x, Preview, Scroll hint, Count, Apply / Cancel, All / Selected, Select all, Closing); fixes on the way: Count Off at the bottom, Count + Apply / Cancel share one bar, compact popup spacing',
+};
 const KIND = { switch: 'Off / On', choice: 'choice buttons', text: 'text box', number: 'number box', colour: 'colour' };
 let md = '# BSelect – settings gear, tab by tab\n\n';
 
@@ -25,7 +29,7 @@ TABS.forEach((tab) => {
         row.results.push(r.result);
     });
 
-    md += '## ' + tab + '\n\n| Control | Option | Type | Shown for | Test |\n|---|---|---|---|---|\n';
+    md += '## ' + tab + '\n\n' + (REVIEW[tab] ? '**Review: ' + REVIEW[tab] + '**\n\n' : '**Review: not reviewed yet**\n\n') + '| Control | Option | Type | Shown for | Test |\n|---|---|---|---|---|\n';
     Object.keys(rows).forEach((key) => {
         const r = rows[key];
         const shown = r.modes.length === 2 ? 'single + multiple' : r.modes[0] + ' only';

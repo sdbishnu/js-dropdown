@@ -836,6 +836,17 @@
 /* count line under the search: part of the header block, no extra gap (search -> count is tight) */
 .bselect-header:has(+ .bselect-infobar:not(.bselect-info-bottom)) { padding-bottom: 3px; border-bottom: 0; }
 .bselect-infobar:not(.bselect-info-bottom) { margin-top: 0; padding: 0 12px 5px; background: var(--bselect-surface-2); line-height: 13px; }
+/* settings popup: compact vertical rhythm (less gap between the header, the tabs and the rows) */
+.bselect-settings:not(.bselect-drawer) .bselect-settings-header { padding: 5px 8px 3px; }
+.bselect-settings:not(.bselect-drawer) .bselect-tabs { margin-bottom: 2px; }
+.bselect-settings:not(.bselect-drawer) .bselect-tab { height: 22px; }
+.bselect-settings:not(.bselect-drawer) .bselect-rowc { min-height: 23px; padding: 0 2px; }
+.bselect-settings:not(.bselect-drawer) .bselect-rowc-stack { gap: 2px; padding-top: 2px; padding-bottom: 2px; }
+.bselect-settings:not(.bselect-drawer) .bselect-seg button { padding-top: 2px; padding-bottom: 2px; }
+.bselect-settings .bselect-pills, .bselect-settings:not(.bselect-drawer) .bselect-pills { gap: 0 16px; padding: 1px 2px 2px; }
+.bselect-settings .bselect-pill, .bselect-settings:not(.bselect-drawer) .bselect-pill { min-height: 22px; }
+.bselect-settings .bselect-seg-mini b { padding-top: 2px; padding-bottom: 2px; }
+.bselect-settings:not(.bselect-drawer) .bselect-settings-footer { padding: 4px 10px; }
 /* header controls (search, sort, gear) and the settings popup share ONE shape: it follows the dropdown's shape / radius setting */
 .bselect-panel, .bselect-settings-wrap { --bselect-ctl-radius: min(calc(var(--bselect-panel-radius) * .7), 14px); --bselect-ctl-inner: max(0px, calc(var(--bselect-ctl-radius) - 2px)); --bselect-ctl-h: 30px; }
 .bselect-size-lg.bselect-panel, .bselect-size-lg .bselect-panel { --bselect-ctl-h: 36px; }

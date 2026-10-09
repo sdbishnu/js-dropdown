@@ -36,6 +36,7 @@ Legend: option name in `code`; **default** is stated where it matters.
 - Apply / Cancel commit mode (`commit`, `commitClose`, events `apply` / `cancel`)
 - Recent picks and favourites (`recent`, `favorites`, saved in localStorage)
 - Groups: `groupField` shows a header per group
+- Compact layout: the count line sits tight under the search box (part of the header block) and the settings popup uses a compact row rhythm (the whole Behavior tab fits without scrolling)
 - Count line "1–20 of 100" (`info`, `infoPlace`, `infoAlign`); with the count at the bottom and Apply / Cancel on, both share one bar (count left, buttons right)
 
 ## 5. Rows

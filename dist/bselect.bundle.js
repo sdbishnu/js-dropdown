@@ -1,4 +1,4 @@
-/* BSelect v1.0.0 - built 2026-10-07 - do not edit, edit src/ and run node build.js */
+/* BSelect v1.0.0 - built 2026-10-09 - do not edit, edit src/ and run node build.js */
 /*
  * BSelect - plain JavaScript dropdown (no AngularJS, no jQuery required).
  *

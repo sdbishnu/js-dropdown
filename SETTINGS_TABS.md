@@ -6,6 +6,8 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 
 ## Behavior
 
+**Review: done - all 13 controls kept (Selection, Loading, Rows, Search, Sort, Clear x, Preview, Scroll hint, Count, Apply / Cancel, All / Selected, Select all, Closing); fixes on the way: Count Off at the bottom, Count + Apply / Cancel share one bar, compact popup spacing**
+
 | Control | Option | Type | Shown for | Test |
 |---|---|---|---|---|
 | Selection | `multiple` | choice buttons | single + multiple | ok |
@@ -24,11 +26,15 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 
 ## Look
 
+**Review: not reviewed yet**
+
 | Control | Option | Type | Shown for | Test |
 |---|---|---|---|---|
 | Mode | `mode` | choice buttons | single + multiple | ok |
 
 ## Button
+
+**Review: not reviewed yet**
 
 | Control | Option | Type | Shown for | Test |
 |---|---|---|---|---|
@@ -49,6 +55,8 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 | Values | `display` | choice buttons | multiple only | ok |
 
 ## Dropdown
+
+**Review: not reviewed yet**
 
 | Control | Option | Type | Shown for | Test |
 |---|---|---|---|---|
@@ -76,6 +84,8 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 
 ## List
 
+**Review: not reviewed yet**
+
 | Control | Option | Type | Shown for | Test |
 |---|---|---|---|---|
 | Count | `infoPlace` | choice buttons | single + multiple | ok |
@@ -89,6 +99,8 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 
 ## Data
 
+**Review: not reviewed yet**
+
 | Control | Option | Type | Shown for | Test |
 |---|---|---|---|---|
 | Preload | `preload` | Off / On | single + multiple | ok |
@@ -97,6 +109,8 @@ Work through one tab at a time: keep it, fix it or remove it, then re-run the ch
 | Virtual from | `virtualFrom` | number box | single + multiple | ok |
 
 ## Images
+
+**Review: not reviewed yet**
 
 | Control | Option | Type | Shown for | Test |
 |---|---|---|---|---|
